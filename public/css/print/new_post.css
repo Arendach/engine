@@ -1,0 +1,2005 @@
+.page-100-130 {
+    width: 205mm;
+    margin-left: 2.5mm
+}
+
+.page-100-130 * {
+    box-sizing: border-box
+}
+
+.marking-100-130 {
+    position: relative;
+    width: 100mm;
+    height: 130mm;
+    float: left;
+    overflow: hidden;
+    margin-bottom: 18.4mm;
+    font-family: Verdana
+}
+
+.marking-100-130:nth-child(2n) {
+    margin-left: 5mm
+}
+
+.marking-100-130 > * {
+    position: absolute
+}
+
+.marking-100-130 hr {
+    margin: 0;
+    border-top: none;
+    border-bottom: .1mm #000 solid
+}
+
+.marking-100-130 .Branch {
+    top: 0;
+    left: 0;
+    width: 80mm;
+    height: 13.5mm;
+    padding-left: 1mm;
+    border-right: .1mm #fff solid;
+    line-height: 13.5mm;
+    background: #000;
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    text-align: center;
+    overflow: hidden
+}
+
+.marking-100-130 .PostCodeRegionalCenter {
+    left: 80mm;
+    width: 20mm;
+    height: 13.5mm;
+    text-align: center;
+    line-height: 13.5mm;
+    background: #000;
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px
+}
+
+.marking-100-130 .CityRecipient {
+    top: 13.5mm;
+    left: 0;
+    width: 80mm;
+    height: 8mm;
+    padding-left: 1mm;
+    border-left: .1mm #000 solid;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    line-height: 8mm;
+    font-weight: 700;
+    font-size: 18px;
+    text-align: center;
+    overflow: hidden
+}
+
+.marking-100-130 .PostCodeBranch {
+    top: 13.5mm;
+    left: 80mm;
+    width: 20mm;
+    height: 8mm;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    line-height: 8mm;
+    font-weight: 700;
+    font-size: 18px;
+    text-align: center
+}
+
+.marking-100-130 .RegionCode {
+    top: 21.5mm;
+    left: 0;
+    width: 43mm;
+    height: 12mm;
+    padding-left: 1mm;
+    overflow: hidden;
+    border-left: .1mm #000 solid;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    line-height: 12mm;
+    font-weight: 700;
+    font-size: 22px
+}
+
+.marking-100-130 .DoorsDelivery {
+    margin-right: 1mm;
+    display: inline-block
+}
+
+.marking-100-130 .Places {
+    top: 21.5mm;
+    left: 43mm;
+    width: 15mm;
+    height: 12mm;
+    padding-left: 1mm;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center
+}
+
+.marking-100-130 .PlacesText1 {
+    margin-bottom: -.5mm;
+    font-size: 8px;
+    font-weight: 400
+}
+
+.marking-100-130 .DeliveryDate {
+    top: 21.5mm;
+    left: 58mm;
+    width: 22mm;
+    height: 12mm;
+    padding-left: 1mm;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    text-align: center
+}
+
+.marking-100-130 .DeliveryDateText1 {
+    margin-bottom: -.5mm;
+    font-size: 8px
+}
+
+.marking-100-130 .BarcodeAdditional {
+    top: 21.5mm;
+    left: 80mm;
+    width: 20mm;
+    height: 56.5mm;
+    padding: 2.2mm 2.5mm 0;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid
+}
+
+.marking-100-130 .Recipient {
+    top: 33.5mm;
+    left: 0;
+    width: 80mm;
+    height: 20.5mm;
+    padding-left: 1mm;
+    overflow: hidden;
+    border-left: .1mm #000 solid;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    font-size: 12px
+}
+
+.marking-100-130 .QrCode {
+    top: 54mm;
+    left: 0;
+    width: 34mm;
+    height: 34mm;
+    overflow: hidden;
+    border-left: .1mm #000 solid;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid
+}
+
+.marking-100-130 .QrCode canvas {
+    width: 33mm;
+    height: 33mm;
+    padding: .45mm
+}
+
+.marking-100-130 .AdditionalInformation {
+    top: 54mm;
+    left: 34mm;
+    width: 46mm;
+    height: 24mm;
+    overflow: hidden;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid
+}
+
+.marking-100-130 .Weight {
+    top: 78mm;
+    left: 34mm;
+    width: 18mm;
+    height: 10mm;
+    padding: 1mm .2mm;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    font-size: 12px;
+    text-align: center
+}
+
+.marking-100-130 .WeightType {
+    top: 78mm;
+    left: 52mm;
+    width: 9mm;
+    height: 10mm;
+    line-height: 10mm;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center
+}
+
+.marking-100-130 .РЎrate {
+    top: 78mm;
+    left: 61mm;
+    width: 10mm;
+    height: 10mm;
+    line-height: 10mm;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center
+}
+
+.marking-100-130 .ExpressPallet {
+    top: 78mm;
+    left: 71mm;
+    width: 9mm;
+    height: 10mm;
+    line-height: 10mm;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    font-weight: 700;
+    text-align: center;
+    font-size: 0
+}
+
+.marking-100-130 .ExpressPallet.ExpressPalletActive {
+    font-size: 16px
+}
+
+.marking-100-130 .Logo {
+    top: 78mm;
+    left: 80mm;
+    width: 20mm;
+    height: 10mm;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    text-align: center
+}
+
+.marking-100-130 .Number {
+    top: 88mm;
+    left: 0;
+    width: 100mm;
+    height: 11mm;
+    border-left: .1mm #000 solid;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    text-align: center;
+    line-height: 11mm
+}
+
+.marking-100-130 .Number .FirstPlace {
+    font-size: 30px
+}
+
+.marking-100-130 .Number .FirstPlace b {
+    font-size: 32px
+}
+
+.marking-100-130 .Number .OtherPlaces {
+    font-size: 26px
+}
+
+.marking-100-130 .Number .OtherPlaces b {
+    font-size: 28px
+}
+
+.marking-100-130 .Barcode {
+    top: 99mm;
+    left: 0;
+    width: 100mm;
+    height: 29.5mm;
+    padding-top: 2mm;
+    border-left: .1mm #000 solid;
+    border-right: .1mm #000 solid;
+    border-bottom: .1mm #000 solid;
+    text-align: center
+}
+
+.page-100-130 .position_col1, .page-100-130 .position_col2 {
+    width: 101mm;
+    display: inline-block;
+    vertical-align: top
+}
+
+.page-100-130 .position_col1 .marking-100-130:nth-child(2n), .page-100-130 .position_col2 .marking-100-130:nth-child(2n) {
+    margin-left: 0
+}
+
+@-moz-document url-prefix() {
+    .marking-100-130 {
+        margin-bottom: 8mm
+    }
+    .marking-100-130 .DeliveryDateText1, .marking-100-130 .PlacesText1 {
+        margin-bottom: -.8mm;
+        margin-top: -.8mm
+    }
+}
+
+@font-face {
+    font-family: Arial Narrow;
+    src: local("Arial Narrow"), url(/public/fonts/arial_narrow.ttf)
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 0;
+    -webkit-print-color-adjust: exact
+}
+
+#newPage {
+    width: 205mm;
+    margin-left: 5mm
+}
+
+.body_zebra {
+    width: 101mm
+}
+
+#mark:last-child * {
+    margin: 0
+}
+
+#mark {
+    top: 0;
+    left: 0;
+    width: 100mm;
+    height: 70mm;
+    font-family: Arial;
+    position: absolute
+}
+
+#content0 {
+    width: 91mm;
+    height: 8.2mm;
+    position: absolute
+}
+
+#bar_code_up {
+    position: absolute;
+    top: .6mm;
+    width: 80mm;
+    height: 7mm;
+    padding-left: 10px
+}
+
+#content1 {
+    width: 80mm;
+    height: 10mm;
+    left: 0;
+    top: 8.2mm;
+    border: .3mm solid #000;
+    position: absolute;
+    float: left
+}
+
+#number_ttn {
+    font-size: 6.8mm;
+    text-align: center;
+    vertical-align: middle;
+    position: absolute;
+    font-weight: 700;
+    top: -.4mm;
+    width: 100%
+}
+
+#date_ttn {
+    font-size: 2.3mm;
+    float: left;
+    vertical-align: bottom;
+    bottom: 0;
+    position: absolute;
+    margin-left: 5px !important
+}
+
+.current_date {
+    font-size: 2.3mm;
+    float: right;
+    vertical-align: bottom;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    margin-right: 5px !important
+}
+
+#content2 {
+    width: 19.8mm;
+    height: 10mm;
+    right: 0;
+    top: 8.2mm;
+    border-bottom: .3mm solid #000;
+    position: absolute
+}
+
+#chapter {
+    position: absolute;
+    width: 29.6mm;
+    height: 8mm;
+    top: .3mm;
+    right: 0;
+    border-left: .3mm solid #000
+}
+
+#region_code {
+    height: 7mm;
+    padding-top: 1mm;
+    overflow: hidden;
+    font-size: 5mm;
+    font-weight: 700;
+    line-height: 1.4;
+    word-break: break-all
+}
+
+#region_code.hasClientBarcode {
+    height: 5.5mm;
+    padding-top: 0
+}
+
+#content3 {
+    width: 80mm;
+    height: 52mm;
+    border-left: .3mm solid #000;
+    border-right: .3mm solid #000;
+    border-bottom: .3mm solid #000;
+    float: left;
+    left: 0;
+    top: 18.2mm;
+    position: absolute
+}
+
+#content31 {
+    position: relative;
+    width: 80mm;
+    height: 13mm;
+    border-bottom: .3mm solid #000
+}
+
+#sender {
+    width: 4.7mm;
+    height: 13mm;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-right: .3mm solid #000
+}
+
+#sender_text {
+    position: absolute;
+    text-align: center;
+    top: 5.5mm;
+    left: -3.2mm;
+    width: 11.4mm;
+    font-size: 1.7mm;
+    text-transform: uppercase;
+    font-family: Arial;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    font-weight: 700
+}
+
+#sender_information {
+    position: absolute;
+    left: .5mm;
+    top: .5mm;
+    line-height: 1.1;
+    width: 60mm;
+    heigt: 2mm;
+    font-size: 1.55mm;
+    padding-left: .5mm;
+    font-weight: 700
+}
+
+.sender_information_text_1, .sender_information_text_2 {
+    font-size: 2.2mm
+}
+
+#position {
+    width: 19mm;
+    height: 13mm;
+    position: absolute;
+    right: 0;
+    top: .25mm;
+    border-left: .3mm solid #000
+}
+
+#position_top {
+    position: absolute;
+    top: 0;
+    font-size: 4mm;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase
+}
+
+#position_bottom {
+    position: absolute;
+    bottom: 0;
+    font-size: 6mm;
+    width: 100%;
+    text-align: center;
+    font-weight: 700
+}
+
+#content32 {
+    position: relative;
+    width: 100%;
+    height: 7mm;
+    background: #000;
+    border-bottom: .3mm solid #000;
+    white-space: nowrap
+}
+
+#from_city {
+    position: absolute;
+    color: #FFF;
+    width: 100%;
+    text-transform: uppercase;
+    font-size: 5mm;
+    text-align: center;
+    font-weight: 700;
+    top: .7mm;
+    overflow: hidden;
+    z-index: 2
+}
+
+#content33 {
+    position: relative;
+    width: 80mm;
+    height: 5mm;
+    border-bottom: .3mm solid #000;
+    overflow: hidden
+}
+
+#to_city {
+    position: absolute;
+    width: 60mm;
+    text-align: center;
+    font-size: 5.5mm;
+    font-weight: 700;
+    top: -.9mm
+}
+
+.express-pallete-status {
+    width: 19mm;
+    height: 5mm;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-left: .3mm solid #000
+}
+
+.express-pallete-active {
+    width: 18.4mm;
+    height: 3.8mm;
+    padding-top: .8mm !important;
+    border: .3mm solid #fff;
+    background: #000;
+    color: #fff;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 3mm
+}
+
+#content34 {
+    position: relative;
+    width: 80mm;
+    height: 12mm;
+    border-bottom: .3mm solid #000
+}
+
+.servicetype-image {
+    width: 19mm;
+    height: 13mm;
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 12pt
+}
+
+.servicetype-wd-image {
+    width: 19mm;
+    height: 13mm;
+    background: url(http://my.novaposhta.ua/img/car.png) right center no-repeat
+}
+
+.weightMark_marking {
+    position: absolute;
+    right: 1.6mm;
+    top: .8mm;
+    display: table-row;
+    width: 12mm;
+    height: 9mm;
+    padding-top: 1.5mm;
+    background: #000;
+    color: #fff;
+    font-size: 18pt;
+    text-align: center
+}
+
+#recipient {
+    width: 4.7mm;
+    height: 13mm;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-right: .3mm solid #000
+}
+
+#recipient_text {
+    position: absolute;
+    text-align: center;
+    top: 5mm;
+    left: -3.2mm;
+    width: 11.3mm;
+    font-size: 1.7mm;
+    font-family: Arial;
+    text-transform: uppercase;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    font-weight: 700
+}
+
+#recipient_information {
+    position: absolute;
+    left: .5mm;
+    top: 0;
+    line-height: 1.1;
+    width: 60mm
+}
+
+.recipient_information_text {
+    position: relative;
+    width: 99%;
+    heigt: 2mm;
+    font-size: 2.1mm;
+    padding-left: .5mm;
+    font-weight: 700
+}
+
+#content35 {
+    position: relative;
+    width: 80mm;
+    height: 5.9mm;
+    border-bottom: .3mm solid #000
+}
+
+.post_information_text {
+    position: relative;
+    width: 99%;
+    line-height: 1.9mm;
+    font-size: 2.5mm;
+    padding-left: .5mm
+}
+
+#content35 .post_information_text .afterpaymentInfo {
+    font-size: 2mm
+}
+
+#content36 {
+    position: relative;
+    width: 80mm;
+    height: 8mm;
+    bottom: 1px
+}
+
+#logo {
+    position: absolute;
+    width: 6.8mm;
+    top: .3mm;
+    height: 6.8mm;
+    right: .5mm
+}
+
+#logo_img {
+    position: absolute;
+    width: 6.5mm;
+    height: 6mm
+}
+
+#other_information {
+    position: absolute;
+    left: 0;
+    width: 52.3mm;
+    height: 8mm;
+    overflow: hidden
+}
+
+#ClientBarcode {
+    position: absolute;
+    bottom: 0;
+    width: 25.5mm;
+    padding: 0 1mm;
+    border-top: 1px solid #000;
+    overflow: hidden;
+    line-height: 2.5mm;
+    font-size: 2.2mm;
+    text-align: right
+}
+
+.other_information_text {
+    font-size: 2.5mm;
+    padding-left: 1mm;
+    height: 8mm;
+    overflow: hidden;
+    word-wrap: break-word
+}
+
+#content4 {
+    width: 20mm;
+    height: 55mm;
+    right: 0;
+    bottom: .2mm;
+    position: absolute
+}
+
+#bar_code_right {
+    position: absolute;
+    width: 10mm;
+    height: 55mm;
+    top: 3mm;
+    left: 1.2mm
+}
+
+.main {
+    text-align: left;
+    overflow: hidden;
+    display: inline-block;
+    position: relative;
+    width: 102mm;
+    height: 70mm;
+    padding-bottom: 5mm;
+    vertical-align: top;
+    zoom: 1
+}
+
+#newPage .page > .main:nth-child(7), #newPage .position_col1 .main:nth-child(4) {
+    padding-bottom: 2px
+}
+
+.main7, .main8 {
+    margin-bottom: 0;
+    padding-bottom: 0
+}
+
+.position_col2 .main7, .zebra .main7, .zebra .main8 {
+    padding-bottom: 5mm
+}
+
+.page {
+    page-break-after: always;
+    page-break-inside: avoid
+}
+
+.page:last-child {
+    page-break-after: auto
+}
+
+.zebra {
+    width: 102mm
+}
+
+.zebra .page {
+    page-break-after: auto;
+    page-break-inside: auto;
+    text-align: left
+}
+
+.zebra .main {
+    display: block;
+    margin-top: 1px;
+    margin-bottom: 0;
+    page-break-after: always;
+    page-break-inside: auto
+}
+
+.reverseColor {
+    background: #000;
+    color: #fff
+}
+
+.originalColor {
+    background: #fff;
+    color: #000
+}
+
+#newPage .position_col1, #newPage .position_col2 {
+    width: 102mm;
+    display: inline-block;
+    vertical-align: top
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 0
+}
+
+.page {
+    page-break-after: always;
+    page-break-inside: avoid
+}
+
+.page:last-child {
+    page-break-after: auto
+}
+
+.mark {
+    text-align: left;
+    overflow: hidden;
+    display: inline-block;
+    position: relative;
+    width: 100mm;
+    height: 65mm;
+    margin-top: 3mm;
+    margin-bottom: 2mm;
+    font-size: 3.1mm;
+    vertical-align: top;
+    zoom: 1
+}
+
+.mark7, .mark8 {
+    margin-bottom: 0
+}
+
+.city, .logo, .number, .place, .recipient, .rightbar, .topbar, .topright {
+    position: absolute
+}
+
+.topbar {
+    top: 2mm;
+    left: 2mm;
+    width: 78mm;
+    height: 15mm
+}
+
+.rightbar {
+    top: 16mm;
+    right: 3mm;
+    width: 10mm;
+    height: 36mm
+}
+
+.number {
+    left: 30mm;
+    top: 18mm
+}
+
+.topright {
+    top: 2mm;
+    right: 2mm;
+    width: 17mm;
+    height: 11mm;
+    padding-top: 1mm;
+    border: 1mm solid #000;
+    text-align: center;
+    line-height: 1
+}
+
+.topright .val {
+    margin-top: 1mm;
+    font-size: 18px;
+    font-weight: 700
+}
+
+.city {
+    top: 23mm;
+    left: 2mm;
+    width: 80mm;
+    border: 1mm solid #000;
+    text-align: center;
+    font-size: 24px
+}
+
+.logo {
+    right: 2mm;
+    bottom: 0
+}
+
+.recipient {
+    left: 3mm;
+    top: 34mm;
+    width: 80mm
+}
+
+.recepient-content {
+    width: 65mm
+}
+
+.place {
+    right: 17mm;
+    top: 34mm;
+    text-align: right
+}
+
+.place .val {
+    font-size: 28px;
+    font-weight: 700
+}
+
+.id {
+    display: inline-block;
+    margin-top: -1mm;
+    margin-left: 5px;
+    font-size: 28px;
+    font-weight: 700
+}
+
+.ttn {
+    width: 100%;
+    text-align: center
+}
+
+.error {
+    text-align: center;
+    color: red;
+    font-weight: 700;
+    font-size: 18px;
+    margin: 10px
+}
+
+.xdebug-var-dump {
+    background-color: #FFF;
+    position: relative;
+    font-size: 14px
+}
+
+.mozilla {
+    width: 200mm
+}
+
+.mozilla .mark {
+    margin-bottom: 4mm
+}
+
+.mozilla .mark7, .mozilla .mark8 {
+    margin-bottom: 0
+}
+
+.webkit .mark {
+    margin-bottom: 4mm
+}
+
+.webkit .page {
+    margin-top: 6mm;
+    margin-left: 4mm
+}
+
+.opera .page {
+    margin-top: 4mm
+}
+
+.zebra .page {
+    page-break-after: always;
+    page-break-inside: auto;
+    text-align: left
+}
+
+.zebra .mark {
+    display: block;
+    margin-top: 1px;
+    margin-bottom: 0;
+    page-break-after: always;
+    page-break-inside: auto
+}
+
+gulpbody {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif
+}
+
+div, form {
+    padding: 0;
+    margin: 0
+}
+
+input {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 700
+}
+
+th {
+    background-color: #CCC;
+    font-weight: 700
+}
+
+.font10 {
+    font-size: 10px
+}
+
+.font12 {
+    font-size: 12px
+}
+
+.font16 {
+    font-size: 16px
+}
+
+.no-page-break {
+    page-break-inside: avoid
+}
+
+.page-break-after {
+    page-break-after: always
+}
+
+.documentBodyEN {
+    overflow: hidden;
+    padding: 0;
+    width: 300mm;
+    font-size: 12px
+}
+
+.documentBodyEN table {
+    width: 100%;
+    padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    text-align: center
+}
+
+.documentBodyEN th {
+    border: 1px solid grey;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000
+}
+
+.documentBodyEN td {
+    word-break: break-all;
+    border: 1px solid grey
+}
+
+.documentBodyEN .total td {
+    border-bottom: 1px solid #000
+}
+
+.documentBodyEN td div.height_limit {
+    display: table;
+    width: 100%;
+    height: 17mm;
+    overflow: hidden
+}
+
+.documentBodyEN.portrait td div.height_limit {
+    height: 23mm
+}
+
+.documentBodyEN td div.vertical_align {
+    display: table-cell;
+    height: 17mm
+}
+
+.documentBodyEN.portrait td div.vertical_align {
+    height: 23mm
+}
+
+.header {
+    position: relative;
+    width: 100%
+}
+
+.header .brand {
+    position: absolute;
+    left: 57%;
+    top: 0;
+    text-align: center
+}
+
+.header .summury {
+    margin: 1mm 0;
+    font-weight: 700
+}
+
+.header .barcode {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    width: 6.5cm;
+    height: 1.4cm
+}
+
+.brand .logo {
+    position: static
+}
+
+.documents .barcode {
+    width: 4.5cm;
+    height: 1cm
+}
+
+.size_number div {
+    width: 22mm !important
+}
+
+.size_amount {
+    width: 8mm
+}
+
+.size_name div {
+    width: 25mm !important
+}
+
+.size_person div {
+    width: 33mm !important;
+    text-align: left
+}
+
+.size_mass {
+    width: 4px
+}
+
+.size_additional_information div {
+    max-width: 31mm !important
+}
+
+.size_barcode .vertical_align {
+    vertical-align: middle
+}
+
+.portrait .font10, .portrait .font12 {
+    font-size: 9px
+}
+
+.portrait.documentBodyEN {
+    width: 210mm
+}
+
+.portrait .header .brand {
+    left: 52%
+}
+
+.portrait .header .brand .logo img {
+    width: 40mm;
+    height: auto
+}
+
+.portrait .header .barcode {
+    right: -5mm
+}
+
+.portrait .size_counter {
+    width: 1mm
+}
+
+.portrait .size_number div {
+    width: 19mm !important
+}
+
+.portrait .size_client_barcode, .portrait .size_cost {
+    width: 1mm
+}
+
+.portrait .size_person div {
+    width: 22mm !important
+}
+
+.portrait .size_additional_information, .portrait .size_backward, .portrait .size_costonsite, .portrait .size_docs {
+    width: 1mm
+}
+
+.portrait .size_amount {
+    width: 5mm
+}
+
+.portrait .size_name div {
+    width: 13mm !important
+}
+
+.documentBodyEN td.cell_footer {
+    border: none
+}
+
+.footer {
+    font-size: 12px
+}
+
+.footer_details {
+    position: relative;
+    width: 50%;
+    height: 80px;
+    float: left
+}
+
+.footer_details .sender {
+    position: absolute;
+    top: 0;
+    left: 50px
+}
+
+.footer_details .handed {
+    position: absolute;
+    top: 30px;
+    left: 180px
+}
+
+.footer_details .print {
+    position: absolute;
+    top: 65px;
+    right: 120px
+}
+
+.terms_of_the_agreement {
+    padding-left: 5px;
+    margin-top: 20px;
+    font-weight: 700;
+    font-size: 11px;
+    text-align: justify
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000
+}
+
+div {
+    padding: 0;
+    margin: 0
+}
+
+.documentBodyOld th {
+    background-color: #CCC;
+    border-bottom: 1px solid #000;
+    font-weight: 700
+}
+
+.documentBody.documentBodyOld {
+    margin: 5px;
+    padding-left: 5mm;
+    width: 750px;
+    overflow: hidden
+}
+
+.documentBodyOld .relative {
+    position: relative;
+    height: 65px
+}
+
+.documentBodyOld .dateText {
+    position: absolute;
+    top: 5px;
+    left: 230px;
+    font-size: 12px
+}
+
+.documentBodyOld .TTH {
+    position: absolute;
+    top: 5px;
+    left: 3px;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 700
+}
+
+.documentBodyOld .TTH_N {
+    text-align: left;
+    margin: 3px 0 0;
+    font-size: 28px;
+    font-weight: 700;
+    position: absolute;
+    bottom: 7px
+}
+
+.documentBodyOld .documentLeft {
+    width: 238px;
+    overflow: hidden
+}
+
+.documentBodyOld .documentCenter {
+    width: 258px;
+    overflow: hidden
+}
+
+.documentBodyOld .ofSenderInfo {
+    font-size: 10px
+}
+
+.documentBodyOld .b-addServices {
+    text-align: center
+}
+
+.documentBodyOld .Info {
+    font-size: 6px
+}
+
+.documentBodyOld .line_height {
+    line-height: 1.6mm;
+    text-align: justify
+}
+
+.documentBodyOld .cashless_payment {
+    font-size: 8px
+}
+
+.documentBodyOld div.barcode {
+    padding-left: 99mm;
+    position: absolute
+}
+
+.documentBodyOld img.barcode {
+    width: 8cm;
+    height: 1.6cm
+}
+
+.documentBodyOld .barcodevertical {
+    margin-top: -10px;
+    width: 1.6cm;
+    height: 3.5cm
+}
+
+.documentBodyOld .logo_small_xx {
+    z-index: -1;
+    float: left;
+    left: 7px;
+    position: relative
+}
+
+.documentBodyOld .block {
+    margin-left: 2px;
+    margin-right: 2px;
+    border: 2px solid #000;
+    border-bottom: none
+}
+
+.documentBodyOld .block_l {
+    margin-left: 2px;
+    padding-left: 2px;
+    border: 2px solid #000;
+    border-right: none
+}
+
+.documentBodyOld .block_r {
+    border-left: 1px solid #000;
+    border-top: 1px solid #000
+}
+
+.documentBodyOld .block_b {
+    margin-left: 2px;
+    margin-right: 2px;
+    border: 2px solid #000
+}
+
+.documentBodyOld .block_r_b {
+    border-left: 1px solid #000;
+    border-bottom: none
+}
+
+.documentBodyOld table.skl {
+    border-collapse: collapse
+}
+
+.documentBodyOld .subblock {
+    font-size: 6px;
+    padding: 1px
+}
+
+.documentBodyOld .cell {
+    border: 1px solid #000;
+    font-size: 9px;
+    padding: 1px;
+    margin: 0
+}
+
+.documentBodyOld .cellAddress {
+    border: 1px solid #000;
+    font-size: 9px;
+    padding: 1px;
+    margin: 0 0 1px;
+    overflow: hidden;
+    height: 6mm
+}
+
+.documentBodyOld .cellCity {
+    border: 1px solid #000;
+    font-size: 9px;
+    text-transform: uppercase;
+    padding: 1px;
+    margin: 1px 0 0;
+    width: 160px;
+    text-align: center;
+    height: 10px;
+    overflow: hidden
+}
+
+.documentBodyOld .cellAccompanyingDocuments {
+    max-width: 65mm;
+    height: 5.6em;
+    overflow: hidden;
+    word-wrap: break-word
+}
+
+.documentBodyOld .hdelimeter {
+    padding: 0;
+    margin: 0;
+    font-size: 1px;
+    height: 2px
+}
+
+.documentBodyOld .vdelimeter {
+    font-size: 1px;
+    width: 2px
+}
+
+.documentBodyOld .branch {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 0;
+    margin: 0
+}
+
+.documentBodyOld .checkWeight {
+    font-size: 12px;
+    font-weight: 700
+}
+
+.documentBodyOld .checkboxCell {
+    font-size: 10px;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #000;
+    width: 15px
+}
+
+.documentBodyOld .typeOfService {
+    font-size: 10px;
+    font-weight: 700
+}
+
+.documentBodyOld .payer {
+    font-size: 9px
+}
+
+.documentBodyOld .additionalServices {
+    font-size: 8px
+}
+
+.documentBodyOld .hr {
+    padding: 0;
+    margin: 0;
+    font-size: 1px;
+    border-bottom: 1px solid #000
+}
+
+.documentBodyOld table.tbl {
+    border-collapse: collapse
+}
+
+.documentBodyOld table.tbl td {
+    padding: 2px;
+    border: 1px solid #000
+}
+
+.documentBodyOld div.city {
+    font-size: 18px;
+    font-weight: 700
+}
+
+.documentBodyOld .branchCity {
+    width: 230px;
+    max-height: 2.2em;
+    word-wrap: break-word;
+    overflow: hidden
+}
+
+.documentBodyOld .cellAdditionalData {
+    font-size: 10px;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    word-break: break-all
+}
+
+.documentBodyOld .weightMark {
+    width: 11mm;
+    font-size: 15px;
+    color: #fff;
+    background: #000;
+    inset: 1px solid #fff;
+    border: 1px solid #000
+}
+
+.documentBodyOld #regionDelimeter {
+    margin: 0;
+    padding: 0;
+    font-size: 1px;
+    height: 35px
+}
+
+.documentBodyOld #regionContainer {
+    font-size: 22px;
+    font-weight: 700;
+    padding: 3.6mm 0;
+    margin: 0;
+    height: 7mm
+}
+
+.documentBodyOld .juridic_info {
+    height: 9.5mm;
+    margin-bottom: 30px;
+    padding: 2px;
+    text-align: justify;
+    font-size: 6px
+}
+
+.error {
+    text-align: center;
+    color: red;
+    font-weight: 700;
+    font-size: 18px;
+    margin: 10px
+}
+
+.documentBodyOld .font18 {
+    font-size: 18px;
+    font-weight: 700
+}
+
+.documentBodyOld .font13 {
+    font-size: 13px;
+    font-weight: 700
+}
+
+.documentBodyOld .infoAbout {
+    padding-bottom: 10px
+}
+
+.documentBodyOld .page-break {
+    page-break-after: always
+}
+
+.documentBodyOld .infoCenter {
+    text-align: center
+}
+
+.documentBodyOld .infoRight {
+    text-align: right
+}
+
+.documentBodyOld .infoLeft {
+    text-align: left
+}
+
+.documentBodyOld table .Width100 {
+    width: 100%
+}
+
+.documentBodyOld .invert {
+    background-color: #000;
+    color: #fff;
+    font-weight: 700;
+    height: 10px
+}
+
+.documentBodyOld .backward_delivery_table {
+    width: 100%;
+    border: 1px solid #000;
+    border-collapse: collapse
+}
+
+.documentBodyOld .backward_delivery_table td, .documentBodyOld .backward_delivery_table th {
+    border: 1px solid #000;
+    border-collapse: collapse;
+    padding: 1px
+}
+
+.documentBodyOld .reverseColor {
+    background: #000;
+    color: #fff
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000
+}
+
+div {
+    padding: 0;
+    margin: 0
+}
+
+.documentBodyNew th {
+    background-color: #CCC;
+    border-bottom: 1px solid #000;
+    font-weight: 700
+}
+
+.documentBody.documentBodyNew {
+    margin: 5px;
+    padding-left: 5mm;
+    width: 750px;
+    overflow: hidden
+}
+
+.documentBodyNew .relative {
+    position: relative
+}
+
+.documentBodyNew .documentHeader {
+    height: 29mm
+}
+
+.documentBodyNew .dateText {
+    position: absolute;
+    top: 13mm;
+    left: 1mm;
+    font-size: 9px
+}
+
+.documentBodyNew .brand {
+    position: absolute;
+    top: 2mm;
+    left: 50mm;
+    font-size: 10px
+}
+
+.documentBodyNew .np-contact {
+    display: inline-flex
+}
+
+.documentBodyNew .phone {
+    margin-left: 5px
+}
+
+.documentBodyNew .site {
+    margin-left: 5px;
+    font-weight: 700
+}
+
+.documentBodyNew .TTH {
+    position: absolute;
+    top: 5px;
+    left: 3px;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 700
+}
+
+.documentBodyNew .documentContent {
+    position: relative;
+    top: -10mm;
+    width: 750px
+}
+
+.documentBodyNew .documentLeft {
+    width: 238px;
+    overflow: hidden
+}
+
+.documentBodyNew .documentCenter {
+    width: 258px;
+    margin-top: 15mm;
+    overflow: hidden
+}
+
+.documentBodyNew .documentRight {
+    width: 253px;
+    margin-top: 12.5mm
+}
+
+.documentBodyNew .ofSenderInfo {
+    font-size: 10px
+}
+
+.documentBodyNew .b-addServices {
+    text-align: center
+}
+
+.documentBodyNew .Info {
+    font-size: 7px
+}
+
+.documentBodyNew .line_height {
+    line-height: 1.6mm;
+    text-align: justify
+}
+
+.documentBodyNew .cashless_payment {
+    font-size: 8px
+}
+
+.documentBodyNew div.barcode {
+    padding: 0 0 0 80mm;
+    position: absolute
+}
+
+.documentBodyNew div.barcodeMin {
+    padding: 0 0 10mm 70mm;
+    position: absolute
+}
+
+.documentBodyNew div.BarcodeAdditional {
+    float: right
+}
+
+.documentBodyNew img.barcode {
+    width: 10cm;
+    height: 2.5cm
+}
+
+.documentBodyNew .barcodevertical {
+    margin-top: -10px;
+    width: 1.6cm;
+    height: 3.5cm
+}
+
+.documentBodyNew .logo_small_xx {
+    z-index: -1;
+    float: left;
+    left: 7px;
+    position: relative
+}
+
+.documentBodyNew .block {
+    margin-left: 2px;
+    margin-right: 2px;
+    border: 2px solid #000;
+    border-bottom: none
+}
+
+.documentBodyNew .block_l {
+    margin-left: 2px;
+    padding-left: 2px;
+    border: 2px solid #000;
+    border-right: none
+}
+
+.documentBodyNew .block_r {
+    border-left: 1px solid #000;
+    border-top: 1px solid #000
+}
+
+.documentBodyNew .block_b {
+    margin-left: 2px;
+    margin-right: 2px;
+    border: 2px solid #000
+}
+
+.documentBodyNew .block_r_b {
+    border-left: 1px solid #000;
+    border-bottom: none
+}
+
+.documentBodyNew table.skl {
+    border-collapse: collapse
+}
+
+.documentBodyNew .subblock {
+    font-size: 6px;
+    padding: 1px
+}
+
+.documentBodyNew .cell {
+    border: 1px solid #000;
+    font-size: 9px;
+    padding: 1px;
+    margin: 0
+}
+
+.documentBodyNew .cellAddress {
+    border: 1px solid #000;
+    font-size: 9px;
+    padding: 1px;
+    margin: 0 0 1px;
+    overflow: hidden;
+    height: 6mm
+}
+
+.documentBodyNew .cellCity {
+    border: 1px solid #000;
+    font-size: 9px;
+    text-transform: uppercase;
+    padding: 1px;
+    margin: 1px 0 0;
+    width: 160px;
+    text-align: center;
+    height: 10px;
+    overflow: hidden
+}
+
+.documentBodyNew .cellAccompanyingDocuments {
+    max-width: 65mm;
+    height: 5.6em;
+    overflow: hidden;
+    word-wrap: break-word
+}
+
+.documentBodyNew .hdelimeter {
+    padding: 0;
+    margin: 0;
+    font-size: 1px;
+    height: 2px
+}
+
+.documentBodyNew .vdelimeter {
+    font-size: 1px;
+    width: 2px
+}
+
+.documentBodyNew .branch {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 0;
+    margin: 0
+}
+
+.documentBodyNew .Description {
+    height: 7.5mm
+}
+
+.documentBodyNew .checkWeight {
+    font-size: 12px;
+    font-weight: 700
+}
+
+.documentBodyNew .checkboxCell {
+    font-size: 10px;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #000;
+    width: 15px
+}
+
+.documentBodyNew .typeOfService {
+    font-size: 10px;
+    font-weight: 700
+}
+
+.documentBodyNew .payer {
+    font-size: 9px
+}
+
+.documentBodyNew .additionalServices {
+    font-size: 8px
+}
+
+.documentBodyNew .hr {
+    padding: 0;
+    margin: 0;
+    font-size: 1px;
+    border-bottom: 1px solid #000
+}
+
+.documentBodyNew table.tbl {
+    border-collapse: collapse
+}
+
+.documentBodyNew table.tbl td {
+    padding: 2px;
+    border: 1px solid #000
+}
+
+.documentBodyNew div.city {
+    font-size: 18px;
+    font-weight: 700
+}
+
+.documentBodyNew .branchCity {
+    width: 230px;
+    max-height: 2.2em;
+    word-wrap: break-word;
+    overflow: hidden
+}
+
+.documentBodyNew .cellAdditionalData {
+    height: 0;
+    font-size: 10px;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    word-break: break-all
+}
+
+.documentBodyNew .weightMark {
+    width: 11mm;
+    font-size: 15px;
+    color: #fff;
+    background: #000;
+    inset: 1px solid #fff;
+    border: 1px solid #000;
+    text-align: center
+}
+
+.documentBodyNew #regionDelimeter {
+    margin: 0;
+    padding: 0;
+    font-size: 1px;
+    height: 35px
+}
+
+.documentBodyNew #regionContainer {
+    font-size: 22px;
+    font-weight: 700;
+    padding: 3.6mm 0;
+    margin: 0;
+    height: 7mm
+}
+
+.documentBodyNew .juridic_info {
+    position: relative;
+    top: -10mm;
+    height: 4mm;
+    margin-bottom: 6px;
+    padding: 2px;
+    text-align: justify;
+    font-size: 6px;
+    line-height: .9
+}
+
+.error {
+    text-align: center;
+    color: red;
+    font-weight: 700;
+    font-size: 18px;
+    margin: 10px
+}
+
+.documentBodyNew .font18 {
+    font-size: 18px;
+    font-weight: 700
+}
+
+.documentBodyNew .font13 {
+    font-size: 13px;
+    font-weight: 700
+}
+
+.page-break {
+    page-break-after: always
+}
+
+.documentBodyNew .infoCenter {
+    text-align: center
+}
+
+.documentBodyNew .infoRight {
+    text-align: right
+}
+
+.documentBodyNew .infoLeft {
+    text-align: left
+}
+
+.documentBodyNew table .Width100 {
+    width: 100%
+}
+
+.documentBodyNew .invert {
+    background-color: #000;
+    color: #fff;
+    font-weight: 700;
+    height: 10px
+}
+
+.documentBodyNew .backward_delivery_table {
+    width: 100%;
+    border: 1px solid #000;
+    border-collapse: collapse
+}
+
+.documentBodyNew .backward_delivery_table td, .documentBodyNew .backward_delivery_table th {
+    border: 1px solid #000;
+    border-collapse: collapse;
+    padding: 1px
+}
+
+.documentBodyNew .reverseColor {
+    background: #000;
+    color: #fff
+}
+
+.documentBodyNew .font7 {
+    font-size: 7px
+}

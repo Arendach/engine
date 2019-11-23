@@ -1,0 +1,31 @@
+.user-block{
+    border-bottom: 1px dashed #bbb;
+    color: #555;
+    padding: 10px;
+    display: block;
+    position: relative;
+}
+
+.user-block .fa-user-circle{
+    color: #00f;
+}
+
+
+.buttons123 {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+}
+
+
+.not_closed_orders{
+    display: none;
+    position: absolute;
+    bottom: 17px;
+    right: 445px;
+    background: #006;
+    z-index: 1;
+    padding: 15px;
+    width: 150px;
+    border-radius: 20px 20px 0 20px;
+}

@@ -1,0 +1,22 @@
+{
+  "require": {
+    "filp/whoops": "2.*",
+    "lis-dev/nova-poshta-api-2": "dev-master",
+    "kint-php/kint": "^2.2",
+    "rah/danpu": "2.6.*",
+    "nesbot/carbon": "^1.22",
+    "mobizon/mobizon-php": "^1.0",
+    "phelium/mysql-backup": "dev-master",
+    "league/flysystem": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Web\\": "web",
+      "RedBeanPHP\\": "web/App/RedBeanPHP"
+    },
+    "files": [
+      "config.php",
+      "functions.php"
+    ]
+  }
+}

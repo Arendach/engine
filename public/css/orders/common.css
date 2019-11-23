@@ -1,0 +1,13 @@
+input.filter_time_input {
+    display: inline-block;
+    width: 50px;
+}
+
+select, input[type=text]{
+    height: 22px;
+    width: 100%;
+}
+
+[disabled] {
+    background-color: #ccc;
+}

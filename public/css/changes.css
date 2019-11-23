@@ -1,0 +1,112 @@
+.dropdown_block{
+    width: 700px;
+    padding: 5px 0 0 0;
+    color: #8c8c8c;
+    font-size: 14px;
+}
+.dropdown_block .dropdown_list {
+    padding: 3px 6px 0 6px;
+    height: 30px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 0 20px 0 0;
+    color: #444;
+    border: 1px solid #efefef;
+    width: 700px;
+    z-index: 11;
+    background: #fcfcfc;
+}
+.dropdown_list .btn {
+    width: 17px;
+    height: 18px;
+    float: right;
+}
+.dropdown_list div, .delivery_list .sym{
+    /*     padding: 2px 0 0 2px; */
+    display: block;
+    font-weight: bold;
+}
+.dropdown_block ul.cities_list {
+    margin-top: 0px;
+    z-index: 10;
+    background: #fcfcfc;
+    /*     position: absolute; */
+    border-radius: 3px;
+    width: 700px;
+    padding: 0;
+    border: 1px solid #eee;
+    display: none;
+}
+ul.cities_list li {
+    padding: 6px 9px;
+    list-style-type: none;
+    border-top: 1px solid #efefef;
+}
+ul.cities_list li:hover {
+    cursor: pointer;
+    background: #fff;
+}
+
+.new_product_change{
+    color: green;
+    display: inline;
+}
+
+.delete_product_change{
+    color: red;
+    display: inline;
+}
+
+.update_product_change{
+    color: blue;
+    display: inline;
+
+}
+.product-history{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px
+}
+.product{
+    padding: 3px 6px 0 6px;
+    height: 30px;
+    cursor: pointer;
+    border-radius: 4px;
+    /*     margin: 0 -20px 0 0; */
+    color: #444;
+    border: 1px solid #efefef;
+    width: 680px;
+    z-index: 11;
+    background: #fcfcfc;
+
+}
+
+.product .btn {
+    width: 17px;
+    height: 18px;
+    float: right;
+}
+ul.prod_list {
+    margin-top: 0px;
+    z-index: 10;
+    background: #fcfcfc;
+    /* position: absolute; */
+    border-radius: 3px;
+    width: 678px;
+    padding: 0;
+    border: 1px solid #eee;
+}
+ul.prod_list li {
+    padding: 6px 9px;
+    list-style-type: none;
+    border-top: 1px solid #efefef;
+}
+ul.prod_list li:hover {
+    cursor: pointer;
+    background: #fff;
+}
+
+.author{
+    display: inline-block;
+    width: 150px;
+}

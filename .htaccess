@@ -1,0 +1,26 @@
+php_flag magic_quotes_gpc Off
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+
+RewriteEngine On
+# CheckSpelling on
+
+Options +FollowSymlinks
+RewriteBase /
+
+RewriteRule ^index\.php$ - [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.)*$ /index.php [NC,L]
+</IfModule>
+
+php_value  post_max_size  20M
+php_value  upload_max_filesize  20M
+php_value  max_execution_time   10000
+php_value  max_input_time  10000
+php_value  memory_limit 1024M
+
+RemoveHandler .tpl
+AddType application/x-httpd-php .php .tpl

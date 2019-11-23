@@ -1,1 +1,10 @@
 /.idea
+/vendor
+/server/logs/*
+/server/sessions/*
+/server/stat/*
+/server/temp_files/*
+/server/uploads/*
+/server/black_dates.txt
+/backup/*
+/cache/*

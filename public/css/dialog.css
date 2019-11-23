@@ -1,0 +1,182 @@
+.message-me {
+    text-align: right;
+}
+
+.message-me .message {
+    background-color: #C7EDFC;
+    border-radius: 10px 0 10px 10px;
+    color: #2B2B30;
+}
+
+.message-alien .message {
+    background-color: #F0F4F8;
+    border-radius: 0 10px 10px 10px;
+    color: #2B2B30;
+}
+
+.message {
+    background-color: #336699;
+    margin-bottom: 10px;
+    max-width: 80%;
+    min-width: 20%;
+    display: inline-block;
+    padding: 10px;
+}
+
+.dialog-media:hover {
+    background: linear-gradient(to right, #f88, #8ff);
+    cursor: pointer;
+}
+
+.dialog-active {
+    background: linear-gradient(to right, #8ff, #f88);
+}
+
+.dialog-not-read {
+    background: linear-gradient(to right, #C7EDFC, #44f);
+}
+
+#message-wrap {
+    overflow-y: scroll;
+    height: 0;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+.nav-tabs {
+    border-bottom: none;
+    background-color: #fff;
+}
+
+.dialog-media {
+    padding: 10px;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+    border: none;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.upload {
+    font-family: 'PT Sans Narrow', sans-serif;
+    background-color: #373a3d;
+
+    background-image: -webkit-linear-gradient(top, #373a3d, #313437);
+    background-image: -moz-linear-gradient(top, #373a3d, #313437);
+    background-image: linear-gradient(top, #373a3d, #313437);
+
+    width: 100%;
+    padding: 10px;
+    border-radius: 3px;
+
+    margin: 20px auto 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#drop {
+    background-color: #2E3134;
+    padding: 40px 40px;
+    margin-bottom: 0;
+    border: 20px solid rgba(0, 0, 0, 0);
+    border-radius: 3px;
+    border-image: url('/public/images/border-image.png') 25 repeat;
+    text-align: center;
+    text-transform: uppercase;
+
+    font-size: 16px;
+    font-weight: bold;
+    color: #7f858a;
+}
+
+#drop a {
+    background-color: #007a96;
+    padding: 12px 12px;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 2px;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 12px;
+    line-height: 1;
+}
+
+#drop a:hover {
+    background-color: #0986a3;
+}
+
+#drop input {
+    display: none;
+}
+
+.upload ul {
+    list-style: none;
+    margin: 0;
+    border-top: 1px solid #2b2e31;
+    border-bottom: 1px solid #3d4043;
+    padding-left: 0;
+}
+
+.upload ul li {
+
+    background-color: #333639;
+
+    background-image: -webkit-linear-gradient(top, #333639, #303335);
+    background-image: -moz-linear-gradient(top, #333639, #303335);
+    background-image: linear-gradient(top, #333639, #303335);
+
+    border-top: 1px solid #3d4043;
+    border-bottom: 1px solid #2b2e31;
+    padding: 5px;
+    height: 72px;
+
+    position: relative;
+}
+
+.upload ul li input {
+    display: none;
+}
+
+.upload ul li p {
+    width: 144px;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #EEE;
+    font-size: 16px;
+    font-weight: bold;
+    position: absolute;
+    top: 20px;
+    left: 0px;
+}
+
+.upload ul li i {
+    font-weight: normal;
+    font-style: normal;
+    color: #7f7f7f;
+    display: block;
+}
+
+.upload ul li canvas {
+    top: 15px;
+    left: 0px;
+    position: absolute;
+}
+
+.upload ul li span {
+    width: 15px;
+    height: 12px;
+    background: url('/public/images/icons.png') no-repeat;
+    position: absolute;
+    top: 34px;
+    right: 33px;
+    cursor: pointer;
+}
+
+.upload ul li.working span {
+    height: 16px;
+    background-position: 0 -12px;
+}
+
+.upload ul li.error p {
+    color: red;
+}
