@@ -22,11 +22,16 @@ class CommandsController extends Controller
 
     public function action_run($post)
     {
-        $response = (new Runner($post->command))
-            ->getResponse();
+        if (empty($post->command))
+            response(400, ['message' => '<div style="color: red">Введіть команду</div>']);
 
-        response(200, [
-            'message' => "<div>-- $response</div>"
+        $runner = new Runner($post->command);
+
+        $response = $runner->getResponse();
+        $code = $runner->getCode();
+
+        response($code, [
+            'message' => "<div style='color: " . ($code == 200 ? 'white' : 'red') . "'>-- $response</div>"
         ]);
     }
 }

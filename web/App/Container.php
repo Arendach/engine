@@ -4,6 +4,8 @@ namespace Web\App;
 
 class Container
 {
+    private static $objects = [];
+
     /**
      * @var array
      */
@@ -34,5 +36,17 @@ class Container
     public static function getContainer(): array
     {
         return static::$data;
+    }
+
+    /**
+     * @param string $abstract
+     * @return mixed
+     */
+    public function getClassObject(string $abstract)
+    {
+        if (!isset(static::$objects[$abstract]))
+            static::$objects[$abstract] = new $abstract;
+
+        return static::$objects[$abstract];
     }
 }

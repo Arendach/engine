@@ -8,7 +8,9 @@ use Web\App\Config;
 use Web\Model\Api\NewPost;
 use Web\App\Model;
 use LisDev\Delivery\NovaPoshtaApi2;
+use Web\Orders\OrderCreate;
 use Web\Tools\Log;
+use stdClass;
 
 class Orders extends Model
 {
@@ -498,282 +500,29 @@ class Orders extends Model
         return $sum;
     }
 
-    // Получаємо назву міста по Ref Нової пошти
-    private static function prepare_city($data)
-    {
-        if (isset($data->city)) {
-            $new_post = new NewPost();
-            if (!isset($data->warehouse)) {
-                $data->city = $new_post->getNameCityByRef($data->city);
-            } else {
-                $temp = $new_post->get_address($data->city, $data->warehouse);
-                $data->city = $temp['city'];
-                $data->warehouse = $temp['warehouse'];
-            }
-        }
-
-        return $data;
-    }
-
-    // Пишимо історію замовлення(при створенні)
-    private static function save_original($data, $products, $id, $return_shipping = false)
-    {
-        // Получаємо людино-подібну назву міста і складу(якщо нова пошта)
-        if (isset($data->delivery)) {
-            $delivery_company = R::load('logistics', $data->delivery);
-            if ($delivery_company->name == 'НоваПошта') $data = self::prepare_city($data);
-        }
-
-        // видаляємо
-        if (isset($data->form_delivery) && $data->form_delivery == 'imposed')
-            unset($data->imposed);
-
-        // Заміняємо ідентифікатори на значення
-        $arr = ['courier' => 'users', 'pay_method' => 'pays', 'delivery' => 'logistics', 'site' => 'sites'];
-        foreach ($arr as $key => $table) if (isset($data->$key)) $data->$key = (R::load($table, $data->$key))->name;
-
-        // заміняємо ключі значеннями
-        $arr = ['imposed' => ['sender' => 'Відправник', 'recipient' => 'Отримувач'],
-            'pay_delivery' => ['sender' => 'Відправник', 'recipient' => 'Отримувач'],
-            'form_delivery' => ['imposed' => 'Наложений платіж', 'on_the_card' => 'Безготівкова']];
-        foreach ($arr as $key => $value) if (isset($data->$key)) $data->$key = $value[$data->$key];
-
-        // Визначаємо підказку
-        if (isset($data->hint) && $data->hint != 0) {
-            $temp = R::load('colors', $data->hint);
-            $data->hint = '<span style="color: #' . $temp->color . '">' . $temp->description . '</span>';
-        }
-
-        // додавання назв товарів у історію
-        foreach ($products as $i => $value) {
-            $products->$i->name = (R::load('products', $value->id))->name;
-            $products->$i->storage_name = (R::load('storage', $value->storage))->name;
-        }
-        $data->products = $products;
-
-        // зворотня доставка
-        if ($return_shipping !== false) {
-            $data->return_shipping = new \stdClass();
-            $data->return_shipping->type = $return_shipping->type;
-            if ($return_shipping->type == 'remittance') $data->return_shipping->payer = $return_shipping->payer;
-        }
-
-        // видаляємо порожні поля
-        foreach ($data as $key => $value) if ($value == '') unset($data->$key);
-
-        self::save_changes_log('original', json($data), $id);
-    }
-
-    private static function products($products, $id)
-    {
-        $sum = 0;
-        foreach ($products as $product) {
-            // Додаємо запис в історію товару
-            self::history_product('add_to_order', json([
-                'order_id' => $id,
-                'amount' => $product->amount,
-                'price' => $product->price]), $product->id);
-
-            // списуємо товар зі складу
-            self::take_product_from_warehouse($product);
-
-            // привязуємо товар до замовлення і зберігаємо
-            $bean = R::xdispense('product_to_order');
-            $bean->order_id = $id;
-            $bean->product_id = $product->id;
-            $bean->attributes = isset($product->attributes) ? json($product->attributes) : '{}';
-            $bean->amount = $product->amount;
-            $bean->price = $product->price;
-            $bean->place = isset($product->place) ? $product->place : 1;
-            $bean->storage_id = $product->storage;
-            R::store($bean);
-
-            // рахуємо суму замовлення
-            $sum += $product->amount * $product->price;
-        }
-
-        // загружаємо створене замовлення
-        $bean = R::load('orders', $id);
-
-        // міняємо його суму
-        $bean->full_sum = $sum + $bean->delivery_cost - $bean->discount;
-
-        // зберігаємо
-        R::store($bean);
-    }
-
-    // списати товар зі складу
-    private static function take_product_from_warehouse($product)
-    {
-        $bean = R::load('products', $product->id);
-
-        // якщо товар комбінований
-        if ($bean->combine) {
-
-            // загружаємо аліаси компонентів
-            $components = R::findAll('combine_product', 'product_id = ?', [$product->id]);
-
-            foreach ($components as $component) {
-
-                // загружаємо pts компонента
-                $pts = self::create_pts_if_not_exists($component->linked_id, $product->storage);
-
-                // віднімаємо з складу
-                $pts->count -= $product->amount * $component->combine_minus;
-
-                // додаємо до закупки якщо <= 2
-                self::create_purchase($pts, $product->amount * $component->combine_minus);
-
-                // зберігаємо
-                R::store($pts);
-            }
-        } elseif (!$bean->combine && $bean->accounted) { // якщо товар одиничний і обіковий
-
-            // загружаємо pts
-            $pts = self::create_pts_if_not_exists($product->id, $product->storage);
-
-            // віднімаємо з складу
-            $pts->count -= $product->amount;
-
-            // додаємо до закупки якщо <= 2
-            self::create_purchase($pts, $product->amount);
-
-            // зберігаємо
-            R::store($pts);
-        }
-    }
-
     // Створення замовлень
     // Відправка
     public static function createSending($data, $products, $return_shipping)
     {
-        // створюємо замовлення
-        $bean = R::dispense('orders');
-        foreach ($data as $k => $v) $bean->$k = trim($v);
-        $bean->date = date('Y-m-d H:i:s');
-        $bean->author = user()->id;
-        $id = R::store($bean);
-
-        if (isset($_POST['client_id']))
-            self::add_client_to_order($_POST['client_id'], $id);
-
-        // загружаємо тільки що створене замовлення
-        $order = R::load('orders', $id);
-
-        // кидаємо замовлення в сесію
-        $_SESSION['order'] = $order;
-
-        // створення звіту по предоплаті замовлення
-        if ($order->prepayment != 0) Reports::createOrderPrepayment($order->prepayment, $order->id);
-
-        // додавання товарів до замовлення
-        self::products($products, $id);
-
-        // створення зворотньої доставки
-        $rs = R::xdispense('return_shipping');
-        $order = R::load('orders', $id);
-        foreach ($return_shipping as $key => $value) $rs->$key = $value;
-        $rs->sum = $order->full_sum - $order->discount + $order->delivery_cost;
-        $rs->order_id = $_SESSION['order']->id;
-        R::store($rs);
-
-
-        // створюємо оригінал історії замовлення
-        self::save_original($data, $products, $id, $return_shipping);
-
-        return $id;
+        return (new OrderCreate)->sending($data, $products, $return_shipping);
     }
 
     // Самовивіз
-    public static function createSelf($data, $products)
+    public static function createSelf(stdClass $data, stdClass $products): int
     {
-        $bean = R::dispense('orders');
-
-        foreach ($data as $k => $v) $bean->$k = $v;
-        $bean->date = date('Y-m-d H:i:s');
-        $bean->author = user()->id;
-
-        $id = R::store($bean);
-
-        if (isset($_POST['client_id']))
-            self::add_client_to_order($_POST['client_id'], $id);
-
-        // загружаємо тільки що створене замовлення
-        $order = R::load('orders', $id);
-
-        // кидаємо замовлення в сесію
-        $_SESSION['order'] = $order;
-
-        // створення звіту по предоплаті замовлення
-        if ($order->prepayment != 0) Reports::createOrderPrepayment($order->prepayment, $order->id);
-
-        self::products($products, $id);
-        self::save_original($data, $products, $id);
-
-        return $id;
+        return (new OrderCreate)->self($data, $products);
     }
 
     // Доставка
     public static function createDelivery($data, $products)
     {
-        $bean = R::dispense('orders');
-
-        foreach ($data as $k => $v) {
-            if ($k == 'time_with' || $k == 'time_to')
-                $bean->$k = time_to_string($v);
-            elseif ($k != 'client_id')
-                $bean->$k = $v;
-        }
-
-        $bean->date = date('Y-m-d H:i:s');
-        $bean->author = user()->id;
-
-        $id = R::store($bean);
-
-        if (isset($_POST['client_id']))
-            self::add_client_to_order($_POST['client_id'], $id);
-
-        // звіт по предоплаті замовлення
-        if ($data->prepayment != 0) Reports::createOrderPrepayment($data->prepayment, $id);
-
-        // товари
-        self::products($products, $id);
-
-        // історрія замовлення
-        self::save_original($data, $products, $id);
-
-        return $id;
+        return (new OrderCreate)->delivery($data, $products);
     }
 
     // Магазин
-    public static function createShop($data, $products)
+    public static function createShop(stdClass $data, stdClass $products): int
     {
-        $bean = R::dispense('orders');
-
-        foreach ($data as $k => $v) $bean->$k = $v;
-        $bean->date = date('Y-m-d H:i:s');
-        $bean->author = user()->id;
-        $bean->status = 0;
-
-        $id = R::store($bean);
-
-        self::products($products, $id);
-
-        self::save_original($data, $products, $id);
-
-        return $id;
-    }
-
-
-    // Додати клієнта до замовлення
-    private static function add_client_to_order($client_id, $order_id)
-    {
-        $bean = R::xdispense('client_orders');
-
-        $bean->client_id = $client_id;
-        $bean->order_id = $order_id;
-
-        R::store($bean);
+        return (new OrderCreate)->self($data, $products);
     }
 
     private static function create_purchase($pts, $amount = 1)

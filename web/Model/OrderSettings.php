@@ -265,7 +265,7 @@ class OrderSettings extends Model
                     // remittance - Грошовий переказ
                     // documents - Документи(* Не підтримується)
                     // other - Інше(* Не підтримується)
-                    'return_shipping_type' => 'remittance',
+                    'type' => 'remittance',
 
                     // Грошовий переказ
                     // imposed - На відділення
@@ -283,7 +283,7 @@ class OrderSettings extends Model
                 'params' => [
                     'form_delivery' => 'imposed', //
                     'pay_delivery' => 'sender',
-                    'return_shipping_type' => 'remittance',
+                    'type' => 'remittance',
                     'type_remittance' => 'imposed', //
                     'payer' => 'receiver'
                 ]
@@ -293,7 +293,7 @@ class OrderSettings extends Model
                 'params' => [
                     'form_delivery' => 'imposed', //
                     'pay_delivery' => 'sender',
-                    'return_shipping_type' => 'remittance',
+                    'type' => 'remittance',
                     'type_remittance' => 'imposed', //
                     'payer' => 'sender'
                 ]
@@ -303,7 +303,7 @@ class OrderSettings extends Model
                 'params' => [
                     'form_delivery' => 'imposed', //
                     'pay_delivery' => 'sender',
-                    'return_shipping_type' => 'none',
+                    'type' => 'none',
                     'type_remittance' => 'imposed', //
                     'payer' => 'sender'
                 ]
@@ -313,7 +313,7 @@ class OrderSettings extends Model
                 'params' => [
                     'form_delivery' => 'imposed', //
                     'pay_delivery' => 'recipient',
-                    'return_shipping_type' => 'none',
+                    'type' => 'none',
                     'type_remittance' => 'imposed', //
                     'payer' => 'sender'
                 ]

@@ -30,6 +30,11 @@ abstract class Cron
     private $response;
 
     /**
+     * @var array
+     */
+    private $params = [];
+
+    /**
      * Run Schedule
      */
     abstract public function run(): void;
@@ -56,11 +61,12 @@ abstract class Cron
     }
 
     /**
+     * @param $params array
      * @return void
      */
-    public function before(): void
+    public function before(array $params): void
     {
-
+        $this->params = $params;
     }
 
     /**
@@ -73,4 +79,19 @@ abstract class Cron
         return $this->response;
     }
 
+    /**
+     * @return int
+     */
+    public function getCode(): int
+    {
+        return is_null($this->error) ? 200 : 500;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getParams(): array
+    {
+        return $this->params;
+    }
 }

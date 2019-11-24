@@ -217,6 +217,8 @@ class Reports extends Model
 
     public static function createOrderPrepayment($sum, $id)
     {
+        $sum = (int)$sum;
+
         self::actionSum((object)['sum' => $sum], false);
 
         self::prepare((object)[

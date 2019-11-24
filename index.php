@@ -4,6 +4,7 @@ use \Web\App\Router\StrongRouter;
 use Web\App\Router\SimpleRouter;
 use Web\App\Router\ApiRouter;
 use Whoops\Handler\PrettyPageHandler;
+use Whoops\Handler\JsonResponseHandler;
 use Whoops\Run as Whoops;
 
 define('START', microtime(1));
@@ -17,7 +18,7 @@ session_start();
 include_once './vendor/autoload.php';
 
 (new Whoops)
-    ->pushHandler(new PrettyPageHandler)
+    ->pushHandler($_SERVER['REQUEST_METHOD'] == 'get' ? new PrettyPageHandler : new JsonResponseHandler)
     ->register();
 
 $parse = 'parse_' . strtolower($_SERVER['REQUEST_METHOD']);

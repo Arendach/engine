@@ -65,7 +65,7 @@
                 },
                 error: function (answer) {
                     $('.result').find('.load').remove();
-                    $('.result').append(answer.message);
+                    $('.result').append(answer.responseJSON.message);
                     $form.find('button').removeAttr('disabled');
                 }
             });

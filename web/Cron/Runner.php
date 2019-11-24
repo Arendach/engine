@@ -10,6 +10,11 @@ class Runner
     private $response = '';
 
     /**
+     * @var int
+     */
+    private $code = 200;
+
+    /**
      * @var array
      */
     private $hour = [
@@ -47,6 +52,8 @@ class Runner
      */
     public function __construct(string $periodOrCommand)
     {
+
+
         if ($periodOrCommand == '')
             return;
 
@@ -58,6 +65,32 @@ class Runner
     }
 
     /**
+     * @param $command
+     * @return array
+     */
+    private function parseCommand($command): array
+    {
+        $chunks = explode(' ', $command);
+
+        if (!count($chunks)) {
+            return [];
+        }
+
+        $command = array_shift($chunks);
+
+        $params = [];
+        foreach ($chunks as $chunk) {
+            $p = explode('=', $chunk);
+            $params[trim($p[0], '-')] = $p[1];
+        }
+
+        return [
+            'command' => $command,
+            'params' => $params
+        ];
+    }
+
+    /**
      * @param string $period
      */
     private function runPeriod(string $period): void
@@ -66,6 +99,7 @@ class Runner
             $this->runner($item, $period);
 
         $this->response = 'Задачі вдало виконані';
+        $this->code = 200;
     }
 
     /**
@@ -73,19 +107,25 @@ class Runner
      */
     private function runOne(string $command): void
     {
+        $command = $this->parseCommand($command);
+
         $commands = $this->commands();
 
-        if (isset($commands[$command]))
-            $this->response = $this->runner($commands[$command], 'hand');
-        else
+        if (isset($commands[$command['command']])) {
+            $this->runner($commands[$command['command']], 'hand', $command['params']);
+        } else {
             $this->response = 'Задача не знайдена';
+            $this->code = 500;
+        }
     }
 
     /**
      * @param string $command
      * @param string $period
+     * @param array $params
+     * @return string
      */
-    private function runner(string $command, $period = 'hand'): string
+    private function runner(string $command, $period = 'hand', $params = []): string
     {
         /**
          * @var \Web\App\Cron $schedule
@@ -93,10 +133,13 @@ class Runner
         $schedule = new $command();
 
         $schedule->period = $period;
-        $schedule->before();
+        $schedule->before($params);
         $schedule->run();
 
-        return $schedule->after();
+        $this->response = $schedule->after();
+        $this->code = $schedule->getCode();
+
+        return $this->response;
     }
 
     /**
@@ -124,5 +167,13 @@ class Runner
     public function getResponse(): string
     {
         return $this->response;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCode(): int
+    {
+        return $this->code;
     }
 }

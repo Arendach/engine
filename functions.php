@@ -1195,3 +1195,8 @@ function count_holidays($year = null, $month = null)
 
     return $holidays;
 }
+
+function container($abstract)
+{
+    return (new \Web\App\Container())->getClassObject($abstract);
+}

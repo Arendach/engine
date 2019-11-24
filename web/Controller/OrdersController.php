@@ -2,6 +2,7 @@
 
 namespace Web\Controller;
 
+use function PHPSTORM_META\type;
 use SergeyNezbritskiy\PrivatBank\AuthorizedClient;
 use SergeyNezbritskiy\PrivatBank\Merchant;
 use Web\Model\Coupon;
@@ -13,7 +14,6 @@ use Web\Model\Api\NewPost;
 use Web\Model\Sms;
 use Web\Model\Reports;
 use RedBeanPHP\R;
-use DiDom\Document;
 
 class OrdersController extends Controller
 {
@@ -268,7 +268,7 @@ class OrdersController extends Controller
                 ['Історія']
             ]
         ];
-        
+
         // dd($data['changes']);
 
         $this->view->display('buy.changes.main', $data);
@@ -462,14 +462,8 @@ class OrdersController extends Controller
         if (empty($post->warehouse))
             response(400, 'Заповніть відділення!');
 
-        if (empty($post->pay_delivery))
-            response(400, 'Заповніть платника доставки!');
-
         if (!isset($post->products))
             response(400, 'Виберіть хоча-б один товар!');
-
-        if (empty($post->return_shipping_type))
-            response(400, 'Виберіть тип зворотньої доставки!');
 
         $return_shipping = $this->return_shipping_parse($post);
         $products = $post->products;
@@ -558,20 +552,15 @@ class OrdersController extends Controller
         ]);
     }
 
-    /**
-     * @param $data
-     * @return mixed
-     */
-    private function return_shipping_parse($data)
+    private function return_shipping_parse(&$data)
     {
         $temp = new \stdClass();
 
-        foreach ($data as $key => $value) {
-            if (preg_match('/return_shipping_/', $key)) {
-                $new_key = preg_replace('/return_shipping_([\w]+)/', '$1', $key);
-                $temp->$new_key = $value;
-                unset($data->$key);
-            }
+        foreach (OrderSettings::getSendingVariant($data->sending_variant)['params'] as $key => $value) {
+            if (in_array($key, ['type', 'type_remittance', 'payer']))
+                $temp->$key = $value;
+            else
+                $data->$key = $value;
         }
 
         return $temp;
@@ -640,6 +629,8 @@ class OrdersController extends Controller
         if ($post->type == 'sending')
             if (empty($post->pay_delivery))
                 response(400, 'Заповніть платника доставки!');
+
+        $post->prepayment = (integer)$post->prepayment;
 
         Orders::update_pay($post);
 
