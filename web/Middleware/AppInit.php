@@ -10,17 +10,17 @@ class AppInit
 {
     public function handle()
     {
-        app_set('settings',  Model::getSettings());
+        app('settings',  Model::getSettings());
 
-        app_set('course', OrderSettings::getCourse());
+        app('course', OrderSettings::getCourse());
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['section']))
-        app_set('section', $_GET['section']);
+        app('section', $_GET['section']);
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']))
-        app_set('action', $_POST['action']);
+        app('action', $_POST['action']);
 
         $u = new User();
-        app_set('me', $u->init());
+        app('me', $u->init());
     }
 }

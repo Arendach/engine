@@ -22,7 +22,7 @@ class ApiRouter extends MainRouter
                 if ($this->request_method == 'post') {
                     $method_name = $this->get_action_name($controller);
                     if ($this->get_action_name($controller) != false) {
-                        app_set('action', $method_name);
+                        app('action', $method_name);
 
                         $this->call_handler($controller, $method_name, $_REQUEST);
                     }
@@ -30,10 +30,10 @@ class ApiRouter extends MainRouter
                     $method_name = $this->get_section_name($controller);
                     if ($method_name != false) {
                         if (isset($_GET['section'])) {
-                            app_set('section', $_GET['section']);
+                            app('section', $_GET['section']);
                             unset($_GET['section']);
                         } else {
-                            app_set('section', 'main');
+                            app('section', 'main');
                         }
                         $this->call_handler($controller, $method_name, $_GET);
                     }

@@ -47,27 +47,4 @@ class Sms extends Model
 
         return $messages;
     }
-
-
-    public static function updateStatusesOpenOrders()
-    {
-        $orders = R::findAll('orders', "`type` != 'shop' AND `status` IN(0,1) OR type = 'shop' AND `status` = 0");
-        $api = new MobizonApi(SMS_API_KEY);
-
-        foreach ($orders as $order) {
-            $messages = R::findAll('sms_messages', '`order_id` = ?', [$order->id]);
-            $arr = [];
-            foreach ($messages as $message) $arr[] = $message->message_id;
-
-            $MS = $api->call('message', 'getSMSStatus', ['ids' => implode(',', $arr)], [], true);
-
-            if (!empty($MS)) {
-                foreach ($MS as $item) {
-                    $bean = R::findOne('sms_messages', '`message_id` = ?', [$item->id]);
-                    $bean->status = $item->status;
-                    R::store($bean);
-                }
-            }
-        }
-    }
 }

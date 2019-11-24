@@ -20,10 +20,10 @@ class SimpleRouter extends MainRouter
                     $method_name = $this->get_action_name($controller);
                     if ($method_name != false) {
                         if (isset($_POST['action'])) {
-                            app_set('action', $_POST['action']);
+                            app('action', $_POST['action']);
                             unset($_POST['action']);
                         } else {
-                            app_set('action', 'main');
+                            app('action', 'main');
                         }
                         $this->call_handler($controller, $method_name, $_POST);
                     }
@@ -31,10 +31,10 @@ class SimpleRouter extends MainRouter
                     $method_name = $this->get_section_name($controller);
                     if ($method_name != false) {
                         if (isset($_GET['section'])) {
-                            app_set('section', $_GET['section']);
+                            app('section', $_GET['section']);
                             unset($_GET['section']);
                         } else {
-                            app_set('section', 'main');
+                            app('section', 'main');
                         }
                         $this->call_handler($controller, $method_name, $_GET);
                     }
@@ -136,7 +136,7 @@ class SimpleRouter extends MainRouter
     {
         if (preg_match('/^\/([\w]+)/', $this->request_uri, $matches)) {
             $controller = s2c($matches[1]);
-            app_set('controller', $controller);
+            app('controller', $controller);
             return "Web\\Controller\\" . $controller . 'Controller';
         } else {
             return false;

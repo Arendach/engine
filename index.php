@@ -3,19 +3,22 @@
 use \Web\App\Router\StrongRouter;
 use Web\App\Router\SimpleRouter;
 use Web\App\Router\ApiRouter;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run as Whoops;
 
-define('START',  microtime(1));
+define('START', microtime(1));
+define('ROOT', __DIR__);
 
 ini_set("display_errors", 1);
-ini_set('session.save_path', $_SERVER['DOCUMENT_ROOT'] . '/server/sessions/');
+ini_set('session.save_path', ROOT . '/server/sessions/');
 error_reporting(E_ALL);
 session_start();
 
-define('ROOT', __DIR__);
-
-$app = (object)[];
-
 include_once './vendor/autoload.php';
+
+(new Whoops)
+    ->pushHandler(new PrettyPageHandler)
+    ->register();
 
 $parse = 'parse_' . strtolower($_SERVER['REQUEST_METHOD']);
 $route = new StrongRouter();

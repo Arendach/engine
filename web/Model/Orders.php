@@ -320,31 +320,6 @@ class Orders extends Model
         self::save_changes_log('update_type', "Змінено тип на \"$type_name\"", $id);
     }
 
-    // Оновлення статусів доставок
-    public static function updateSendingStatus()
-    {
-        set_time_limit(300);
-        $sql = "`type` = 'sending' AND `status` = '1' AND `street` != ''";
-        $count = R::count('orders', $sql);
-        $post = new NewPost();
-        for ($i = 0; $i <= $count; $i += 100) {
-            $orders = R::findAll('orders', $sql . "LIMIT $i,100");
-            self::update_statuses($post->getStatusDocuments($orders)['data']);
-        }
-    }
-
-    // Оновлення статусів доставок на Новій Пошті
-    private static function update_statuses($result)
-    {
-        foreach ($result as $item) {
-            $bean = R::findOne('orders', 'street LIKE ?', ['%' . $item['Number'] . '%']);
-            if ($bean != null) {
-                $bean->phone2 = $item['StatusCode'];
-                R::store($bean);
-            }
-        }
-    }
-
     // Бонуси і штрафи по замовленню
     public static function getBonuses($id)
     {

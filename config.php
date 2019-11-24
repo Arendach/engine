@@ -18,9 +18,6 @@ define('MIN_PATH', SITE . '/public/min/');
 define('ASSET_PATH', SITE . '/public/');
 define('LOGS_FOLDER', __DIR__ . '/server/logs/');
 
-// стиснення исходного коду
-define('COMPRESSION', TRUE);
-
 // технічні роботи
 define('UPDATE', false);
 
@@ -41,11 +38,7 @@ define('AUTH_TIME', 3600);
 define('SMS_API_KEY', 'ed9e034a348a3d1282bba036a0d324ade81720f6');
 define('NEW_POST_KEY', '6817184ef3bfa2d67d1c266299fc10ff');
 
-// DEBUG THEME
-\Kint_Renderer_Rich::$theme = 'solarized-dark.css';
-
 date_default_timezone_set('Europe/Kiev');
-
 
 define('DATA_SUCCESS_CREATED', 'Дані успішно збережені!');
 define('DATA_SUCCESS_UPDATED', 'Дані успішно оновлені!');

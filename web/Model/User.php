@@ -123,9 +123,4 @@ class User extends Model
 
         return $users;
     }
-
-    public static function clean_session()
-    {
-        R::exec('DELETE FROM `users_session` WHERE UNIX_TIMESTAMP(`created`) + ? < ? + 0', [AUTH_TIME, time()]);
-    }
 }

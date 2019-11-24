@@ -1010,21 +1010,21 @@ function setting($key = false)
         return $settings;
 }
 
-
-function app()
+/**
+ * @param string|null $key
+ * @param mixed|null $value
+ * @return mixed|null|object
+ */
+function app($key = null, $value = null)
 {
-    return $GLOBALS['app'];
-}
+    if (is_null($key) && is_null($value))
+        return (object)\Web\App\Container::getContainer();
+    elseif (!is_null($key) && is_null($value))
+        return \Web\App\Container::get($key, null);
+    else
+        \Web\App\Container::set($key, $value);
 
-function app_set($key, $value)
-{
-    if (!isset($GLOBALS['app']->{$key})) {
-        $GLOBALS['app']->{$key} = $value;
-    } else {
-        $message = '<span style="color: red">Не можливо перезаписати існуючу перемінну в APP! Ключ: ' . $key . ' </span>';
-        \Web\App\Log::error($message);
-        throw new \Exception($message);
-    }
+    return null;
 }
 
 function rand32()
@@ -1110,7 +1110,7 @@ function create_file_if_not_exists($name, $content = '')
 
 function start($name = 'test')
 {
-    app_set('process_time_' . $name, microtime(1));
+    app('process_time_' . $name, microtime(1));
 }
 
 function finish($name = 'test')
@@ -1174,7 +1174,7 @@ function count_working_days($year = null, $month = null): int
     if ($month == null) $month = date('m');
 
     $working_days = 0;
-    $count_days =  date('t', strtotime($year . '-' . $month . '-01'));
+    $count_days = date('t', strtotime($year . '-' . $month . '-01'));
 
     for ($i = 1; $i <= $count_days; $i++) {
         $day = date('D', strtotime($year . '-' . $month . '-' . $i));

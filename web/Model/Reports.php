@@ -28,7 +28,7 @@ class Reports extends Model
     {
         $bean = R::load('users', user()->id);
 
-        if ($act == 'put'){
+        if ($act == 'put') {
             $bean->reserve_funds = $bean->reserve_funds + $sum;
             $name_operation = 'Переміщення коштів у резерв!';
             $type = 'to_reserve';
@@ -48,7 +48,7 @@ class Reports extends Model
             'type' => $type,
             'name_operation' => $name_operation,
             'action' => $action
-         ]);
+        ]);
     }
 
     public static function getReport($year, $month, $user, $createIfNotExists = true)
@@ -335,7 +335,7 @@ class Reports extends Model
         return $result;
     }
 
-    public static function createReportIfNotExists($user)
+    public static function createReportIfNotExists($user): void
     {
         if (!R::count('report_items', '`year` = ? AND `month` = ? AND `user` = ?', [date('Y'), date('m'), $user])) {
             self::createReportItem(date('Y'), date('m'), $user);
@@ -364,20 +364,9 @@ class Reports extends Model
         R::store($bean);
     }
 
-
-    // Крон задачі
-    public function createReportFromUsers()
-    {
-        $users = R::findAll('users', 'archive = 0');
-
-        foreach ($users as $user) {
-            $this->createReportIfNotExists($user->id);
-        }
-    }
-
     public function normalizeCheck($year, $month)
     {
-        $users = R::finfAll('users', 'archive = 0');
+        $users = R::findAll('users', 'archive = 0');
         $month = month_valid($month);
 
         foreach ($users as $user) {
@@ -386,7 +375,6 @@ class Reports extends Model
             if (R::count('report_items', $sql, $binds)) {
                 $this->normalizeReport($year, $month, $user->id);
             } else {
-                // if ($year == date('Y') && $month = date('m'))
                 $this->createReportItem($year, $month, $user->id);
             }
         }

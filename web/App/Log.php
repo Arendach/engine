@@ -27,10 +27,15 @@ class Log
     public static function parse_ajax_log($data)
     {
         $post = get_object($data);
-        if(isset($post->desc)) {
+        if (isset($post->desc)) {
             $type = isset($post->type) ? $post->type : 'unknown_error';
             self::error($post->desc, $type);
         }
+    }
+
+    public static function cron($period, $message): void
+    {
+
     }
 
 }

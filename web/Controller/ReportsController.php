@@ -65,7 +65,7 @@ class ReportsController extends Controller
             'user' => $params['user'],
             'breadcrumbs' => [
                 ['Менеджери', uri('user')],
-                [user()->login, uri('reports', ['section' => 'user', 'id' => user($params['user'])->id])],
+                [user($params['user'])->login, uri('reports', ['section' => 'user', 'id' => user($params['user'])->id])],
                 ['Звіти']
             ]
         ];

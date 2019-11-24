@@ -80,10 +80,12 @@ $(document).ready(function () {
                 url: url,
                 data: data,
                 success: function (answer) {
-                    if (success == 'redirect') {
+                    if (success === 'redirect') {
                         successHandler(answer, function () {
                             redirect(redirect_url);
                         });
+                    } else if (success === 'close') {
+                        successHandler(answer, true);
                     } else {
                         successHandler(answer);
                     }
