@@ -14,6 +14,7 @@ use Web\Model\Api\NewPost;
 use Web\Model\Sms;
 use Web\Model\Reports;
 use RedBeanPHP\R;
+use Web\Orders\OrderUpdate;
 
 class OrdersController extends Controller
 {
@@ -590,7 +591,7 @@ class OrdersController extends Controller
 
         if (empty($post->phone)) response(400, 'Заповніть телефон!');
 
-        Orders::update_contacts($post);
+        (new OrderUpdate($post->id))->contacts($post);
 
         response(200, ['message' => 'Контакти вдало оновлені!', 'action' => 'close']);
     }
@@ -601,7 +602,7 @@ class OrdersController extends Controller
         if (isset($post->date_delivery) && empty($post->date_delivery))
             response(400, 'Заповніть дату доставки!');
 
-        Orders::update_working($post);
+        (new OrderUpdate($post->id))->working($post);
 
         response(200, ['action' => 'close', 'message' => DATA_SUCCESS_UPDATED]);
     }
@@ -675,7 +676,8 @@ class OrdersController extends Controller
         if (($order->type == 'delivery' || $order->type == 'self') && $order->courier == 0)
             response(400, 'Для того щоб змінити статус виберіть курєра!');
 
-        Orders::update_status($post);
+        (new OrderUpdate($post->id))
+            ->status($post->status);
 
         response(200, [
             'message' => 'Статус вдало оновлено!',

@@ -9,6 +9,7 @@ use Web\Model\Api\NewPost;
 use Web\App\Model;
 use LisDev\Delivery\NovaPoshtaApi2;
 use Web\Orders\OrderCreate;
+use Web\Orders\OrderUpdate;
 use Web\Tools\Log;
 use stdClass;
 
@@ -314,12 +315,7 @@ class Orders extends Model
     // Змінити тип замовлення (Самовивіз <=> Доставка)
     public static function change_type($type, $id)
     {
-        $type_name = $type == 'self' ? 'Самовивіз' : 'Доставка';
-        $bean = R::load('orders', $id);
-        $bean->type = $type;
-        R::store($bean);
-
-        self::save_changes_log('update_type', "Змінено тип на \"$type_name\"", $id);
+        (new OrderUpdate($id))->changeType($type);
     }
 
     // Бонуси і штрафи по замовленню
@@ -596,44 +592,6 @@ class Orders extends Model
         }
     }
 
-    // Оновлення контактів
-    public static function update_contacts($post)
-    {
-        $bean = R::load('orders', $post->id);
-
-        $history = [];
-        foreach ($post as $k => $v) {
-            // Наповнюємо масив історії
-            if ($bean->$k != $v) $history[$k] = $v;
-            // Оновлємо дані
-            $bean->$k = trim($v);
-        }
-
-        // Зберігаємо історію
-        if (count($history) > 0) self::save_changes_log('update_contact', json($history), $post->id);
-
-        R::store($bean);
-    }
-
-    // Оновлення статусу
-    public static function update_status($post)
-    {
-        $bean = R::load('orders', $post->id);
-        $bean->status = $post->status;
-        if ($bean->type != 'shop') {
-            if ($post->status == 2 || $post->status == 3)
-                self::return_products($post->id);
-        } else {
-            if ($post->status == 2)
-                self::return_products($post->id);
-        }
-        R::store($bean);
-
-        $statuses = OrderSettings::statuses($bean->type);
-        $data = 'Новий статус: "' . $statuses[$post->status]->text . '"';
-        self::save_changes_log('update_status', $data, $post->id);
-    }
-
     // Оновлення адреси
     public static function update_address($post)
     {
@@ -668,64 +626,6 @@ class Orders extends Model
             $bean->$k = trim($v);
 
         self::save_changes_log('update_address', json($history), $post->id);
-
-        R::store($bean);
-    }
-
-    // Оновлення загальної інформації
-    public static function update_working($post)
-    {
-        $bean = R::load('orders', $post->id);
-
-        $history = [];
-
-        // Зміна Курєра
-        if (isset($post->courier)) {
-            if ($bean->courier != $post->courier) {
-                $history['courier'] = $post->courier == 0 ? 'Не вибрано' : user($post->courier)->name;
-            }
-        }
-
-        // Зміна транспортної компанії
-        if (isset($post->delivery)) {
-            if ($bean->delivery != $post->delivery) {
-                $delivery = parent::getOne($post->delivery, 'logistics');
-                $history['delivery'] = $delivery->name;
-            }
-        }
-
-        // Зміна сайту
-        if (isset($post->site)) {
-            if ($bean->site != $post->site) {
-                $site = parent::getOne($post->site, 'sites');
-                $history['site'] = $site->name;
-            }
-        }
-
-        // Зміна підказки
-        if (isset($post->hint)) {
-            if ($bean->hint != $post->hint) {
-                $hint = parent::getOne($post->hint, 'colors');
-                $history['hint'] = '<span style="color: #' . $hint->color . '">' . $hint->description . '</span>';
-            }
-        }
-
-        // Зміна решти полів
-        // Дата доставки, коментар, купон, градація по часу доставки
-        foreach (['date_delivery', 'comment', 'coupon', 'time_with', 'time_to'] as $k)
-            if (isset($post->$k)) if ($bean->$k != $post->$k) $history[$k] = $post->$k;
-
-        // Перетворення часу доставки
-        if (isset($post->time_with))
-            $post->time_with = time_to_string($post->time_with);
-
-        if (isset($post->time_to))
-            $post->time_to = time_to_string($post->time_to);
-
-        // Оновлення даних
-        foreach ($post as $k => $v) $bean->$k = $v;
-
-        self::save_changes_log('update_working', json($history), $post->id);
 
         R::store($bean);
     }
@@ -832,21 +732,6 @@ class Orders extends Model
         }
 
         R::store($bean);
-    }
-
-    public static function create_pts_if_not_exists($product_id, $storage_id)
-    {
-        if (!R::count('product_to_storage', '`product_id` = ? AND `storage_id` = ?', [$product_id, $storage_id])) {
-            $pts = R::xdispense('product_to_storage');
-            $pts->product_id = $product_id;
-            $pts->storage_id = $storage_id;
-            $pts->count = 0;
-            R::store($pts);
-
-            return $pts;
-        } else {
-            return R::findOne('product_to_storage', '`product_id` = ? AND `storage_id` = ?', [$product_id, $storage_id]);
-        }
     }
 
     private static function update_product($pto, $product)
