@@ -89,6 +89,50 @@ class OrderUpdate extends Order
     }
 
     /**
+     * @param stdClass $data
+     * @return void
+     */
+    public function courier(stdClass $data): void
+    {
+        $this->order->courier = $data->courier;
+
+        $this->save();
+
+        $this->history->courier($data);
+    }
+
+    /**
+     * Видалити товар з замовлення
+     * @param $data
+     * @return void
+     */
+    public function dropProduct(stdClass $data): void
+    {
+        $pto = R::load('product_to_order', $data->pto);
+
+        if (empty($pto)) return;
+
+        // Змінюємо вартість замовлення
+        $this->order->full_sum -= $pto->amount * $pto->price;
+        $this->save();
+
+        // загружаємо товар
+        $product = R::load('products', $pto->product_id);
+
+        // повертаємо товар на склад
+        $this->returnProduct($product, $pto);
+
+        // історія замовлення
+        $this->history->dropProduct($product);
+
+        // історія товару
+        (new ProductHistory($product))->drop($this->order->id);
+
+        // Видаляємо товар з замовлення
+        R::trash($pto);
+    }
+
+    /**
      * @return void
      */
     private function returnProducts(): void
@@ -96,35 +140,65 @@ class OrderUpdate extends Order
         // загружаємо всі товари замовлення
         $pto = R::findAll('product_to_order', '`order_id` = ?', [$this->order->id]);
 
-        // перебираємо кожен товар замовлення
         foreach ($pto as $item) {
-
             // загружаємо безпосередньо сам товар
             $product = R::load('products', $item->product_id);
 
-            // якщо товар обліковий і одиничний
-            if ($product->accounted && !$product->combine) {
-                $pts = $this->getPTS($item->product_id, $item->storage->id);
-                $pts->count += $item->amount;
-                R::store($pts);
-
-                // якщо товар комбінований
-            } else if ($product->combine) {
-
-                // загружаємо всі компоненти товара
-                $linked = R::findAll('combine_product', 'product_id = ?', [$item->product_id]);
-
-                // перебираємо всі компоненти товару
-                foreach ($linked as $component) {
-                    $pts_c = $this->getPTS($component->linked_id, $item->storage_id);
-                    $pts_c->count += $component->combine_minus * $item->amount;
-                    R::store($pts_c);
-                }
-            }
+            // вертаєм товар на склад
+            $this->returnProduct($product, $item);
 
             // обнуляємо кількість товару в замовленні
             $item->amount = 0;
             R::store($item);
+        }
+    }
+
+    /**
+     * @param OODBBean $product
+     * @param OODBBean $product2order
+     * @return void
+     */
+    private function returnProduct(OODBBean $product, OODBBean $product2order): void
+    {
+        // якщо товар комбінований
+        if ($product->combine) {
+
+            // загружаємо компоненти
+            $linked = R::findAll('combine_product', 'product_id = ?', [$product->id]);
+
+            // перебираємо кожен компонент
+            foreach ($linked as $item) {
+
+                // загружаємо безпосередньо сам компонент
+                $component = R::load('products', $item->linked_id);
+
+                // якщо компонент обліковується
+                if ($component->accounted) {
+
+                    // створюємо `pts` якщо немає
+                    $pts = $this->getPTS($item->linked_id, $product2order->storage_id);
+
+                    // додаємо до кількості
+                    $pts->count += $product2order->amount * $item->combine_minus;
+
+                    // зберігаємо
+                    R::store($pts);
+                }
+            }
+        } else {
+
+            // якщо товар обліковується
+            if ($product->accounted) {
+
+                // створюємо `pts` якщо немає
+                $pts = $this->getPTS($product->id, $product2order->storage_id);
+
+                // додаємо до кількості
+                $pts->count += $product2order->amount;
+
+                // зберігаємо
+                R::store($pts);
+            }
         }
     }
 

@@ -138,7 +138,8 @@
 
                     <td>
                         <button type="button" class="btn btn-danger btn-xs drop_product delete"
-                                data-id="<?= $p->id; ?>">
+                                data-order-id="<?= $order->id ?>"
+                                data-pto="<?= $p->id; ?>">
                             <span class="glyphicon glyphicon-remove"></span>
                         </button>
                     </td>

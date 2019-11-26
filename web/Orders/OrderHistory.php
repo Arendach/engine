@@ -97,9 +97,26 @@ class OrderHistory
     }
 
     /**
+     * @param OODBBean $product_id
+     * @return void
+     */
+    public function dropProduct(OODBBean $product): void
+    {
+        $this->save('delete_product', ['id' => $product->id, 'name' => $product->name]);
+    }
+
+    public function courier(stdClass $data)
+    {
+        $history = [];
+
+        $this->courierCheck($history, $data);
+
+        $this->save('update_courier', $history['courier'] ?? '');
+    }
+
+    /**
      * @param array $history
      * @param stdClass $data
-     * @return void
      */
     private function courierCheck(array &$history, stdClass $data): void
     {
@@ -190,6 +207,7 @@ class OrderHistory
      */
     private function save(string $type, $data): void
     {
+        if (is_string($data) && mb_strlen($data) == 0) return;
         if (is_array($data) && count($data) == 0) return;
 
         if (is_array($data))

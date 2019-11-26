@@ -2,7 +2,6 @@
 
 namespace Web\Controller;
 
-use function PHPSTORM_META\type;
 use SergeyNezbritskiy\PrivatBank\AuthorizedClient;
 use SergeyNezbritskiy\PrivatBank\Merchant;
 use Web\Model\Coupon;
@@ -207,9 +206,9 @@ class OrdersController extends Controller
         } else response(400, 'Такого типу замовлень не існує!');
     }
 
-    public function action_drop_product($data)
+    public function action_drop_product($post)
     {
-        Orders::drop_product($data);
+        (new OrderUpdate($post->id))->dropProduct($post);
 
         response(200, ['action' => 'close', 'message' => 'Товар вдало видалений!']);
     }
@@ -687,7 +686,7 @@ class OrdersController extends Controller
 
     public function action_update_courier($post)
     {
-        Orders::update_courier($post);
+        (new OrderUpdate($post->id))->courier($post);
 
         response(200, ['action' => 'close', 'message' => DATA_SUCCESS_UPDATED]);
     }

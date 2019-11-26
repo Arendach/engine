@@ -102,7 +102,11 @@ $(document).ready(function () {
             $.ajax({
                 type: 'post',
                 url: url('orders'),
-                data: {pto: $this.parents('tr').data('pto'), action: 'drop_product'},
+                data: {
+                    pto: $this.parents('tr').data('pto'),
+                    action: 'drop_product',
+                    id: $this.data('order-id')
+                },
                 success: function (answer) {
                     successHandler(answer, true);
                     $this.parents('tr').remove();
