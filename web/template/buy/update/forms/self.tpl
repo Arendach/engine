@@ -13,6 +13,10 @@
         <i class="fa fa-print"></i> Товарний чек
     </a>
     <a style="margin-right: 20px; color: #0a790f" target="_blank"
+       href="<?= uri('orders', ['section' => 'receipt', 'id' => $id, 'official' => 1]) ?>">
+        <i class="fa fa-print"></i> Товарний чек для бугалетрії
+    </a>
+    <a style="margin-right: 20px; color: #0a790f" target="_blank"
        href="<?= uri('orders', ['id' => $id, 'section' => 'invoice']); ?>">
         <i class="fa fa-print"></i> Рахунок-фактура
     </a>

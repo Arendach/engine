@@ -13,6 +13,7 @@ use Web\Model\Api\NewPost;
 use Web\Model\Sms;
 use Web\Model\Reports;
 use RedBeanPHP\R;
+use Web\Orders\OrderCreate;
 use Web\Orders\OrderUpdate;
 
 class OrdersController extends Controller
@@ -104,8 +105,6 @@ class OrdersController extends Controller
 
         if (get('type') == 'sending') {
             $data['scripts'][] = 'orders/sending.js';
-        } elseif (get('type') == 'shop') {
-            $data['address'] = 'Бориспільська 26 \'З\', магазин \'Повітряно\'';
         } elseif (get('type') == 'delivery') {
             $data['scripts'][] = 'orders/delivery.js';
         }
@@ -186,15 +185,37 @@ class OrdersController extends Controller
         $this->view->display('buy.update.main', $data);
     }
 
+    public function section_changes()
+    {
+        $order = Orders::getOne(get('id'));
+
+        $data = [
+            'order' => $order,
+            'title' => 'Історія змін замовлення',
+            'changes' => Orders::get_changes_by_id(get('id')),
+            'id' => get('id'),
+            'breadcrumbs' => [
+                ['Замовлення', uri('orders', ['type' => 'delivery'])],
+                [type_parse($order->type), uri('orders', ['type' => $order->type])],
+                ['Замовлення #' . $order->id, uri('orders', ['section' => 'update', 'id' => $order->id])],
+                ['Історія']
+            ]
+        ];
+
+        // dd($data['changes']);
+
+        $this->view->display('buy.changes.main', $data);
+    }
+
+
     public function action_create($post)
     {
         unset($post->storage);
-        $arr = ['sending', 'delivery', 'self', 'shop'];
+        $arr = ['sending', 'delivery', 'self'];
         if (isset($post->client_id)) unset($post->client_id);
 
-        if ($post->type != 'shop')
-            if (!preg_match('/[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}/', $post->phone))
-                response(400, 'Заповніть телефон в правильному форматі!');
+        if (!preg_match('/[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}/', $post->phone))
+            response(400, 'Заповніть телефон в правильному форматі!');
 
         if (isset($post->date_delivery))
             if (strtotime($post->date_delivery) < strtotime(date('Y-m-d')))
@@ -252,31 +273,9 @@ class OrdersController extends Controller
         $this->view->display('buy.show_found_products', $data);
     }
 
-    public function section_changes()
-    {
-        $order = Orders::getOne(get('id'));
-
-        $data = [
-            'order' => $order,
-            'title' => 'Історія змін замовлення',
-            'changes' => Orders::get_changes_by_id(get('id')),
-            'id' => get('id'),
-            'breadcrumbs' => [
-                ['Замовлення', uri('orders', ['type' => 'delivery'])],
-                [type_parse($order->type), uri('orders', ['type' => $order->type])],
-                ['Замовлення #' . $order->id, uri('orders', ['section' => 'update', 'id' => $order->id])],
-                ['Історія']
-            ]
-        ];
-
-        // dd($data['changes']);
-
-        $this->view->display('buy.changes.main', $data);
-    }
-
     public function action_change_type($post)
     {
-        Orders::change_type($post->type, $post->id);
+        (new OrderUpdate($post->id))->changeType($post->type);
 
         response(200, 'Тип замовлення вдало змінений!');
     }
@@ -293,7 +292,8 @@ class OrdersController extends Controller
 
     public function action_create_user_bonus($post)
     {
-        if ($post->sum <= 0) response('Сума не може бути меншою від нуля!');
+        if ($post->sum <= 0)
+            response('Сума не може бути меншою від нуля!');
 
         $post->date = date('Y-m-d H:i:s');
 
@@ -364,13 +364,17 @@ class OrdersController extends Controller
         $order = Orders::getOne(get('id'));
 
         $products = Orders::getProducts(get('id'));
+
+        $payer = Orders::getOne($order->pay_method, 'pays');
+
         $data = [
             'order' => $order,
             'id' => get('id'),
             'type' => $order->type,
             'products' => $products->products,
             'sum' => $products->sum,
-            'places' => $products->places
+            'places' => $products->places,
+            'payer' => $payer
         ];
 
         if ($order->type == 'sending' && $order->street != '') {
@@ -407,7 +411,10 @@ class OrdersController extends Controller
             $data['pay'] = Orders::getPay(get('id'));
         }
 
-        $this->view->display('orders.print.receipt', $data);
+        if (get('official'))
+            $this->view->display('orders.print.receipt_official', $data);
+        else
+            $this->view->display('orders.print.receipt', $data);
     }
 
     // Роздруковка рахунку фактури
@@ -469,7 +476,9 @@ class OrdersController extends Controller
         $products = $post->products;
         unset($post->products);
 
-        $id = Orders::createSending($post, $products, $return_shipping);
+        Orders::createSending($post, $products, $return_shipping);
+
+        $id = (new OrderCreate)->sending($post, $products, $return_shipping);
 
         response(200, [
             'action' => 'redirect',
@@ -498,7 +507,7 @@ class OrdersController extends Controller
         $products = $post->products;
         unset($post->products);
 
-        $id = Orders::createDelivery($post, $products);
+        $id = (new OrderCreate)->delivery($post, $products);
 
         response(200, [
             'action' => 'redirect',
@@ -509,13 +518,11 @@ class OrdersController extends Controller
 
     public function action_create_self($post)
     {
-        if (empty($post->fio)) {
+        if (empty($post->fio))
             response('400', 'Заповніть імя!');
-        }
 
-        if (empty($post->phone)) {
+        if (empty($post->phone))
             response('400', 'Заповніть телефон!');
-        }
 
         if (!isset($post->products))
             response(400, 'Виберіть хоча-б один товар!');
@@ -523,27 +530,7 @@ class OrdersController extends Controller
         $products = $post->products;
         unset($post->products);
 
-        $id = Orders::createSelf($post, $products);
-
-        response(200, [
-            'action' => 'redirect',
-            'uri' => uri('orders', ['section' => 'update', 'id' => $id]),
-            'message' => 'Замовлення вдало створено!'
-        ]);
-    }
-
-    public function action_create_shop($post)
-    {
-        if (!isset($post->pay_method) || empty($post->pay_method))
-            response(400, 'Виберіть варіант оплати');
-
-        if (!isset($post->products))
-            response(400, 'Виберіть хоча-б один товар!');
-
-        $products = $post->products;
-        unset($post->products);
-
-        $id = Orders::createShop($post, $products);
+        $id = (new OrderCreate)->self($post, $products);
 
         response(200, [
             'action' => 'redirect',
@@ -564,15 +551,6 @@ class OrdersController extends Controller
         }
 
         return $temp;
-    }
-
-    public function action_update_shop($post)
-    {
-        if (empty($post->date_delivery)) response(400, 'Заповніть дату доставки!');
-
-        Orders::update($post, $post->id);
-
-        response(200, ['message' => DATA_SUCCESS_UPDATED, 'action' => 'close']);
     }
 
     // Оновлення інформації по зворотній доставці
@@ -656,11 +634,9 @@ class OrdersController extends Controller
     public function action_close($post)
     {
         if (!R::count('reports', '`data` = ? AND `type` = ?', [$post->id, 'order'])) {
-            $order = R::load('orders', $post->id);
-            $status = $order->type == 'shop' ? '2' : '4';
-
             Reports::createOrder($post);
-            Orders::update_status((object)['status' => $status, 'id' => $post->id]);
+
+            (new OrderUpdate($post->id))->status(4);
 
             response(200, 'Замовлення вдало закрито!');
         } else {

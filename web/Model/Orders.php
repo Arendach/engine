@@ -232,18 +232,6 @@ class Orders extends Model
         return R::findAll('product_to_order', '`order_id` = ?', [$id]);
     }
 
-    // Дані по зворотній доставці
-    public static function get_return_shipping($id)
-    {
-        return (R::findOne('return_shipping', '`order_id` = ?', [$id]));
-    }
-
-    // Змінити тип замовлення (Самовивіз <=> Доставка)
-    public static function change_type($type, $id)
-    {
-        (new OrderUpdate($id))->changeType($type);
-    }
-
     // Бонуси і штрафи по замовленню
     public static function getBonuses($id)
     {
@@ -354,6 +342,7 @@ class Orders extends Model
         $i = 0;
         foreach ($pto as $item) {
             $bean = R::load('products', $item->product_id);
+            $new[$i]['articul'] = $bean->articul;
             $new[$i]['amount'] = $item->amount;
             $new[$i]['attributes'] = $item->attributes;
             $new[$i]['price'] = $item->price;
@@ -422,31 +411,6 @@ class Orders extends Model
         return $sum;
     }
 
-    // Створення замовлень
-    // Відправка
-    public static function createSending($data, $products, $return_shipping)
-    {
-        return (new OrderCreate)->sending($data, $products, $return_shipping);
-    }
-
-    // Самовивіз
-    public static function createSelf(stdClass $data, stdClass $products): int
-    {
-        return (new OrderCreate)->self($data, $products);
-    }
-
-    // Доставка
-    public static function createDelivery($data, $products)
-    {
-        return (new OrderCreate)->delivery($data, $products);
-    }
-
-    // Магазин
-    public static function createShop(stdClass $data, stdClass $products): int
-    {
-        return (new OrderCreate)->self($data, $products);
-    }
-
     private static function create_purchase($pts, $amount = 1)
     {
         $product = R::load('products', $pts->product_id);
@@ -466,39 +430,6 @@ class Orders extends Model
                 'storage_id' => $pts->storage_id
             ]);
         }
-    }
-
-    private static function create_return_shipping($post, $bean)
-    {
-        if (empty($bean)) {
-            $sql = "INSERT INTO return_shipping SET order_id = ?, type = 'none'";
-            R::exec($sql, [$post->id]);
-            return R::findOne('return_shipping', '`order_id` = ?', [$post->id]);
-        } else {
-            return $bean;
-        }
-    }
-
-    public static function update_return_shipping($post)
-    {
-        $bean = R::findOne('return_shipping', '`order_id` = ?', [$post->id]);
-        $bean = self::create_return_shipping($post, $bean);
-
-        $id = $post->id;
-        unset($post->id);
-
-        $history = [];
-        foreach ($post as $k => $v) {
-            if ($bean->$k != $v) {
-                $history[$k] = $v;
-            }
-            $bean->$k = $v;
-        }
-
-        if (count($history) > 0)
-            self::save_changes_log('update_return_shipping', json($history), $id);
-
-        R::store($bean);
     }
 
     private static function productsSum($order_id, $products)

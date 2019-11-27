@@ -240,7 +240,8 @@
             <td style="width: 20%">
                 <?= isset($pay->director) && !is_null($pay->director)
                     ? $pay->director
-                    : 'Нечипоренко Р.О.' ?></td>
+                    : 'Нечипоренко Р.О.' ?>
+            </td>
 
             <td class="right" style="width: 20%"><b>Підпис:</b></td>
             <td><span></span></td>

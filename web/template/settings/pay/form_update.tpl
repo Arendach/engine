@@ -33,6 +33,14 @@
         </div>
 
         <div class="form-group">
+            <label>Являється платником податків</label>
+            <select name="is_pdv" class="form-control">
+                <option <?= !$pay->is_pdv ? 'selected' : '' ?> value="0">Ні</option>
+                <option <?= $pay->is_pdv ? 'selected' : '' ?> value="1">Так</option>
+            </select>
+        </div>
+
+        <div class="form-group">
             <label>Постачальник</label>
             <input name="provider" class="form-control" value="<?= $pay->provider ?>">
         </div>
