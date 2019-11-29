@@ -2,95 +2,211 @@
 
 namespace Web\App;
 
+use stdClass;
 
 class Request
 {
     /**
-     * @var
+     * @var string
      */
     public $method;
 
     /**
-     * @var
+     * @var array
      */
-    private $type;
+    private $query;
 
     /**
-     * @var
+     * @var array
      */
-    private $request;
+    private $cookie;
 
     /**
-     * @var
+     * @var string
      */
-    private $_get;
+    public $uri;
 
     /**
-     * @var
+     * @var string
      */
-    private $_post;
+    public $host;
+
+    /**
+     * @var string
+     */
+    public $scheme;
+
+    /**
+     * @var string
+     */
+    public $url;
+
+    /**
+     * @var string
+     */
+    public $full_url;
 
     /**
      * Request constructor.
      */
     public function __construct()
     {
-        $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->method = strtolower($_SERVER['REQUEST_METHOD']);
+        $this->setQuery();
+        $this->queryConverter();
+        $this->setCookie();
+        $this->setUri();
+        $this->setScheme();
+        $this->setHost();
+        $this->setUrl();
+        $this->setFullUrl();
     }
 
     /**
-     * @param $args
-     */
-    public function setup($args)
-    {
-        $this->type = $args['type'];
-        $this->request = $args['request'];
-        parse_str($args['query'], $output);
-        $this->_get = $output;
-        $this->_post = $args['data'];
-    }
-
-    /**
-     * @param null $name
      * @return bool
      */
-    public function get($name = null)
+    public function isGet(): bool
     {
-        if ($name === null) {
-            return isset($_GET) ? $_GET : false;
-        } else {
-            return isset($_GET[$name]) ? $_GET[$name] : false;
-        }
+        return $this->method == 'get';
     }
 
     /**
-     * @param null $name
      * @return bool
      */
-    public function post($name = null)
+    public function isPost(): bool
     {
-        if ($name === null) {
-            return isset($_POST) ? $_POST : false;
-        } else {
-            return isset($_POST[$name]) ? $_POST[$name] : false;
+        return $this->method == 'post';
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function get(string $key)
+    {
+        if (!isset($this->query[$key])) return null;
+
+        return $this->query[$key];
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return (array)$this->query;
+    }
+
+    /**
+     * @return stdClass
+     */
+    public function toObject(): stdClass
+    {
+        return (object)$this->query;
+    }
+
+    /**
+     * @return string
+     */
+    public function toJson(): string
+    {
+        return json_encode($this->query);
+    }
+
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
+    public function getCookie(string $key)
+    {
+        if (isset($this->cookie[$key])) return null;
+
+        return $this->cookie[$key];
+    }
+
+    /**
+     * @return string
+     */
+    public function getUri(): string
+    {
+        return $this->uri;
+    }
+
+    /**
+     * @return void
+     */
+    private function setQuery(): void
+    {
+        if ($this->isGet())
+            $this->query = $_GET;
+        elseif ($this->isPost())
+            $this->query = $_POST;
+        else
+            $this->query = [];
+    }
+
+    /**
+     * @return void
+     */
+    private function queryConverter(): void
+    {
+        foreach ($this->query as $key => $value) {
+            if (!is_string($value)) continue;
+
+            if (preg_match('@^[0-9]+$@', $value))
+                $this->query[$key] = (int)$value;
+
+            elseif (preg_match('@^[0-9]+\.[0-9]+$@', $value))
+                $this->query[$key] = (float)$value;
         }
     }
 
     /**
-     * @param $url
-     * @param array $data
-     * @return bool|string
+     * @return void
      */
-    public function sendTo($url, $data = [])
+    private function setCookie(): void
     {
+        $this->cookie = $_COOKIE;
+    }
 
-        $vars = "";
-        foreach ($data as $key => $value) {
-            $vars .= "&{$key}={$value}";
-        }
+    /**
+     * @return void
+     */
+    private function setUri(): void
+    {
+        [$uri] = explode('?', $_SERVER['REQUEST_URI']);
+        $this->uri = trim($uri, '/');
+    }
 
-        $vars = substr($vars, 1);
+    /**
+     * @return void
+     */
+    private function setScheme(): void
+    {
+        $this->scheme = $_SERVER['REQUEST_SCHEME'];
+    }
 
-        return file_get_contents("{$url}?{$vars}");
+    /**
+     * @return void
+     */
+    private function setHost(): void
+    {
+        $this->host = $_SERVER['HTTP_HOST'];
+    }
+
+    /**
+     * @return void
+     */
+    private function setUrl(): void
+    {
+        $this->url = $this->scheme . '://' . $this->host . '/' . $this->uri;
+    }
+
+    /**
+     * @return void
+     */
+    private function setFullUrl(): void
+    {
+        $this->full_url = $this->scheme . '://' . $this->host . '/' . $this->uri . '?' . $_SERVER['QUERY_STRING'];
     }
 }

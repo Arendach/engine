@@ -4,6 +4,7 @@ namespace Web\Controller;
 
 use SergeyNezbritskiy\PrivatBank\AuthorizedClient;
 use SergeyNezbritskiy\PrivatBank\Merchant;
+use Web\App\Request;
 use Web\Model\Coupon;
 use Web\Model\Orders;
 use Web\App\Controller;
@@ -18,6 +19,15 @@ use Web\Orders\OrderUpdate;
 
 class OrdersController extends Controller
 {
+
+    /**
+     * @param Request $request
+     */
+    public function sectionUpdate(Request $request, string $id, string $name = 'taras', float $price = 22)
+    {
+        return $id . ', ' . $name . ', ' . $price;
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -359,8 +369,8 @@ class OrdersController extends Controller
     // Товарний чек
     public function section_receipt()
     {
-        //header('Content-Type: text/plain');
         if (!get('id')) $this->display_404();
+
         $order = Orders::getOne(get('id'));
 
         $products = Orders::getProducts(get('id'));
