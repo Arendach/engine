@@ -22,11 +22,12 @@ include_once './vendor/autoload.php';
     ->pushHandler($_SERVER['REQUEST_METHOD'] == 'get' ? new PrettyPageHandler : new JsonResponseHandler)
     ->register();
 
+new ReflectionRouter();
+
 $parse = 'parse_' . strtolower($_SERVER['REQUEST_METHOD']);
 $route = new StrongRouter();
 include ROOT . '/routs/' . strtolower($_SERVER['REQUEST_METHOD']) . '.php';
-// new SimpleRouter();
-// new ApiRouter();
-new ReflectionRouter();
+new SimpleRouter();
+new ApiRouter();
 
 $route->$parse();

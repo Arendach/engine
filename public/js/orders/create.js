@@ -89,7 +89,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'post',
-            url: url('orders'),
+            url: url('orders/create_' + data.type),
             data: data,
             success: function (answer) {
                 successHandler(answer, function () {

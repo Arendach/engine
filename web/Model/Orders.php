@@ -3,6 +3,7 @@
 namespace Web\Model;
 
 use RedBeanPHP\R;
+use Web\App\Interfaces\Converter;
 use Web\App\Paginator;
 use Web\App\Config;
 use Web\Model\Api\NewPost;
@@ -13,7 +14,7 @@ use Web\Orders\OrderUpdate;
 use Web\Tools\Log;
 use stdClass;
 
-class Orders extends Model
+class Orders extends Model implements Converter
 {
     const table = 'orders';
 

@@ -133,14 +133,24 @@ function post($key)
 }
 
 /**
- * @param $var
+ * @param mixed ...$params
  */
-function dd($var)
+function dd(...$params)
 {
-    echo '<pre style="z-index: 9999999;">';
-    print_r($var);
-    echo '</pre>';
+    dump($params);
     exit;
+}
+
+/**
+ * @param mixed ...$params
+ */
+function dump(...$params)
+{
+    foreach ($params as $param){
+        echo '<pre style="z-index: 9999999;">';
+        print_r($param);
+        echo '</pre>';
+    }
 }
 
 /**
@@ -1196,7 +1206,7 @@ function count_holidays($year = null, $month = null)
     return $holidays;
 }
 
-function container($abstract)
+function container($abstract, $parameter = null)
 {
-    return (new \Web\App\Container())->getClassObject($abstract);
+    return (new \Web\App\Container())->getClassObject($abstract, $parameter);
 }

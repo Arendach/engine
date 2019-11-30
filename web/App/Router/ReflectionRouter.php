@@ -36,6 +36,9 @@ class ReflectionRouter
         $this->boot();
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function boot(): void
     {
         if (!$this->patternCheck()) return;
@@ -84,10 +87,10 @@ class ReflectionRouter
             } else {
                 $type_name = $type->getName();
 
-                if (in_array($type_name, ['int', 'float', 'string'])) {
+                if (in_array($type_name, ['int', 'float', 'string', 'array', 'bool'])) {
                     $parameters[$name] = $this->getRequestItem($name);
                 } else {
-                    $parameters[$name] = container($type_name);
+                    $parameters[$name] = container($type_name, $this->getRequestItem($name));
                 }
             }
         }
@@ -142,7 +145,7 @@ class ReflectionRouter
                 $list[$name] = 'null';
             } else {
                 $type_name = $type->getName();
-                if (in_array($type_name, ['string', 'float', 'int']))
+                if (in_array($type_name, ['string', 'float', 'int', 'array', 'bool']))
                     $list[$name] = $type->getName();
             }
         }
@@ -177,16 +180,22 @@ class ReflectionRouter
             $this->toString($type, $parameters[$it]);
 
             // якщо метод очікує число флоат
-            $this->toFLoat($type, $parameters[$it]);
+            $this->toFloat($type, $parameters[$it]);
 
             // якщо метод очікує число
             $this->toInteger($type, $parameters[$it]);
+
+            // якщо метод очікує boolean
+            $this->toBoolean($type, $parameters[$it]);
 
             // якщо тип дабл а параметр флоат то пропускаємо
             if (gettype($parameters[$it]) == 'double' && $type == 'float') continue;
 
             // якщо тип integer а параметр int то пропускаємо
             if (gettype($parameters[$it]) == 'integer' && $type == 'int') continue;
+
+            // якщо тип integer а параметр int то пропускаємо
+            if (gettype($parameters[$it]) == 'boolean' && $type == 'bool') continue;
 
             // якщо тмилкаип не співпадає то по
             if (gettype($parameters[$it]) != $type) return false;
@@ -212,7 +221,7 @@ class ReflectionRouter
      * @param $type
      * @param $param
      */
-    private function toFLoat($type, &$param): void
+    private function toFloat($type, &$param): void
     {
         if ($type != 'float') return;
 
@@ -230,6 +239,22 @@ class ReflectionRouter
 
         if (is_integer($param) || is_float($param) || is_numeric($param))
             $param = (int)$param;
+    }
+
+    /**
+     * @param $type
+     * @param $param
+     * @return void
+     */
+    private function toBoolean($type, &$param): void
+    {
+        if ($type != 'bool') return;
+
+        if ($param === 1 || $param === '1' || $param === 'true')
+            $param = true;
+
+        if ($param === 0 || $param === '0' || $param === 'false')
+            $param = false;
     }
 
     /**

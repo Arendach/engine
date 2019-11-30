@@ -4,6 +4,7 @@ namespace Web\Controller;
 
 use SergeyNezbritskiy\PrivatBank\AuthorizedClient;
 use SergeyNezbritskiy\PrivatBank\Merchant;
+use Web\App\Collection;
 use Web\App\Request;
 use Web\Model\Coupon;
 use Web\Model\Orders;
@@ -16,16 +17,17 @@ use Web\Model\Reports;
 use RedBeanPHP\R;
 use Web\Orders\OrderCreate;
 use Web\Orders\OrderUpdate;
+use Web\Requests\Orders\CreateSelfRequest;
 
 class OrdersController extends Controller
 {
-
     /**
      * @param Request $request
      */
-    public function sectionUpdate(Request $request, string $id, string $name = 'taras', float $price = 22)
+    public function sectionUpdate(Collection $a)
     {
-        return $id . ', ' . $name . ', ' . $price;
+        dd($a->all());
+        exit;
     }
 
     public function __construct()
@@ -526,19 +528,10 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function action_create_self($post)
+    public function actionCreateSelf(CreateSelfRequest $request, array $products)
     {
-        if (empty($post->fio))
-            response('400', 'Заповніть імя!');
-
-        if (empty($post->phone))
-            response('400', 'Заповніть телефон!');
-
-        if (!isset($post->products))
-            response(400, 'Виберіть хоча-б один товар!');
-
-        $products = $post->products;
-        unset($post->products);
+        dd($products);
+        dd($request->toArray());
 
         $id = (new OrderCreate)->self($post, $products);
 

@@ -14,7 +14,7 @@ class Request
     /**
      * @var array
      */
-    private $query;
+    protected $query;
 
     /**
      * @var array
@@ -87,6 +87,33 @@ class Request
         if (!isset($this->query[$key])) return null;
 
         return $this->query[$key];
+    }
+
+    /**
+     * @param array $keys
+     * @return array
+     */
+    public function only(array $keys): array
+    {
+        $result = [];
+        foreach ($keys as $key)
+            $result[$key] = $this->get($key);
+
+        return $result;
+    }
+
+    /**
+     * @param array $keys
+     * @return array
+     */
+    public function except(array $keys): array
+    {
+        $result = [];
+        foreach ($this->query as $key => $item)
+            if (!in_array($key, $keys))
+                $result[$key] = $item;
+
+        return $result;
     }
 
     /**
@@ -208,5 +235,19 @@ class Request
     private function setFullUrl(): void
     {
         $this->full_url = $this->scheme . '://' . $this->host . '/' . $this->uri . '?' . $_SERVER['QUERY_STRING'];
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     * @throws \Exception
+     */
+    public function __get($name)
+    {
+        if (isset($this->query[$name])) {
+            return $this->query[$name];
+        }
+
+        throw new \Exception();
     }
 }
