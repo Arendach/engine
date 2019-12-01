@@ -105,9 +105,15 @@ class OrderHistory
         $this->save('delete_product', ['id' => $product->id, 'name' => $product->name]);
     }
 
-    public function courier(stdClass $data)
+    /**
+     * @param int $courier_id
+     */
+    public function courier(int $courier_id)
     {
         $history = [];
+
+        $data = new stdClass;
+        $data->courier = $courier_id;
 
         $this->courierCheck($history, $data);
 

@@ -1,3 +1,21 @@
+<?php
+
+$scripts = [
+    'elements.js',
+    'orders/order.js',
+    'orders/create.js'
+];
+
+$components = ['inputmask'];
+
+$css = ['elements.css'];
+
+if ($type == 'sending') $scripts[] = 'orders/sending.js';
+
+if ($type == 'delivery') $scripts[] = 'orders/delivery.js';
+
+?>
+
 <?php include parts('head'); ?>
 
     <!-- Buttons -->
@@ -43,5 +61,7 @@
             </div>
         </form>
     </div>
+
+    <script>window.type = '<?= $type ?>'</script>
 
 <?php include parts('foot') ?>

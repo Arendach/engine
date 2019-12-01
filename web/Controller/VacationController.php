@@ -20,7 +20,7 @@ class VacationController extends Controller
             'components' => ['calendar', 'modal'],
             'scripts' => ['vacation.js'],
             'vacations' => Vacation::getThisYear(),
-            'users' => Vacation::findAll('users', 'archive = 0'),
+            'users' => Vacation::findAll('user', 'archive = 0'),
             'breadcrumbs' => [['Планувальник відпусток']]
         ];
 

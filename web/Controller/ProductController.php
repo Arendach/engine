@@ -464,7 +464,7 @@ class ProductController extends Controller
         $data = [
             'title' => 'Нове переміщення',
             'storage' => Storage::findAll('storage', 'accounted = 1'),
-            'users' => User::findAll('users', 'archive = 0')
+            'users' => User::findAll('user', 'archive = 0')
         ];
 
         $this->view->display('product.moving.create_form', $data);

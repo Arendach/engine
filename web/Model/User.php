@@ -16,7 +16,7 @@ class User extends Model
     public static function getMe()
     {
         if (isset($_COOKIE['session'])) {
-            $session = R::findOne('users_session', '`session` = ?', [$_COOKIE['session']]);
+            $session = R::findOne('user_session', '`session` = ?', [$_COOKIE['session']]);
             $user = R::load('users', $session->user_id);
 
             if ($session->session == my_hash($user->login . $user->password . $_SERVER['HTTP_USER_AGENT'])) {
@@ -38,14 +38,12 @@ class User extends Model
         if (R::count('users', '`login` = ? AND `password` = ?', [$data->login, my_hash($data->password)])) {
             $user = R::findOne('users', '`login` = ? AND `password` = ?', [$data->login, my_hash($data->password)]);
 
-            $bean = R::xdispense('users_session');
+            $bean = R::xdispense('user_session');
 
             $bean->session = my_hash($user->login . $user->password . $_SERVER['HTTP_USER_AGENT']);
             $bean->created = date('Y-m-d H:i:s');
             $bean->user_id = $user->id;
 
-//            http_status(500);
-//            dd($bean);
             R::store($bean);
 
             setcookie('session', my_hash($user->login . $user->password . $_SERVER['HTTP_USER_AGENT']));
@@ -104,7 +102,7 @@ class User extends Model
      */
     public static function getAccess($id)
     {
-        return R::load('users_access', $id);
+        return R::load('user_access', $id);
     }
 
     /**

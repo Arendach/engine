@@ -137,7 +137,8 @@ function post($key)
  */
 function dd(...$params)
 {
-    dump($params);
+    foreach ($params as $param)
+        dump($param);
     exit;
 }
 
@@ -146,11 +147,12 @@ function dd(...$params)
  */
 function dump(...$params)
 {
-    foreach ($params as $param){
+    foreach ($params as $param) {
         echo '<pre style="z-index: 9999999;">';
         print_r($param);
         echo '</pre>';
     }
+    echo '<hr>';
 }
 
 /**
@@ -713,6 +715,7 @@ function type_year($year)
  */
 function user($id = 0)
 {
+
     if ($id == 0)
         return get_object(app()->me);
     else
@@ -1209,4 +1212,29 @@ function count_holidays($year = null, $month = null)
 function container($abstract, $parameter = null)
 {
     return (new \Web\App\Container())->getClassObject($abstract, $parameter);
+}
+
+/**
+ * @param int $code
+ * @param string $message
+ */
+function abort(int $code, string $message = '')
+{
+    container(\Web\App\Response::class)->abort($code, $message);
+}
+
+function abort_if(bool $bool, $code, $message = '')
+{
+    if ($bool)
+        abort($code, $message);
+}
+
+/**
+ * @param string $key
+ * @param $default
+ * @return mixed
+ */
+function request(string $key, $default)
+{
+    return container(\Web\App\Request::class)->get($key, $default);
 }

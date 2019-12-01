@@ -8,7 +8,7 @@ class UsersListInit
 {
     public function handle()
     {
-        $users = Model::finfAll('users', 'archive = 0');
+        $users = Model::findAll('user', 'archive = 0');
 
         $new = [];
 

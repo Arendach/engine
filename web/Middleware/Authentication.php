@@ -14,10 +14,10 @@ class Authentication extends Middleware
     public function handle()
     {
         if (isset($_COOKIE['session'])) {
-            if (!R::count('users_session', '`session` = ?', [$_COOKIE['session']])) {
+            if (!R::count('user_session', '`session` = ?', [$_COOKIE['session']])) {
                 $this->login_form();
             } else {
-                $bean = R::findOne('users_session', '`session` = ?', [$_COOKIE['session']]);
+                $bean = R::findOne('user_session', '`session` = ?', [$_COOKIE['session']]);
                 $bean->created = date('Y-m-d H:i:s');
                 R::store($bean);
 

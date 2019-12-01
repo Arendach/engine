@@ -22,7 +22,6 @@ class Sms extends Model
 
     public static function getMessagesByOrderId($id)
     {
-        // $api = new MobizonApi(SMS_API_KEY);
         $messages = R::findAll('sms_messages', '`order_id` = ?', [$id]);
 
         return $messages;

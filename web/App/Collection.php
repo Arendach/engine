@@ -13,6 +13,11 @@ class Collection implements Countable, Converter
     private $data = [];
 
     /**
+     * @var array
+     */
+    private $paginate = [];
+
+    /**
      * @return int
      */
     public function count(): int
@@ -99,5 +104,15 @@ class Collection implements Countable, Converter
                 $result[$key] = $item;
 
         return $result;
+    }
+
+    public function setPaginate(array $data): void
+    {
+        $this->paginate = $data;
+    }
+
+    public function getPaginate(): array
+    {
+        return $this->paginate;
     }
 }

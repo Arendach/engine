@@ -10,7 +10,6 @@ use Web\Model\Task;
 
 class IndexController extends Controller
 {
-
     public function index()
     {
         if (user()->schedule_notice) {

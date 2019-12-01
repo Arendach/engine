@@ -17,13 +17,38 @@
             <p class="submit"><input type="submit" id="submit" value="Вхід"></p>
         </form>
     </div>
-
-    <div class="login-help">
-        <a href="<?= uri('user', ['section' => 'reset'])?>">Забули пароль?</a>
-    </div>
 </section>
 <script>var site = '<?= SITE ?>'</script>
 <script src="<?= asset('js/jquery.js') ?>"></script>
-<script src="<?= asset('js/login.js') ?>"></script>
+
+<script>
+
+    $(document).ready(function () {
+        $(document).on('click', '#submit', function (event) {
+            event.preventDefault();
+            let login = $('#login').val();
+            let password = $('#password').val();
+            let remember_me = $('#remember_me').is(':checked') ? 1 : 0;
+
+            $.ajax({
+                type: 'post',
+                url: site + '/login',
+                data: {login, password, remember_me},
+                success: (answer) => {
+                    console.log(answer);
+                    /* if (window.location.pathname == '/login')
+                         window.location.href = site;
+                     else
+                         window.location.reload();*/
+                },
+                error: (e) => {
+                    let response = JSON.parse(e.responseText);
+                    alert(response.message);
+                }
+            });
+        });
+    });
+
+</script>
 </body>
 </html>

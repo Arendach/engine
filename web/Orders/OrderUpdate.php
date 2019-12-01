@@ -5,8 +5,10 @@ namespace Web\Orders;
 use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
 use stdClass;
+use Web\App\Interfaces\Converter;
+use Web\App\Response;
 
-class OrderUpdate extends Order
+class OrderUpdate extends Order implements Converter
 {
     /**
      * @var OrderHistory
@@ -22,11 +24,22 @@ class OrderUpdate extends Order
      * OrderUpdate constructor.
      * @param $id
      */
-    public function __construct(int $id)
-    {
-        $this->order = R::load('orders', $id);
+    public function __construct(int $order_id)
+     {
+         abort_if(is_null($order_id), 404);
 
-        $this->history = new OrderHistory(clone $this->order);
+         $this->order = R::load('orders', $order_id);
+
+         abort_if(empty($this->order->id), 404);
+
+         $this->history = new OrderHistory(clone $this->order);
+     }
+
+    public function convert($order_id)
+    {
+        /*$this->order = R::load('orders', $order_id);
+
+        $this->history = new OrderHistory(clone $this->order);*/
     }
 
     /**
@@ -92,13 +105,13 @@ class OrderUpdate extends Order
      * @param stdClass $data
      * @return void
      */
-    public function courier(stdClass $data): void
+    public function courier(int $courier_id): void
     {
-        $this->order->courier = $data->courier;
+        $this->order->courier = $courier_id;
 
         $this->save();
 
-        $this->history->courier($data);
+        $this->history->courier($courier_id);
     }
 
     /**

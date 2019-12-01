@@ -84,30 +84,24 @@
                     <ul class="dropdown-1">
                         <?php if (can('orders') || can('orders_view')) { ?>
                             <li class="dropdown">
-                                <a href="<?= uri('orders', ['type' => 'delivery']) ?>">
+                                <a href="<?= uri('orders/view', ['type' => 'delivery']) ?>">
                                     <i class="fa fa-sitemap"></i>
                                     <span>Замовлення</span>
                                     <ul class="dropdown-8">
                                         <li>
-                                            <a href="<?= uri('orders', ['type' => 'delivery']) ?>">
+                                            <a href="<?= uri('orders/view', ['type' => 'delivery']) ?>">
                                                 <i class="fa fa-angle-right"></i>
                                                 <span>Доставка</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="<?= uri('orders', ['type' => 'shop']) ?>">
-                                                <i class="fa fa-angle-right"></i>
-                                                <span>Магазин</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="<?= uri('orders', ['type' => 'self']) ?>">
+                                            <a href="<?= uri('orders/view', ['type' => 'self']) ?>">
                                                 <i class="fa fa-angle-right"></i>
                                                 <span>Самовивіз</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="<?= uri('orders', ['type' => 'sending']) ?>">
+                                            <a href="<?= uri('orders/view', ['type' => 'sending']) ?>">
                                                 <i class="fa fa-angle-right"></i>
                                                 <span>Відправка</span>
                                             </a>

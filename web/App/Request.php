@@ -82,11 +82,20 @@ class Request
      * @param string $key
      * @return mixed
      */
-    public function get(string $key)
+    public function get(string $key, $default = null)
     {
-        if (!isset($this->query[$key])) return null;
+        if (!isset($this->query[$key])) return $default;
 
         return $this->query[$key];
+    }
+
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function has(string $key)
+    {
+        return isset($this->query[$key]);
     }
 
     /**
@@ -149,6 +158,16 @@ class Request
         if (isset($this->cookie[$key])) return null;
 
         return $this->cookie[$key];
+    }
+
+    /**
+     * @param string $key
+     * @param string $type
+     * @return mixed
+     */
+    public function getFromType(string $key, string $type)
+    {
+        return Type::to($type, $this->get($key));
     }
 
     /**

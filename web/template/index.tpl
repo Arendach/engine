@@ -88,12 +88,6 @@
                 </a>
             <?php } ?>
 
-            <?php if ($nco->shop != 0) { ?>
-                <a href="<?= uri('orders', ['type' => "shop", 'courier' => user()->id, 'status' => 'open']) ?>">
-                    Магазин - <b style="color: red"><?= $nco->shop ?></b><br>
-                </a>
-            <?php } ?>
-
             <?php if ($nco->self != 0) { ?>
                 <a href="<?= uri('orders', ['type' => "self", 'courier' => user()->id, 'status' => 'open']) ?>">
                     Самовивози - <b style="color: red"><?= $nco->self ?></b>

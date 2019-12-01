@@ -1,3 +1,19 @@
+<?php
+
+$components = ['modal', 'inputmask'];
+
+$scripts = ['elements.js', 'orders/order.js', 'orders/update.js'];
+
+$css = ['elements.css'];
+
+if ($type == 'sending')
+    $scripts[] = 'orders/sending.js';
+
+if ($type == 'delivery')
+    $scripts[] = 'orders/delivery.js';
+
+?>
+
 <?php include parts('head') ?>
 
     <!-- Tab-Navigation -->
@@ -73,5 +89,13 @@
             <?php include t_file('buy.update.parts.photo'); ?>
         </div>
     </div>
+
+    <script>
+        window.id = '<?= $id ?>';
+        window.type = '<?= $order->type ?>';
+        window.discount = '<?= $order->discount ?>';
+        window.delivery_cost = '<?= $order->delivery_cost ?>';
+        window.closed_order = '<?= $closed_order ?>';
+    </script>
 
 <?php include parts('foot') ?>

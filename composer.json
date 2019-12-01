@@ -2,10 +2,13 @@
   "require": {
     "filp/whoops": "2.*",
     "lis-dev/nova-poshta-api-2": "dev-master",
-    "nesbot/carbon": "^1.22",
+    "nesbot/carbon": "^2.27",
     "mobizon/mobizon-php": "^1.0",
     "phelium/mysql-backup": "dev-master",
-    "sergeynezbritskiy/privatbank-api": "^2.0.0"
+    "sergeynezbritskiy/privatbank-api": "^2.0.0",
+    "illuminate/database": "^6.6",
+    "illuminate/pagination": "^6.6",
+    "illuminate/view": "^6.6"
   },
   "autoload": {
     "psr-4": {

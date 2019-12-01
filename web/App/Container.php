@@ -73,7 +73,7 @@ class Container
      */
     private function converter($object, $data)
     {
-        if ($object instanceof Converter){
+        if ($object instanceof Converter) {
             $object->convert($data);
         }
     }
@@ -104,8 +104,6 @@ class Container
         $parameters = [];
 
         $reflectorClass = new ReflectionClass($abstract);
-
-        if ($abstract != 'Web\App\Collection') return [];
 
         if ($reflectorClass->hasMethod('__construct')) {
             $reflectorMethod = new ReflectionMethod($abstract, '__construct');
@@ -160,9 +158,13 @@ class Container
 
         $result = [];
         foreach ($parameters as $parameter => $parameterType) {
-            if (in_array($parameterType, $types)) continue;
 
-            $result[$parameter] = container($parameterType);
+            if (in_array($parameterType, $types)) {
+                $result[$parameter] = container(Request::class)
+                    ->getFromType($parameter, $parameterType);
+            } else {
+                $result[$parameter] = container($parameterType);
+            }
         }
 
         return $result;

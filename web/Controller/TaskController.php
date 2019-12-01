@@ -35,7 +35,7 @@ class TaskController extends Controller
     {
         $data = [
             'title' => 'Створити задачу',
-            'users' => Task::findAll('users', 'archive = 0'),
+            'users' => Task::findAll('user', 'archive = 0'),
             'modal_size' => 'lg',
             'user_id' => $post->user_id
         ];
@@ -48,7 +48,7 @@ class TaskController extends Controller
         if (!isset($post->content) || mb_strlen($post->content) < 10)
             response(400, 'Задача не може бити коротшою 10-ти символів');
 
-        if (!User::exists($post->user, 'users'))
+        if (!User::exists($post->user, 'user'))
             response(400, 'Такого менеджера не існує!');
 
         $post->date = date('Y-m-d H:i:s');

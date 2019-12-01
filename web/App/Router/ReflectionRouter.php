@@ -5,6 +5,8 @@ namespace Web\App\Router;
 use Web\App\Request;
 use ReflectionMethod;
 use Web\App\Response;
+use Web\App\Type;
+use Web\Orders\OrderUpdate;
 
 class ReflectionRouter
 {
@@ -62,11 +64,21 @@ class ReflectionRouter
         if (!$this->isValidParameters($list_types, $parameters))
             return;
 
+        $this->middleware();
+
         // визиваємо
         $result = $reflector->invokeArgs(new $this->controller, $parameters);
 
         // відповідь
-        $this->response->apply($result);
+         // $this->response->apply($result);
+        exit;
+    }
+
+    private function middleware()
+    {
+        $list = new MiddlewareList();
+        foreach ($list->autoload as $item)
+            (new $item())->handle();
     }
 
     /**
@@ -176,17 +188,7 @@ class ReflectionRouter
             // параметр будь якого типу
             if ($type == 'null') continue;
 
-            // якщо метод очікує строку
-            $this->toString($type, $parameters[$it]);
-
-            // якщо метод очікує число флоат
-            $this->toFloat($type, $parameters[$it]);
-
-            // якщо метод очікує число
-            $this->toInteger($type, $parameters[$it]);
-
-            // якщо метод очікує boolean
-            $this->toBoolean($type, $parameters[$it]);
+            Type::to($type, $parameters[$it]);
 
             // якщо тип дабл а параметр флоат то пропускаємо
             if (gettype($parameters[$it]) == 'double' && $type == 'float') continue;
@@ -202,59 +204,6 @@ class ReflectionRouter
         }
 
         return true;
-    }
-
-    /**
-     * Перетворення чисел в строку
-     * @param $type
-     * @param $param
-     */
-    private function toString($type, &$param): void
-    {
-        if ($type != 'string') return;
-
-        if (is_integer($param) || is_float($param))
-            $param = (string)$param;
-    }
-
-    /**
-     * @param $type
-     * @param $param
-     */
-    private function toFloat($type, &$param): void
-    {
-        if ($type != 'float') return;
-
-        if (is_integer($param) || is_float($param) || is_numeric($param))
-            $param = (float)$param;
-    }
-
-    /**
-     * @param $type
-     * @param $param
-     */
-    private function toInteger($type, &$param): void
-    {
-        if ($type != 'int') return;
-
-        if (is_integer($param) || is_float($param) || is_numeric($param))
-            $param = (int)$param;
-    }
-
-    /**
-     * @param $type
-     * @param $param
-     * @return void
-     */
-    private function toBoolean($type, &$param): void
-    {
-        if ($type != 'bool') return;
-
-        if ($param === 1 || $param === '1' || $param === 'true')
-            $param = true;
-
-        if ($param === 0 || $param === '0' || $param === 'false')
-            $param = false;
     }
 
     /**

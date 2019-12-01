@@ -4,9 +4,6 @@ use \Web\App\Router\StrongRouter;
 use Web\App\Router\SimpleRouter;
 use Web\App\Router\ApiRouter;
 use Web\App\Router\ReflectionRouter;
-use Whoops\Handler\PrettyPageHandler;
-use Whoops\Handler\JsonResponseHandler;
-use Whoops\Run as Whoops;
 
 define('START', microtime(1));
 define('ROOT', __DIR__);
@@ -18,12 +15,9 @@ session_start();
 
 include_once './vendor/autoload.php';
 
-(new Whoops)
-    ->pushHandler($_SERVER['REQUEST_METHOD'] == 'get' ? new PrettyPageHandler : new JsonResponseHandler)
-    ->register();
+include 'laravel.php';
 
 new ReflectionRouter();
-
 $parse = 'parse_' . strtolower($_SERVER['REQUEST_METHOD']);
 $route = new StrongRouter();
 include ROOT . '/routs/' . strtolower($_SERVER['REQUEST_METHOD']) . '.php';

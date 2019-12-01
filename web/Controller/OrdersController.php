@@ -4,8 +4,10 @@ namespace Web\Controller;
 
 use SergeyNezbritskiy\PrivatBank\AuthorizedClient;
 use SergeyNezbritskiy\PrivatBank\Merchant;
-use Web\App\Collection;
 use Web\App\Request;
+use Web\Eloquent\Order;
+use Web\Eloquent\Shop;
+use Web\Filters\OrdersListFilter;
 use Web\Model\Coupon;
 use Web\Model\Orders;
 use Web\App\Controller;
@@ -15,27 +17,20 @@ use Web\Model\Api\NewPost;
 use Web\Model\Sms;
 use Web\Model\Reports;
 use RedBeanPHP\R;
+use Web\Eloquent\User;
 use Web\Orders\OrderCreate;
 use Web\Orders\OrderUpdate;
 use Web\Requests\Orders\CreateSelfRequest;
 
 class OrdersController extends Controller
 {
-    /**
-     * @param Request $request
-     */
-    public function sectionUpdate(Collection $a)
-    {
-        dd($a->all());
-        exit;
-    }
-
     public function __construct()
     {
         parent::__construct();
 
         $this->checkBlackDate();
     }
+
 
     private function checkBlackDate()
     {
@@ -59,109 +54,78 @@ class OrdersController extends Controller
             response(400, 'На цю дату неможливо завести замовлення!');
     }
 
-    public function section_main()
+    public function sectionView(OrdersListFilter $filter, Request $request, string $type = 'delivery')
     {
-        // якщо тип не вказано то по дефолту доставки
-        if (!get('type')) $_GET['type'] = 'delivery';
+        $orders = Order::with(['pay', 'courier', 'liable', 'bonuses', 'bonuses', 'hint', 'professional'])
+            ->filter($filter)
+            ->paginate(ITEMS);
 
+        $full = $orders->sum(function ($item){
+            return $item->full_sum;
+        });
 
-        $order = Orders::orderDataByType(get('type'));
-
-        //$order = [];
-        $full = 0;
-        foreach ($order['data'] as $item)
-            $full += $item['full_sum'];
-
+        $orders->appends($request->toArray());
 
         $data = [
-            'title' => 'Замовлення :: ' . type_parse(get('type')),
-            'scripts' => ['orders/view.js'],
+            'title' => 'Замовлення :: ' . type_parse($type),
             'full' => $full,
-            'components' => ['inputmask'],
-            'type' => get('type'),
-            'css' => ['orders/common.css'],
-            'data' => get_object($order['data']),
-            'paginate' => $order['paginate'],
-            'shops' => Orders::getAll('shops'),
-            'breadcrumbs' => [['Замовлення', uri('orders', ['type' => 'delivery'])], [type_parse(get('type'))]]
+            'type' => $type,
+            'orders' => $orders,
+            'couriers' => User::where('archive', 0)->get(),
+            'shops' => Shop::all(),
+            'request' => $request,
+            'breadcrumbs' => [
+                ['Замовлення', uri('orders/view', ['type' => 'delivery'])],
+                [type_parse($type)]
+            ]
         ];
 
         $this->view->display('buy.view.index', $data);
     }
 
-    public function section_create()
+    public function sectionCreate(string $type = 'delivery')
     {
-        if (!get('type')) get('type', 'delivery');
-
         $data = [
             'title' => 'Замовлення :: Нове замовлення',
-            'scripts' => ['elements.js', 'orders/order.js', 'orders/create.js'],
-            'components' => ['inputmask'],
-            'css' => ['elements.css'],
             'categories' => Coupon::getCategories(),
-            'type' => get('type'),
-            'hints' => Orders::getHints(get('type')),
+            'type' => $type,
+            'hints' => Orders::getHints($type),
             'pays' => OrderSettings::getAll('pays'),
             'users' => OrderSettings::findAll('users', 'archive = 0'),
             'deliveries' => OrderSettings::getAll('logistics'),
-            'to_js' => [
-                'type' => get('type')
-            ],
+            'storage' => Orders::findAll('storage', '`accounted` = 1 ORDER BY `sort` ASC'),
             'breadcrumbs' => [
                 ['Замовлення', uri('orders', ['type' => 'delivery'])],
-                [type_parse(get('type')), uri('orders', ['type' => get('type')])],
+                [type_parse($type), uri('orders', ['type' => $type])],
                 ['Нове замовлення']
-            ],
-            'storage' => Orders::findAll('storage', '`accounted` = 1 ORDER BY `sort` ASC')
+            ]
         ];
-
-        if (get('type') == 'sending') {
-            $data['scripts'][] = 'orders/sending.js';
-        } elseif (get('type') == 'delivery') {
-            $data['scripts'][] = 'orders/delivery.js';
-        }
 
         $this->view->display('buy.create.main', $data);
     }
 
-    public function section_update()
+    public function sectionUpdate(int $id)
     {
-        if (!get('id')) $this->display_404();
-
-        $id = get('id');
-
-        $order = Orders::getOrderById($id);
-
-        $sms = Sms::getMessagesByOrderId($id);
+        $order = Order::with('sms_messages', 'author')->findOrFail($id);
 
         $data = [
             'title' => 'Замовлення :: Редагування',
-            'components' => ['modal', 'inputmask'],
             'breadcrumbs' => [
-                ['Замовлення', uri('orders', ['type' => 'delivery'])],
-                [type_parse($order->type), uri('orders', ['type' => $order->type])],
-                ['№<b>' . $order->id . '</b> - ' . user($order->author)->login]
+                ['Замовлення', uri('orders/view', ['type' => 'delivery'])],
+                [$order->type_name, uri('orders/view', ['type' => $order->type])],
+                ['№<b>' . $order->id . '</b> - ' . $order->author->login]
             ],
-            'scripts' => ['elements.js', 'orders/order.js', 'orders/update.js'],
-            'css' => ['elements.css'],
             'id' => $id,
             'type' => $order->type,
             'products' => Orders::getProductsByOrderId($id),
             'order' => $order,
             'categories' => Coupon::getCategories(),
-            'to_js' => [
-                'id' => $id,
-                'type' => $order->type,
-                'discount' => $order->discount,
-                'delivery_cost' => $order->delivery_cost,
-                'closed_order' => Orders::count('reports', "`data` = ? AND `type` = 'order'", [$id])
-            ],
             'sms_templates' => Sms::getAllByType($order->type),
-            'sms' => $sms,
             'bonuses' => Orders::getBonuses($id),
             'images' => Orders::getImages($id),
             'storage' => Orders::findAll('storage', '`accounted` = 1  ORDER BY `sort` ASC'),
-            'pay' => Orders::getOne($order->pay_method, 'pays')
+            'pay' => Orders::getOne($order->pay_method, 'pays'),
+            'closed_order' => Orders::count('reports', "`data` = ? AND `type` = 'order'", [$id])
         ];
 
         $add_transaction = false;
@@ -176,36 +140,27 @@ class OrdersController extends Controller
         }
         $data['add_transaction'] = $add_transaction;
 
-        if ($order->client != '') $order->client = Orders::getOne($order->client, 'clients');
+        if ($order->client != '')
+            $order->client = Orders::getOne($order->client, 'clients');
 
-        if ($order->type == 'sending') {
-            if ($order->logistic_name == 'НоваПошта') {
-                $new_post = new NewPost();
-                $order->city_name = $new_post->getNameCityByRef($order->city);
-                $data['warehouses'] = $new_post->search_warehouses($order->city);
-                $data['return_shipping'] = Orders::get_return_shipping($data['id']);
-                $data['cards'] = $new_post->get_cards();
-            } else {
-                $data['return_shipping'] = Orders::get_return_shipping($data['id']);
-                $data['cards'] = [];
-            }
-            $data['scripts'][] = 'orders/sending.js';
-        } elseif ($order->type == 'delivery') {
-            $data['scripts'][] = 'orders/delivery.js';
+        if ($order->type == 'sending' && $order->logistic_name == 'НоваПошта') {
+            $new_post = new NewPost();
+            $order->city_name = $new_post->getNameCityByRef($order->city);
+            $data['warehouses'] = $new_post->search_warehouses($order->city);
         }
 
         $this->view->display('buy.update.main', $data);
     }
 
-    public function section_changes()
+    public function sectionChanges(int $id)
     {
-        $order = Orders::getOne(get('id'));
+        $order = Orders::getOne($id);
 
         $data = [
             'order' => $order,
             'title' => 'Історія змін замовлення',
-            'changes' => Orders::get_changes_by_id(get('id')),
-            'id' => get('id'),
+            'changes' => Orders::get_changes_by_id($id),
+            'id' => $id,
             'breadcrumbs' => [
                 ['Замовлення', uri('orders', ['type' => 'delivery'])],
                 [type_parse($order->type), uri('orders', ['type' => $order->type])],
@@ -214,11 +169,8 @@ class OrdersController extends Controller
             ]
         ];
 
-        // dd($data['changes']);
-
         $this->view->display('buy.changes.main', $data);
     }
-
 
     public function action_create($post)
     {
@@ -292,11 +244,11 @@ class OrdersController extends Controller
         response(200, 'Тип замовлення вдало змінений!');
     }
 
-    public function action_preview($post)
+    public function actionPreview(int $id)
     {
         $data = [
-            'products' => Orders::getProductsByOrderId($post->id),
-            'order' => get_object(Orders::getOne($post->id))
+            'products' => Orders::getProductsByOrderId($id),
+            'order' => get_object(Orders::getOne($id))
         ];
 
         $this->view->display('orders.preview', $data);
@@ -663,9 +615,9 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function action_update_courier($post)
+    public function actionUpdateCourier(OrderUpdate $order, int $courier_id = 0)
     {
-        (new OrderUpdate($post->id))->courier($post);
+        $order->courier($courier_id);
 
         response(200, ['action' => 'close', 'message' => DATA_SUCCESS_UPDATED]);
     }

@@ -4,6 +4,7 @@ namespace Web\Model;
 
 use Web\App\Model;
 use RedBeanPHP\R;
+use Web\Eloquent\Order;
 
 class Index extends Model
 {
@@ -51,35 +52,15 @@ class Index extends Model
     }
 
     /**
-     * @return array
+     * @return object
      */
     public static function not_close_orders()
     {
-        return (get_object(R::getRow("
-            SELECT 
-                (SELECT COUNT(`orders`.`id`) FROM `orders` WHERE 
-                    `orders`.`type` = 'delivery' AND 
-                    `orders`.`courier` = `users`.`id` AND 
-                    `orders`.`status` IN(0,1)
-                ) AS `delivery`,
-                (SELECT COUNT(*) FROM `orders` WHERE 
-                    `orders`.`type` = 'self' AND 
-                    `orders`.`courier` = `users`.`id` AND 
-                    `orders`.`status` IN(0,1)
-                ) AS `self`,
-                (SELECT COUNT(*) FROM `orders` WHERE 
-                    `orders`.`type` = 'sending' AND 
-                    `orders`.`courier` = `users`.`id` AND 
-                    `orders`.`status` IN(0,1)
-                ) AS `sending`,
-                (SELECT COUNT(*) FROM `orders` WHERE 
-                    `orders`.`type` = 'shop' AND 
-                    `orders`.`courier` = `users`.`id` AND 
-                    `orders`.`status` = 0
-                ) AS `shop`
-            FROM
-                `users`
-            WHERE `users`.`id` = ?", [user()->id])));
+        return (object)[
+            'delivery' => Order::where('type', 'delivery')->where('courier_id', user()->id)->whereIn('status', [0,1])->count(),
+            'self' => Order::where('type', 'self')->where('courier_id', user()->id)->whereIn('status', [0,1])->count(),
+            'sending' => Order::where('type', 'sending')->where('courier_id', user()->id)->whereIn('status', [0,1])->count(),
+        ];
     }
 
     /**

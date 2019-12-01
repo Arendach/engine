@@ -6,7 +6,8 @@ class Response
 {
     public function apply($response)
     {
-        dd($response);
+        if (is_string($response))
+            echo $response;
     }
 
     public function abort(int $code): void

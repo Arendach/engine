@@ -21,7 +21,7 @@ $route->post('/delete_temp_file', 'ProductController@delete_temp_file');
 /**
  * Автентифікація
  */
-$route->post('/login', 'UserController@post_login', ['exception' => true]);
+$route->post('/login', 'UserController@actionLogin', ['exception' => true]);
 $route->post('/reset_password', 'UserController@post_reset_password', ['exception' => true]);
 
 

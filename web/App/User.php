@@ -39,8 +39,8 @@ class User extends Entity
      */
     private function setAccess($id)
     {
-        if (R::count('users_access', '`id` = ?', [$id]) > 0) {
-            $bean = R::load('users_access', $id);
+        if (R::count('user_access', '`id` = ?', [$id]) > 0) {
+            $bean = R::load('user_access', $id);
             return json_decode($bean->params);
         } elseif ($id == 9999) {
             return true;

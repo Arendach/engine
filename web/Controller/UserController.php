@@ -43,7 +43,7 @@ class UserController extends Controller
                 ['Менеджери', uri('user')],
                 ['Архів']
             ],
-            'items' => User::findAll('users', 'archive = 1')
+            'items' => User::findAll('user', 'archive = 1')
         ];
 
         $this->view->display('users.archive', $data);
@@ -137,7 +137,7 @@ class UserController extends Controller
     }
 
 
-    public function post_login($data)
+    public function actionLogin($data)
     {
         if (isset($data->login) && !empty($data->login) && isset($data->password) && !empty($data->password)) {
             User::post_login($data);
@@ -171,10 +171,10 @@ class UserController extends Controller
         if (strlen($post->password) < 4 || !preg_match('/^[A-z0-9]+$/', $post->password))
             response(400, 'Пароль не може бути кортше 4 символів! Тільки англійські букви і цифри!');
 
-        if (User::count('users', '`email` = ?', [$post->email]) > 0)
+        if (User::count('user', '`email` = ?', [$post->email]) > 0)
             response(400, 'Користувач з таким E-Mail уже існує в БД!');
 
-        if (User::count('users', '`login` = ?', [$post->login]) > 0)
+        if (User::count('user', '`login` = ?', [$post->login]) > 0)
             response(400, 'Користувач з таким логіном уже існує в БД!');
 
         User::register($post);
@@ -249,7 +249,7 @@ class UserController extends Controller
 
     public function api_all_users()
     {
-        $users = User::findAll('users', 'archive = 0');
+        $users = User::findAll('user', 'archive = 0');
 
         $result = [];
         foreach ($users as $i => $user) {

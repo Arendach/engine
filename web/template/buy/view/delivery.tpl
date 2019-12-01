@@ -2,7 +2,6 @@
 
 use Web\Model\OrderSettings as Settings;
 
-$users = Settings::findAll('users', 'archive = 0');
 $s = isset($_GET['status']) ? true : false;
 
 ?>
@@ -23,15 +22,15 @@ $s = isset($_GET['status']) ? true : false;
 
     <tr class="tr_search">
         <td>
-            <input autocomplete="false" class="search" id="id" value="<?= get('id') ? get('id') : ''; ?>">
+            <input autocomplete="false" class="search" id="id" value="<?= $request->get('id', '') ?>">
         </td>
 
         <td>
-            <input class="search" id="fio" value="<?= get('fio'); ?>">
+            <input class="search" id="fio" value="<?= get('fio') ?>">
         </td>
 
         <td>
-            <input class="search" id="phone" value="<?= get('phone'); ?>">
+            <input class="search" id="phone" value="<?= get('phone') ?>">
         </td>
 
         <td style="width: 88px;">
@@ -52,14 +51,14 @@ $s = isset($_GET['status']) ? true : false;
             </select>
         </td>
         <td>
-            <select class="search" id="courier">
+            <select class="search" id="courier_id">
                 <option value=""></option>
-                <option <?= isset($_GET['courier']) && $_GET['courier'] == '0' ? 'selected' : '' ?> value="0">
+                <option <?= isset($_GET['courier_id']) && $_GET['courier_id'] == 0 ? 'selected' : '' ?> value="0">
                     Не вибрано
                 </option>
-                <?php foreach ($users as $user) { ?>
-                    <option <?= $user->id != get('courier') ?: 'selected' ?> value="<?= $user->id ?>">
-                        <?php echo $user->name ?>
+                <?php foreach ($couriers as $courier) { ?>
+                    <option <?= $courier->id != get('courier_id') ?: 'selected' ?> value="<?= $courier->id ?>">
+                        <?= $courier->name ?>
                     </option>
                 <?php } ?>
             </select>
@@ -99,34 +98,30 @@ $s = isset($_GET['status']) ? true : false;
 
     </tr>
 
-    <?php if (my_count($data) > 0) { ?>
-        <?php foreach ($data as $item) { ?>
+    <?php if ($orders->count()) { ?>
+        <?php foreach ($orders as $item) { ?>
             <tr id="<?= $item->id; ?>" class="order-row<?= $item->client_id != '' ? ' client-order' : '' ?>">
 
                 <td>
                     <?= $item->id; ?>
-                    <?php if ($item->atype != 0) { ?>
+                    <?php if (!is_null($item->professional)) { ?>
                         <button type="button"
                                 class="btn btn-xs btn-primary"
-                                style="background: #<?= $item->order_type_color ?>; height: 20px; width: 20px;"
+                                style="background: #<?= $item->professional->color ?>; height: 20px; width: 20px;"
                                 data-toggle="popover"
                                 data-placement="top"
                                 data-trigger="hover"
-                                title="<?= $item->order_type_login ?>"
+                                title="<?= $item->liable->login ?>"
                                 data-html="true"
-                                data-content="<?= $item->order_type_name ?>">
+                                data-content="<?= $item->professional->name ?>">
                             <i class="fa fa-info"></i>
                         </button>
                     <?php } ?>
                 </td>
 
-                <td>
-                    <?= $item->fio; ?>
-                </td>
+                <td><?= $item->fio ?></td>
 
-                <td>
-                    <?= $item->phone; ?>
-                </td>
+                <td><?= $item->phone ?></td>
 
                 <td style="width: 88px;">
                     <?php if (string_to_time($item->time_with) != '00:00' && string_to_time($item->time_to) != '00:00')
@@ -136,35 +131,24 @@ $s = isset($_GET['status']) ? true : false;
                     ?>
                 </td>
 
-                <td>
-                    <?= $item->street . ' ' . $item->address ?>
-                </td>
+                <td><?= $item->street . ' ' . $item->address ?></td>
 
                 <td>
                     <select class="courier">
-                        <option <?= $item->status != 0 ? 'disabled' : '' ?> <?= $item->courier == '0' ? 'selected' : '' ?>
-                                value="0">
-                            Не вибрано
-                        </option>
-                        <?php foreach ($users as $user) { ?>
-                            <option <?= $user->id == $item->courier ? 'selected' : '' ?> value="<?= $user->id ?>">
-                                <?= $user->name ?>
+                        <option <?= !$item->status ?: 'disabled' ?> <?= $item->courier ?: 'selected' ?> value="0">Не вибрано</option>
+                        <?php foreach ($couriers as $courier) { ?>
+                            <option <?= $courier->id == $item->courier_id ? 'selected' : '' ?> value="<?= $courier->id ?>">
+                                <?= $courier->name ?>
                             </option>
                         <?php } ?>
                     </select>
                 </td>
 
-                <td>
-                    <?= number_format($item->full_sum, 2) ?>
-                </td>
+                <td><?= number_format($item->full_sum, 2) ?></td>
 
-                <td>
-                    <?= get_order_status($item->status, $type); ?>
-                </td>
+                <td><?= get_order_status($item->status, $type) ?></td>
 
-                <td>
-                    <?= my_df($item->date_delivery, 'd.m.Y'); ?>
-                </td>
+                <td><?= $item->date_delivery->format('d.m.Y') ?></td>
 
                 <td class="action-2 relative">
                     <div id="preview_<?= $item->id ?>" class="preview_container"></div>
@@ -172,36 +156,27 @@ $s = isset($_GET['status']) ? true : false;
                         <button class="btn btn-primary btn-xs preview">
                             <span class="glyphicon glyphicon-eye-open"></span>
                         </button>
-                        <a class="btn btn-primary btn-xs"
-                           href="<?= uri('orders', ['section' => 'update', 'id' => $item->id]); ?>"
-                           title="Редагувати">
+                        <a class="btn btn-primary btn-xs" href="<?= uri('orders/update', ['id' => $item->id]); ?>" title="Редагувати">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </a>
                     </div>
                     <div class="buttons-2">
-                        <a class="btn btn-primary btn-xs"
-                           href="<?= uri('orders', ['section' => 'changes', 'id' => $item->id]); ?>"
-                           title="Історія змін">
+                        <a class="btn btn-primary btn-xs" href="<?= uri('orders/changes', ['id' => $item->id]); ?>" title="Історія змін">
                             <span class="glyphicon glyphicon-time"></span>
                         </a>
-                        <a target="_blank" href="<?= uri('orders', ['section' => 'receipt', 'id' => $item->id]) ?>"
-                           class="btn btn-primary btn-xs print_button" title="Друкувати">
+                        <a target="_blank" href="<?= uri('orders/receipt', ['id' => $item->id]) ?>" class="btn btn-primary btn-xs print_button" title="Друкувати">
                             <span class="glyphicon glyphicon-print"></span>
                         </a>
                     </div>
                     <div class="centered buttons-2">
-                        <?php if (!empty($item->color)) { ?>
-                            <button class="btn btn-xs" data-toggle="tooltip"
-                                    style="background-color: #<?= $item->color; ?>;" title="<?= $item->description; ?>">
+                        <?php if (!is_null($item->hint)) { ?>
+                            <button class="btn btn-xs" data-toggle="tooltip" style="background-color: #<?= $item->hint->color; ?>;" title="<?= $item->hint->description; ?>">
                                 <span class="glyphicon glyphicon-comment"></span>
                             </button>
                         <?php } ?>
 
-                        <?php if (my_count($item->bonuses) > 0) { ?>
-                            <button class="btn btn-xs btn-success"
-                                    style="background: red"
-                                    data-toggle="tooltip"
-                                    title="<?php foreach ($item->bonuses as $bonus){ echo user($bonus->user_id)->login ."\n"; } ?>">
+                        <?php if ($item->bonuses->count()) { ?>
+                            <button class="btn btn-xs btn-success" style="background: red" data-toggle="tooltip" title="<?php foreach ($item->bonuses as $bonus){ echo $bonus->user->login . "\n"; } ?>">
                                 <span class="fa fa-dollar"></span>
                             </button>
                         <?php } ?>

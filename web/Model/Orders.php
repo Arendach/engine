@@ -3,18 +3,18 @@
 namespace Web\Model;
 
 use RedBeanPHP\R;
-use Web\App\Interfaces\Converter;
+use Web\App\Collection;
 use Web\App\Paginator;
 use Web\App\Config;
+use Web\App\Request;
+use Web\Eloquent\Order;
 use Web\Model\Api\NewPost;
 use Web\App\Model;
 use LisDev\Delivery\NovaPoshtaApi2;
-use Web\Orders\OrderCreate;
-use Web\Orders\OrderUpdate;
 use Web\Tools\Log;
-use stdClass;
+use Web\Filters\OrdersListFilter;
 
-class Orders extends Model implements Converter
+class Orders extends Model
 {
     const table = 'orders';
 
@@ -37,85 +37,22 @@ class Orders extends Model implements Converter
     }
 
     // Дані для списку замовлень
-    public static function orderDataByType($type)
+    public function getOrders(Request $request)
     {
+
+        $items = Order::where('id', 50188)->get();
+
+        return $items;
+
         // кількість пунктів на сторінку
         $items = Config::items();
 
         // початок вибірки
-        $start_query = (get('page') - 1) * $items;
+        $start_query = ($request->get('page', 1) - 1) * $items;
 
-        $sql = '`orders`.`type` = \'' . $type . '\'';
+        $filter = new OrdersListFilter;
 
-        if (get('id'))
-            $sql .= ' AND `orders`.`id` LIKE \'' . get('id') . '%\'';
-
-        if (get('fio'))
-            $sql .= ' AND `orders`.`fio` LIKE \'%' . get('fio') . '%\'';
-
-        if (get('pay_method'))
-            $sql .= " AND `orders`.`pay_method` = '" . get('pay_method') . "'";
-
-        if (get('site'))
-            $sql .= ' AND `orders`.`site` = \'' . get('site') . '\'';
-
-        if (get('atype'))
-            $sql .= ' AND `orders`.`atype` = \'' . get('atype') . '\'';
-
-        if (get('hint'))
-            $sql .= ' AND `orders`.`hint` = \'' . get('hint') . '\'';
-
-        if (get('pay_method'))
-            $sql .= ' AND `orders`.`pay_method` = \'' . get('pay_method') . '\'';
-
-        if (get('phone'))
-            $sql .= ' AND `orders`.`phone` LIKE \'' . get('phone') . '%\'';
-
-        if (get('phone2'))
-            $sql .= ' AND `orders`.`phone2`= \'' . get('phone2') . '\'';
-
-        if (get('date'))
-            $sql .= ' AND DATE(`orders`.`date_delivery`) = \'' . get('date') . '\'';
-
-        if (isset($_GET['courier']) && is_numeric($_GET['courier']))
-            $sql .= ' AND `orders`.`courier` = \'' . get('courier') . '\'';
-
-        if (get('time_with') !== false)
-            $sql .= ' AND `orders`.`time_with` >= \'' . time_to_string(get('time_with')) . '\' ';
-
-        if (get('time_to'))
-            $sql .= ' AND `orders`.`time_to` <= \'' . time_to_string(get('time_to')) . '\' ';
-
-        if (get('region'))
-            $sql .= ' AND `orders`.`street` LIKE \'%(' . preg_replace("/'/", "\'", get('region')) . ')\'';
-
-        if (get('warehouse'))
-            $sql .= " AND `orders`.`warehouse`= '{$_GET['warehouse']}'";
-
-        if (get('street'))
-            $sql .= " AND `orders`.`street` LIKE '%" . get('street') . "%'";
-
-        if (get('full_sum'))
-            $sql .= ' AND `orders`.`full_sum` LIKE \'' . get('full_sum') . '%\' ';
-
-        if (get('liable'))
-            $sql .= ' AND `orders`.`liable` = \'' . get('liable') . '\' ';
-
-        if (get('from') && get('to'))
-            $sql .= ' AND DATE(`orders`.`date`) BETWEEN \'' . get('from') . '\' AND \'' . get('to') . '\' ';
-
-        if (get('status') !== false) {
-            if (get('status') === 'open') {
-                $sql .= $type == 'shop' ? ' AND `orders`.`status` = 0 ' : ' AND `orders`.`status` IN(0,1) ';
-            } else if (get('status') === 'close') {
-                $sql .= $type == 'shop' ? ' AND `orders`.`status` IN(1,2) ' : ' AND `orders`.`status` IN(2,3,4) ';
-            } else {
-                $sql .= " AND `orders`.`status` = '" . get('status') . "'";
-            }
-        } else {
-            $sql .= $type == 'shop' ? '' : ' AND `orders`.`status` IN(0,1,4)';
-        }
-
+        $sql = $filter->getSql();
 
         $query = "
             SELECT orders.*,
@@ -141,50 +78,21 @@ class Orders extends Model implements Converter
             GROUP BY orders.id
             ORDER BY orders.id DESC";
 
-
         $data = R::getAll("$query LIMIT $start_query, $items");
 
+        $this->loadBonuses($data);
 
-        $data = static::loadBonuses($data);
-        return [
-            'data' => $data,
-            'paginate' => Paginator::simple('orders', $sql)
-        ];
+        $data = new Collection($data);
+
+        $data->paginate(Paginator::simple('orders', $sql));
+
+        return $data;
     }
 
-    private static function loadBonuses($items)
+    private function loadBonuses(&$items)
     {
-        foreach ($items as $i => $item) {
-            $bonuses = R::findAll('bonuses', "`data` = {$item['id']} AND `source` = 'order'");
-
-            $items[$i]['bonuses'] = $bonuses;
-        }
-
-        return $items;
-    }
-
-    // Дані по замовленню
-    public static function getOrderById($id)
-    {
-        $id = (int)($id);
-        $r = R::getRow("
-            SELECT 
-                `orders`.*, `logistics`.`name` AS `logistic_name`,
-                `users`.`name` AS `courier_name`,
-                `pays`.`name` AS `pay_name`,
-                `colors`.`description` AS `hint_name`,
-                `co`.`client_id` AS `client`
-            FROM 
-                `orders` 
-            LEFT JOIN `logistics` ON (`logistics`.`id` = `orders`.`delivery`) 
-            LEFT JOIN `users` ON(`users`.`id` = `orders`.`courier`)
-            LEFT JOIN `pays` ON (`pays`.`id` = `orders`.`pay_method`)
-            LEFT JOIN `colors` ON (`colors`.`id` = `orders`.`hint`)
-            LEFT JOIN `client_orders` AS `co` ON(`co`.`order_id` = $id) 
-            WHERE 
-                `orders`.`id` = $id ");
-
-        return get_object($r);
+        foreach ($items as $i => $item)
+            $items[$i]['bonuses'] = R::findAll('bonuses', "`data` = {$item['id']} AND `source` = 'order'");
     }
 
     // Історія замовлення
