@@ -106,33 +106,28 @@ $(document).ready(function () {
             ajax_send123();
     });
 
-    $body.on('click', '[data-type="delete"]', function (event) {
+    $(document).on('click', '[data-type="delete"]', function (event) {
         event.preventDefault();
 
-        var id = $(this).data('id');
-        var uri = $(this).data('uri');
-        var action = $(this).data('action');
-        var post = $(this).data('post');
+        let data
+        let id = $(this).data('id')
+        let url = $(this).data('uri')
+        let action = $(this).data('action')
+        let post = $(this).data('post')
 
-        if (post !== undefined)
-            var data = post + '&action=' + action;
-        else
-            var data = {id: id, action: action};
+        if (post !== undefined) data = post + '&action=' + action
+        else data = {id, action}
 
         delete_on_click(function () {
             $.ajax({
                 type: 'post',
-                url: uri,
-                data: data,
-                success: function (answer) {
-                    successHandler(answer);
-                },
-                error: function (answer) {
-                    errorHandler(answer);
-                }
-            });
-        });
-    });
+                url,
+                data,
+                success: answer => successHandler(answer),
+                error: answer => errorHandler(answer)
+            })
+        })
+    })
 
     $body.on('click', '[data-type="get_form"]', function (event) {
         event.preventDefault();

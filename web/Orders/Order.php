@@ -5,6 +5,8 @@ namespace Web\Orders;
 use RedBeanPHP\R;
 use stdClass;
 use RedBeanPHP\OODBBean;
+use Web\Eloquent\Product;
+use Web\Eloquent\ProductStorage;
 use Web\Model\Purchases;
 
 abstract class Order
@@ -32,31 +34,29 @@ abstract class Order
     /**
      * @param int $product_id
      * @param int $storage_id
-     * @return OODBBean
+     * @return ProductStorage
      */
-    protected function getPTS(int $product_id, int $storage_id): OODBBean
+    protected function getPTS(int $product_id, int $storage_id): ProductStorage
     {
-        if (!R::count('product_to_storage', '`product_id` = ? AND `storage_id` = ?', [$product_id, $storage_id])) {
-            $pts = R::xdispense('product_to_storage');
-            $pts->product_id = $product_id;
-            $pts->storage_id = $storage_id;
-            $pts->count = 0;
-            R::store($pts);
+        $build = ProductStorage::where('product_id', $product_id)->where('storage_id', $storage_id);
 
-            return $pts;
-        } else {
-            return R::findOne('product_to_storage', '`product_id` = ? AND `storage_id` = ?', [$product_id, $storage_id]);
-        }
+        if ($build->count())
+            return $build->first();
+        else
+            return ProductStorage::insert([
+                'product_id' => $product_id,
+                'storage_id' => $storage_id,
+                'count' => 0
+            ]);
     }
 
     /**
-     * @param OODBBean $pts
+     * @param ProductStorage $pts
      * @param int $amount
-     * @return void
      */
-    protected function createPurchase(OODBBean $pts, $amount = 1): void
+    protected function createPurchase(ProductStorage $pts, $amount = 1): void
     {
-        $product = R::load('products', $pts->product_id);
+        $product = Product::find($pts->product_id);
 
         if ($pts->count <= 2) {
             Purchases::create((object)[

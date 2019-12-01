@@ -115,4 +115,26 @@ class Collection implements Countable, Converter
     {
         return $this->paginate;
     }
+
+    public function collect()
+    {
+        $res = [];
+        foreach ($this->data as $datum) {
+            $res[] = new Collection($datum);
+        }
+
+        return $res;
+    }
+
+    private function arraysInArray($need): bool
+    {
+        if (!is_array($need)) return false;
+
+        foreach ($need as $item)
+            if (!is_array($item))
+                return false;
+
+        return true;
+    }
+
 }

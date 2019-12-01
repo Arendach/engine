@@ -120,9 +120,8 @@ function element($key, $data = [])
                     <?php if ($type != 'sending') { ?>
                         <option value="0"></option>
                     <?php } ?>
-                    <?php foreach (\Web\Model\Orders::getHints($type) as $item) { ?>
-                        <option <?= htmlspecialchars($hint) == $item->id ? 'selected' : ''; ?>
-                                value="<?= $item->id; ?>">
+                    <?php foreach (\Web\Eloquent\OrderHint::whereIn('type', [0, $type]) as $item) { ?>
+                        <option <?= htmlspecialchars($hint) == $item->id ? 'selected' : ''; ?> value="<?= $item->id; ?>">
                             <?= $item->description; ?>
                         </option>
                     <?php } ?>

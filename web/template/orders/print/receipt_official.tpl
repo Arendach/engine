@@ -91,7 +91,6 @@ if (!isset($payer)) throw new Exception('Виберіть коректний с�
 </head>
 <body>
 <div class="table-container">
-
     <div class="provider">
         <?= isset($payer->provider) && !is_null($payer->provider)
             ? $payer->provider
@@ -101,7 +100,6 @@ if (!isset($payer)) throw new Exception('Виберіть коректний с�
     <div class="centered">
         <b>Товарний чек № <?= $order->id ?> від <?= date_for_humans($order->date_delivery) ?></b>
     </div>
-
 </div>
 
 <div class="table-container">

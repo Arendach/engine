@@ -1,15 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: taras
- * Date: 01.12.2019
- * Time: 11:12
- */
 
 namespace Web\Eloquent;
 
+use Illuminate\Database\Eloquent\Model;
 
-class OrderFile
+class OrderFile extends Model
 {
+    protected $table = 'order_files';
 
 }

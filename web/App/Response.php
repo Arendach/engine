@@ -22,6 +22,14 @@ class Response
         exit;
     }
 
+    public function json($message, $status = 200)
+    {
+        http_status($status);
+        header('Content-Type: application/json');
+        echo json_encode($message);
+        exit;
+    }
+
     public function jsonValidateErrors(array $errors)
     {
         throw new \Exception(json_encode($errors), 400);

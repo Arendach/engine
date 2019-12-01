@@ -1,15 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: taras
- * Date: 01.12.2019
- * Time: 19:00
- */
 
 namespace Web\Eloquent;
 
+use Illuminate\Database\Eloquent\Model;
 
-class Change
+class OrderHistory extends Model
 {
+    protected $table = 'changes';
+
+    public $timestamps = false;
 
 }

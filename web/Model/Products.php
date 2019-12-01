@@ -51,27 +51,6 @@ class Products extends Model
         return get_object($product_attributes);
     }
 
-    // Вертаємо вибрані товари при пошуку
-    public static function get_by_ids($data)
-    {
-        $result = (object)[];
-
-        foreach ($data->products as $item) {
-            $result->{$item->id} = (object)R::getRow("
-                SELECT 
-                  `products`.*, 
-                  `pts`.`storage_id` AS `storage_id`,
-                  `pts`.`count` AS `count_on_storage`,
-                  `storage`.`name` AS `storage_name` 
-                FROM `products`
-                LEFT JOIN `product_to_storage` AS `pts` ON (`pts`.`product_id` = `products`.`id` AND `pts`.`storage_id` = '{$item->storage}' )
-                LEFT JOIN `storage` ON `storage`.`id` = `pts`.`storage_id`
-                WHERE `products`.`id` = {$item->id}");
-        }
-
-        return $result;
-    }
-
     public static function search_products_to_combine($like, $not)
     {
         $n = '';

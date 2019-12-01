@@ -148,7 +148,7 @@ $s = isset($_GET['status']) ? true : false;
 
                 <td><?= get_order_status($item->status, $type) ?></td>
 
-                <td><?= $item->date_delivery->format('d.m.Y') ?></td>
+                <td><?= $item->date_delivery ?></td>
 
                 <td class="action-2 relative">
                     <div id="preview_<?= $item->id ?>" class="preview_container"></div>

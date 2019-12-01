@@ -43,106 +43,91 @@ $(document).ready(function () {
         $('.new_product_block').toggleClass('none');
     });
 
-    $body.on('click', '#save_price', function (event) {
-        event.preventDefault();
+    $(document).on('click', '#save_price', function (event) {
+        event.preventDefault()
 
-        var data = {};
-        data.products = [];
-        data.data = {};
+        let data = {}
+
+        data.products = []
+        data.data = {}
+
         $('#list_products .product').each(function () {
-            var object = {};
-            var $this = $(this);
-            object['id'] = $this.data('id');
-            object['pto'] = $this.data('pto');
-            object['storage'] = $this.find('.storage').val();
-            object['attributes'] = {};
+            let object = {}
+            let $this = $(this)
+            object['id'] = $this.data('id')
+            object['pto'] = $this.data('pto')
+            object['storage'] = $this.find('.storage').val()
+            object['attributes'] = {}
 
             $this.find('.product_field').each(function () {
-                object[$(this).data('name')] = $(this).val();
-            });
+                object[$(this).data('name')] = $(this).val()
+            })
 
             $this.find('.attributes select').each(function () {
-                var key = $(this).attr('data-key');
-                object.attributes[key] = $(this).find(':selected').val();
-            });
-            data.products.push(object);
-        });
+                let key = $(this).attr('data-key')
+                object.attributes[key] = $(this).find(':selected').val()
+            })
+            data.products.push(object)
+        })
 
-        data.data.delivery_cost = $('#delivery_cost').val();
-        data.data.discount = $('#discount').val();
+        data.data.delivery_cost = $('#delivery_cost').val()
+        data.data.discount = $('#discount').val()
 
-        data.id = id;
-        data.action = 'update_products';
+        data.id = id
 
         $.ajax({
             type: 'post',
-            url: url('orders'),
-            data: data,
-            success: function (answer) {
-                successHandler(answer);
-            },
-            error: function (answer) {
-                errorHandler(answer);
-            }
-        });
+            url: url('orders/update_products'),
+            data,
+            success: answer => successHandler(answer),
+            error: answer => errorHandler(answer)
+        })
     });
 
-    $body.on('click', '.drop_product', function (event) {
-        event.preventDefault();
-
-        var $this = $(this);
+    $(document).on('click', '.drop_product', function (event) {
+        event.preventDefault()
+        let $this = $(this)
 
         if ($this.data('id') == 'remove') {
-            $this.parents('tr').remove();
-            check_price();
-            return false;
+            $this.parents('tr').remove()
+            check_price()
+            return false
         }
 
         delete_on_click(function () {
             $.ajax({
                 type: 'post',
-                url: url('orders'),
+                url: url('orders/drop_product'),
                 data: {
                     pto: $this.parents('tr').data('pto'),
-                    action: 'drop_product',
-                    id: $this.data('order-id')
+                    order_id: $this.data('order-id')
                 },
-                success: function (answer) {
-                    successHandler(answer, true);
-                    $this.parents('tr').remove();
-                    check_price();
+                success(answer) {
+                    successHandler(answer, true)
+                    $this.parents('tr').remove()
+                    check_price()
                 },
-                error: function (answer) {
-                    errorHandler(answer);
-                }
-            });
-        });
-    });
+                error: answer => errorHandler(answer)
+            })
+        })
+    })
 
-    $body.on('click', '#select_products', function () {
-        var arr_products = Elements.select('#products').getMultiSelectedWithData();
-        var has_id = [];
-        $.each($('#list_products tr.product'), function (index, value) {
-            has_id.push($(this).data('id'));
-        });
+    $(document).on('click', '#select_products', function () {
+        let products = Elements.select('#products').getMultiSelectedWithData()
 
-        if (arr_products.length == 0) return false;
+        if (products.length == 0) return false
 
         $.ajax({
-            url: url('orders'),
-            data: {
-                products: arr_products,
-                type: type,
-                action: 'get_products'
-            },
+            type: 'post',
+            url: url('orders/get_products'),
+            data: {products, type},
             dataType: 'html',
-            method: 'post',
-            success: function (answer) {
-                $('#list_products tbody').append(answer);
-                $('#price').css('display', 'block');
+            success(answer) {
+                $('#list_products tbody').append(answer)
+                $('#price').css('display', 'block')
             }
-        });
-    });
+        })
+    })
 
 
     /**
@@ -280,7 +265,7 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on('change', '#storage',  function () {
+    $(document).on('change', '#storage', function () {
         $('#products').html('');
     });
 });

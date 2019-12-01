@@ -1,15 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: taras
- * Date: 01.12.2019
- * Time: 12:58
- */
 
 namespace Web\Eloquent;
 
+use Illuminate\Database\Eloquent\Model;
 
-class ProductStorage
+class ProductStorage extends Model
 {
+    protected $table = 'product_storage';
 
+    public $timestamps = false;
+
+    public static function getCount($storage_id, $product_id)
+    {
+        return ProductStorage::select('count')
+            ->where('storage_id', $storage_id)
+            ->where('product_id', $product_id)
+            ->first()
+            ->count;
+    }
 }

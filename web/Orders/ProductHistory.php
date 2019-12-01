@@ -2,23 +2,29 @@
 
 namespace Web\Orders;
 
-use RedBeanPHP\OODBBean;
-use RedBeanPHP\R;
+use Web\Eloquent\Product;
+use Web\Eloquent\ProductHistory as ProductHistoryModel;
 
 class ProductHistory
 {
     /**
-     * @var OODBBean
+     * @var Product
      */
     private $product;
 
     /**
-     * ProductHistory constructor.
-     * @param OODBBean $product
+     * @var ProductHistoryModel
      */
-    public function __construct(OODBBean $product)
+    private $history;
+
+    /**
+     * ProductHistory constructor.
+     * @param Product $product
+     */
+    public function __construct(Product $product)
     {
         $this->product = $product;
+        $this->history = new ProductHistoryModel();
     }
 
     /**
@@ -31,6 +37,15 @@ class ProductHistory
     }
 
     /**
+     * @param array $data
+     */
+    public function updateInOrder(array $data): void
+    {
+        $this->save('update_in_order', $data);
+    }
+
+
+    /**
      * @param string $type
      * @param string|array $data
      */
@@ -41,14 +56,12 @@ class ProductHistory
         if (is_array($data))
             $data = json_encode($data);
 
-        $bean = R::xdispense('history_product');
+        $this->history->product = $this->product->id;
+        $this->history->type = $type;
+        $this->history->data = $data;
+        $this->history->date = date('Y-m-d H:i:s');
+        $this->history->author = user()->id;
 
-        $bean->product = $this->product->id;
-        $bean->type = $type;
-        $bean->data = $data;
-        $bean->date = date('Y-m-d H:i:s');
-        $bean->author = user()->id;
-
-        R::store($bean);
+        $this->history->save();
     }
 }

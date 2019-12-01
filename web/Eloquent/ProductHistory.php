@@ -1,15 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: taras
- * Date: 01.12.2019
- * Time: 19:07
- */
 
 namespace Web\Eloquent;
 
+use Illuminate\Database\Eloquent\Model;
 
-class ProductHistory
+class ProductHistory extends Model
 {
+    protected $table = 'history_product';
 
+    public $timestamps = false;
 }

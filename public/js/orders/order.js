@@ -44,15 +44,11 @@ $(document).ready(function () {
         data.type = type;
         data.storage = $('#storage').val()
 
-        console.log(data);
-
         $.ajax({
             type: 'post',
-            url: url('/orders'),
-            data: data,
-            success: function (data) {
-                $('.new_product_block .products').html(data);
-            }
+            url: url('orders/search_products'),
+            data,
+            success: data => $('.new_product_block .products').html(data)
         });
     }
 

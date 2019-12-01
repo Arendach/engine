@@ -1,10 +1,6 @@
-<!-- Button -->
-
 <div class="open-product-block">
     <div class="but">Додати товар</div>
 </div>
-
-<!-- Search products form -->
 
 <div class="new_product_block form-group none">
     <div class="search_product">
@@ -48,144 +44,171 @@
     <button class="btn btn-primary" id="select_products">Вибрати</button>
 </div>
 
+<form data-type="ajax" action="<?= uri('orders/update_products') ?>">
+    <input type="hidden" name="order_id" value="<?= $order->id ?>">
 
-<div class="products-order">
-    <table id="list_products" class="table table-bordered">
-        <tr>
-            <td>Назва товару</td>
-            <td>ID складу</td>
-            <td>Склад</td>
-            <td>Артикул</td>
-            <td>Кількість</td>
-            <td>Вартість</td>
-            <td>Сума</td>
-            <td>Атрибути</td>
-            <?php if ($type == 'sending') { ?>
-                <td>Номер місця</td>
-            <?php } ?>
-            <td style="width: 36px;">Дії</td>
-        </tr>
-        <?php if (isset($products) && my_count($products) > 0) {
-            foreach ($products as $p) {
-                $p = (object)$p; ?>
-                <tr data-id="<?= $p->id; ?>" class="product" data-pto="<?= $p->pto ?>">
+    <div class="products-order">
+        <table id="list_products" class="table table-bordered">
+            <tr>
+                <td>Назва товару</td>
+                <td>ID складу</td>
+                <td>Склад</td>
+                <td>Артикул</td>
+                <td>Кількість</td>
+                <td>Вартість</td>
+                <td>Сума</td>
+                <td>Атрибути</td>
+                <?php if ($type == 'sending') { ?>
+                    <td>Номер місця</td>
+                <?php } ?>
+                <td style="width: 36px;">Дії</td>
+            </tr>
+            <?php if ($order->products->count()) { ?>
+                <?php foreach ($order->products as $product) { ?>
+                    <? $count = \Web\Eloquent\ProductStorage::getCount($product->pivot->storage->id, $product->id) ?>
+                    <tr data-id="<?= $product->id; ?>" class="product" data-pto="<?= $product->pivot->id ?>">
+                        <td class="product_name">
+                            <a target="_blank"
+                               href="<?= uri('product', ['section' => 'update', 'id' => $product->id]) ?>">
+                                <?= $product->name ?>
+                            </a>
 
-                    <td class="product_name">
-                        <a target="_blank" href="<?= uri('product', ['section' => 'update', 'id' => $p->id]) ?>">
-                            <?= $p->name ?>
-                        </a>
-                    </td>
-
-                    <td><?= $p->identefire_storage ?></td>
-
-                    <td>
-                        <?= $p->storage_name ?>
-                        <input type="hidden" class="storage" value="<?= $p->storage_id ?>">
-                    </td>
-
-                    <td><?= $p->articul ?></td>
-
-                    <td class="price">
-                        <div class="input-group">
-                            <span class="input-group-addon remained">
-                                <?= !$p->accounted || $p->combine ? 'n' : $p->count_on_storage ?>
-                            </span>
-                            <input data-name="amount" class="form-control el_amount count product_field"
-                                   value="<?= $p->amount; ?>" data-inspect="integer">
-                            <input type="hidden" class="count_on_storage"
-                                   value="<?= !$p->accounted || $p->combine ? 'n' : $p->count_on_storage ?>">
-                            <input type="hidden" class="amount_in_order" value="<?= $p->amount; ?>">
-                        </div>
-                    </td>
-
-                    <td class="price">
-                        <input data-name="price" class="form-control el_price count product_field"
-                               value="<?= $p->price; ?>" data-inspect="decimal">
-                    </td>
-
-                    <td class="price">
-                        <input disabled class="form-control el_sum" value="<?= $p->price * $p->amount; ?>">
-                    </td>
-
-                    <td class="attributes">
-                        <div class="attr-edit">
-                            <?php
-                            $attributes = json_decode($p->attr);
-                            $attr = in_array($p->attributes, ['null', '[]', '']) ? [] : with_json($p->attributes);
-
-                            foreach ($attr as $key => $attr) { ?>
-                                <label><?php echo $key; ?></label>
-                                <select class="attr" data-key="<?php echo $key; ?>">
-                                    <?php foreach ($attr as $val) { ?>
-                                        <option <?= isset($attributes->$key) && $val == $attributes->$key ? 'selected' : ''; ?>
-                                                value="<?= $val; ?>"><?= $val; ?></option>
-                                    <?php } ?>
-                                </select><br>
-                            <?php } ?>
-                        </div>
-                    </td>
-
-                    <?php if ($type == 'sending') { ?>
-                        <td>
-                            <select data-name="place" class="product_field">
-                                <?php for ($i = 1; $i < 11; $i++) { ?>
-                                    <option <?= $p->place == $i ? 'selected' : '' ?>
-                                            value="<?= $i ?>"><?= $i ?></option>
-                                <?php } ?>
-                            </select>
+                            <input type="hidden" name="products[<?= $product->id ?>][id]" value="<?= $product->id ?>">
+                            <input type="hidden" name="products[<?= $product->id ?>][pto]"
+                                   value="<?= $product->pivot->id ?>">
                         </td>
-                    <?php } ?>
 
-                    <td>
-                        <button type="button" class="btn btn-danger btn-xs drop_product delete"
-                                data-order-id="<?= $order->id ?>"
-                                data-pto="<?= $p->id; ?>">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                    </td>
-                </tr>
+                        <td><?= $product->identefire_storage ?></td>
 
+                        <td>
+                            <?= $product->pivot->storage->name ?>
+                            <input type="hidden" name="products[<?= $product->id ?>][storage]" class="storage"
+                                   value="<?= $product->pivot->storage->id ?>">
+                        </td>
+
+                        <td><?= $product->articul ?></td>
+
+                        <td class="price">
+                            <div class="input-group">
+                            <span class="input-group-addon remained">
+                                <?= !$product->accounted || $product->combine
+                                    ? 'n'
+                                    : $count ?>
+                            </span>
+                                <input data-name="amount"
+                                       name="products[<?= $product->id ?>][amount]"
+                                       class="form-control el_amount count product_field"
+                                       value="<?= $product->pivot->amount; ?>"
+                                       data-inspect="integer">
+
+                                <input type="hidden"
+                                       class="count_on_storage"
+                                       value="<?= !$product->accounted || $product->combine ? 'n' : $product->count_on_storage ?>">
+
+                                <input type="hidden" class="amount_in_order" value="<?= $product->pivot->amount ?>">
+                            </div>
+                        </td>
+
+                        <td class="price">
+                            <input data-name="price" class="form-control el_price count product_field"
+                                   name="products[<?= $product->id ?>][price]"
+                                   value="<?= $product->pivot->price; ?>" data-inspect="decimal">
+                        </td>
+
+                        <td class="price">
+                            <input disabled class="form-control el_sum"
+                                   value="<?= $product->pivot->price * $product->pivot->amount; ?>">
+                        </td>
+
+                        <td class="attributes">
+                            <div class="attr-edit">
+                                <?php foreach ($product->attributes as $key => $attr) {
+                                    $rand = rand32(); ?>
+                                    <label><?= $key ?></label><br>
+                                    <input type="hidden" name="products[<?= $product->id ?>][attributes][<?= $rand ?>][key]" value="<?= $key ?>">
+                                    <select name="products[<?= $product->id ?>][attributes][<?= $rand ?>][value]" class="attr" data-key="<?= $key ?>">
+                                        <?php foreach ($attr as $val) { ?>
+                                            <option <?= isset($product->pivot->attributes[$key]) && $val == $product->pivot->attributes[$key] ? 'selected' : '' ?>
+                                                    value="<?= $val ?>">
+                                                <?= $val ?>
+                                            </option>
+                                        <?php } ?>
+                                    </select><br>
+                                <?php } ?>
+                            </div>
+                        </td>
+
+                        <?php if ($type == 'sending') { ?>
+                            <td>
+                                <select data-name="place" class="product_field">
+                                    <?php for ($i = 1; $i < 11; $i++) { ?>
+                                        <option <?= $product->pivot->place == $i ? 'selected' : '' ?> value="<?= $i ?>">
+                                            <?= $i ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                        <?php } ?>
+
+                        <td>
+                            <button type="button" class="btn btn-danger btn-xs drop_product delete"
+                                    data-order-id="<?= $order->id ?>"
+                                    data-pto="<?= $product->id; ?>">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </td>
+                    </tr>
+
+                <?php } ?>
             <?php } ?>
-        <?php } ?>
-    </table>
-</div>
-
-<div class="form-horizontal" style="margin-top: 15px;">
-
-    <div class="form-group">
-        <label for="delivery_cost" class="col-md-4 control-label">Ціна за доставку</label>
-        <div class="col-md-5">
-            <input <?= $pay->is_cashless ? 'disabled' : '' ?> id="delivery_cost" class="form-control count" value="<?= $order->delivery_cost ?>" data-inspect="decimal">
-        </div>
+        </table>
     </div>
 
-    <div class=" form-group">
-        <label for="discount" class="col-md-4 control-label">Знижка</label>
-        <div class="col-md-5">
-            <input <?= $pay->is_cashless ? 'disabled' : '' ?> id="discount" class="form-control count" value="<?= $order->discount ?>" data-inspect="decimal">
+    <div class="form-horizontal" style="margin-top: 15px;">
+
+        <div class="form-group">
+            <label for="delivery_cost" class="col-md-4 control-label">Ціна за доставку</label>
+            <div class="col-md-5">
+                <input id="delivery_cost"
+                       name="data[delivery_cost]"
+                       class="form-control count"
+                    <?// = !$order->pay->is_cashless ?: 'disabled' ?>
+                       value="<?= $order->delivery_cost ?>"
+                       data-inspect="decimal">
+            </div>
+        </div>
+
+        <div class=" form-group">
+            <label for="discount" class="col-md-4 control-label">Знижка</label>
+            <div class="col-md-5">
+                <input id="discount"
+                       name="data[discount]"
+                       class="form-control count"
+                    <?// = !$order->pay->is_cashless ?: 'disabled' ?>
+                       value="<?= $order->discount ?>"
+                       data-inspect="decimal">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="sum" class="col-md-4 control-label">Ціна за товари</label>
+            <div class="col-md-5">
+                <input disabled id="sum" class="form-control"
+                       value="<?= $order->full_sum - $order->delivery_cost + $order->discount ?>">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="full_sum" class="col-md-4 control-label">Сума</label>
+            <div class="col-md-5">
+                <input disabled id="full_sum" class="form-control" value="<?= $order->full_sum ?>">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-4 col-md-5">
+                <button class="btn btn-primary">Зберегти зміни</button>
+            </div>
         </div>
     </div>
-
-    <div class="form-group">
-        <label for="sum" class="col-md-4 control-label">Ціна за товари</label>
-        <div class="col-md-5">
-            <input disabled id="sum" class="form-control"
-                   value="<?= $order->full_sum - $order->delivery_cost + $order->discount ?>">
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="full_sum" class="col-md-4 control-label">Сума</label>
-        <div class="col-md-5">
-            <input disabled id="full_sum" class="form-control"
-                   value="<?= $order->full_sum ?>">
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-4 col-md-5">
-            <button class="btn btn-primary" id="save_price">Зберегти зміни</button>
-        </div>
-    </div>
-
-</div>
+</form>

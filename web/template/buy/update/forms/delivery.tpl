@@ -8,24 +8,18 @@
        data-post="<?= params(['id' => $id, 'type' => 'self']) ?>" href="#">
         <i class="fa fa-cog"></i> Змінити тип на Самовивіз
     </a>
-    <a style="margin-right: 20px; color: #0a790f" target="_blank"
-       href="<?= uri('orders', ['section' => 'receipt', 'id' => $id]) ?>">
+    <a style="margin-right: 20px; color: #0a790f" target="_blank" href="<?= uri('orders', ['section' => 'receipt', 'id' => $id]) ?>">
         <i class="fa fa-print"></i> Товарний чек
     </a>
-    <a style="margin-right: 20px; color: #0a790f" target="_blank"
-       href="<?= uri('orders', ['section' => 'receipt', 'id' => $id, 'official' => 1]) ?>">
+    <a style="margin-right: 20px; color: #0a790f" target="_blank" href="<?= uri('orders', ['section' => 'receipt', 'id' => $id, 'official' => 1]) ?>">
         <i class="fa fa-print"></i> Товарний чек для бугалетрії
     </a>
-    <a target="_blank"
-       style="margin-right: 20px; color: #0a790f" href="<?= uri('orders', ['section' => 'invoice', 'id' => $id]) ?>">
+    <a target="_blank" style="margin-right: 20px; color: #0a790f" href="<?= uri('orders', ['section' => 'invoice', 'id' => $id]) ?>">
         <i class="fa fa-print"></i> Рахунок-фактура
     </a>
-    <a target="_blank"
-       style="margin-right: 20px; color: #0a790f"
-       href="<?= uri('orders', ['section' => 'sales_invoice', 'id' => $id]) ?>">
+    <a target="_blank" style="margin-right: 20px; color: #0a790f" href="<?= uri('orders', ['section' => 'sales_invoice', 'id' => $id]) ?>">
         <i class="fa fa-print"></i> Видаткова накладна
     </a>
-
 </div>
 
 <div class="form-horizontal">
@@ -55,10 +49,8 @@
         </div>
 
         <div class="type_block">
-            <form action="<?= uri('orders') ?>" data-type="ajax">
-
+            <form action="<?= uri('orders/update_contacts') ?>" data-type="ajax">
                 <input type="hidden" name="id" value="<?= $order->id ?>">
-                <input type="hidden" name="action" value="update_contacts">
 
                 <?php element('fio', ['fio' => $order->fio]) ?>
 
@@ -84,7 +76,7 @@
                 <input type="hidden" name="id" value="<?= $order->id ?>">
                 <input type="hidden" name="action" value="update_working">
 
-                <?php element('hint', ['hint' => $order->hint, 'type' => $type]) ?>
+                <?php element('hint', ['hint' => $order->hint->id, 'type' => $type]) ?>
 
                 <?php element('date_delivery', ['date_delivery' => $order->date_delivery]) ?>
 
@@ -94,7 +86,7 @@
 
                 <?php element('time_to', ['time_to' => $order->time_to]) ?>
 
-                <?php element('courier', ['courier' => $order->courier, 'status' => $order->status]) ?>
+                <?php element('courier', ['courier' => $order->courier->id, 'status' => $order->status]) ?>
 
                 <?php element('coupon', ['coupon' => $order->coupon]) ?>
 

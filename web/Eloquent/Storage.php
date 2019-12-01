@@ -1,15 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: taras
- * Date: 01.12.2019
- * Time: 11:04
- */
 
 namespace Web\Eloquent;
 
+use Illuminate\Database\Eloquent\Model;
 
-class Storage
+class Storage extends Model
 {
+    protected $table = 'storage';
 
 }

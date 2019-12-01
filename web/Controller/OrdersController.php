@@ -4,9 +4,14 @@ namespace Web\Controller;
 
 use SergeyNezbritskiy\PrivatBank\AuthorizedClient;
 use SergeyNezbritskiy\PrivatBank\Merchant;
+use Web\App\Collection;
 use Web\App\Request;
 use Web\Eloquent\Order;
+use Web\Eloquent\Product;
+use Web\Eloquent\ProductStorage;
 use Web\Eloquent\Shop;
+use Web\Eloquent\SmsTemplate;
+use Web\Eloquent\Storage;
 use Web\Filters\OrdersListFilter;
 use Web\Model\Coupon;
 use Web\Model\Orders;
@@ -14,7 +19,6 @@ use Web\App\Controller;
 use Web\Model\OrderSettings;
 use Web\Model\Products;
 use Web\Model\Api\NewPost;
-use Web\Model\Sms;
 use Web\Model\Reports;
 use RedBeanPHP\R;
 use Web\Eloquent\User;
@@ -30,7 +34,6 @@ class OrdersController extends Controller
 
         $this->checkBlackDate();
     }
-
 
     private function checkBlackDate()
     {
@@ -60,7 +63,7 @@ class OrdersController extends Controller
             ->filter($filter)
             ->paginate(ITEMS);
 
-        $full = $orders->sum(function ($item){
+        $full = $orders->sum(function ($item) {
             return $item->full_sum;
         });
 
@@ -106,7 +109,16 @@ class OrdersController extends Controller
 
     public function sectionUpdate(int $id)
     {
-        $order = Order::with('sms_messages', 'author')->findOrFail($id);
+        $order = Order::with([
+            'products',
+            'sms_messages',
+            'author',
+            'bonuses',
+            'files',
+            'pay',
+            'products.pivot.storage'
+
+        ])->findOrFail($id);
 
         $data = [
             'title' => 'Замовлення :: Редагування',
@@ -117,16 +129,13 @@ class OrdersController extends Controller
             ],
             'id' => $id,
             'type' => $order->type,
-            'products' => Orders::getProductsByOrderId($id),
             'order' => $order,
             'categories' => Coupon::getCategories(),
-            'sms_templates' => Sms::getAllByType($order->type),
-            'bonuses' => Orders::getBonuses($id),
-            'images' => Orders::getImages($id),
-            'storage' => Orders::findAll('storage', '`accounted` = 1  ORDER BY `sort` ASC'),
-            'pay' => Orders::getOne($order->pay_method, 'pays'),
+            'sms_templates' => SmsTemplate::where('type', $order->type)->get(),
+            'storage' => Storage::where('accounted', 1)->orderBy('sort')->get(),
             'closed_order' => Orders::count('reports', "`data` = ? AND `type` = 'order'", [$id])
         ];
+
 
         $add_transaction = false;
 
@@ -191,50 +200,57 @@ class OrdersController extends Controller
         } else response(400, 'Такого типу замовлень не існує!');
     }
 
-    public function action_drop_product($post)
+    public function actionDropProduct(OrderUpdate $order, int $pto)
     {
-        (new OrderUpdate($post->id))->dropProduct($post);
+        $order->dropProduct($pto);
 
-        response(200, ['action' => 'close', 'message' => 'Товар вдало видалений!']);
+        response()->json(['action' => 'close', 'message' => 'Товар вдало видалений!']);
     }
 
     // Пошук товарів
-    public function action_search_products($post)
+    public function actionSearchProducts(Request $request)
     {
-        $where = '';
-        $return = '';
-        if (isset($post->category_id))
-            $where .= " `category` = '{$post->category_id}' ";
-        elseif (isset($post->name))
-            $where .= " `name` LIKE '%{$post->name}%' ";
-        elseif (isset($post->services_code))
-            $where .= " `services_code` LIKE '%{$post->services_code}%' ";
+        $builder = Product::select('products.*', 'product_storage.count')
+            ->leftJoin('product_storage', 'product_storage.product_id', '=', 'products.id')
+            ->where('product_storage.storage_id', $request->storage);
 
-        $where = str_replace('\'`', '\', `', $where);
+        if ($request->has('category_id'))
+            $builder->where('products.category', $request->category_id);
+        elseif ($request->has('name'))
+            $builder->where('products.name', 'like', "%$request->name%");
+        elseif ($request->has('services_code'))
+            $builder->where('products.services_code', 'like', "%$request->name%");
 
-        foreach (Products::search($where, $post->storage) as $product) {
-            if ($product['combine']) $c = 'n';
-            else $c = $product['accounted'] ? $product['count_on_storage'] : 'n';
+        $result = '';
+        foreach ($builder->get() as $product) {
+            if ($product->combine) $c = 'n';
+            else $c = $product->accounted ? $product->count : 'n';
 
-            $return .= "<div data-storage='{$product['storage_id']}' data-id='{$product['id']}' class='option'> ";
-            $return .= $product['name'];
-            $return .= " | ";
-            $return .= "<span style='color: blue;'>";
-            $return .= $c;
-            $return .= "</span></div>\n";
+            $result .= "<div data-storage='{$request->storage}' data-id='{$product->id}' class='option'> ";
+            $result .= $product['name'];
+            $result .= " | ";
+            $result .= "<span style='color: blue;'>";
+            $result .= $c;
+            $result .= "</span></div>\n";
         }
-        echo $return;
+
+        echo $result;
     }
 
     // Вивод вибраних товарів при пошуку
-    public function action_get_products($post)
+    public function actionGetProducts(string $type, array $products)
     {
-        $data = [
-            'products' => get_object(Products::get_by_ids($post)),
-            'type' => $post->type
-        ];
+        $result = [];
+        foreach ($products as $product) {
+            $result[] = Product::select('products.*', 'product_storage.count', 'storage.name as storage_name')
+                ->leftJoin('product_storage', 'product_storage.product_id', '=', 'products.id')
+                ->leftJoin('storage', 'storage.id', '=', 'product_storage.storage_id')
+                ->where('product_storage.storage_id', $product['storage'])
+                ->where('products.id', $product['id'])
+                ->first();
+        }
 
-        $this->view->display('buy.show_found_products', $data);
+        $this->view->display('buy.show_found_products', ['products' => $result, 'type' => $type]);
     }
 
     public function action_change_type($post)
@@ -571,9 +587,9 @@ class OrdersController extends Controller
     }
 
     // Оновлення товарів
-    public function action_update_products($post)
+    public function actionUpdateProducts(OrderUpdate $order, Collection $products, Collection $data)
     {
-        Orders::update_products($post->products, $post->data, $post->id);
+        $order->products($products->collect(), $data);
 
         response(200, DATA_SUCCESS_UPDATED);
     }

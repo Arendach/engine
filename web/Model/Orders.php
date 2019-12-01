@@ -141,30 +141,6 @@ class Orders extends Model
         return R::findAll('product_to_order', '`order_id` = ?', [$id]);
     }
 
-    // Бонуси і штрафи по замовленню
-    public static function getBonuses($id)
-    {
-        $result = R::getAll("
-            SELECT 
-                `bonuses`.*,
-                `users`.`first_name` AS `first_name`,
-                `users`.`last_name` AS `last_name`
-            FROM 
-                `bonuses`
-            LEFT JOIN `users` ON(`users`.`id` = `bonuses`.`user_id`)
-            WHERE
-                `bonuses`.`data` = ? AND `bonuses`.`source` = 'order'
-            GROUP BY `bonuses`.`id`
-        ", [$id]);
-
-        $new = get_object([]);
-        foreach ($result as $item) {
-            $new->{$item['user_id']} = get_object($item);
-        }
-
-        return $new;
-    }
-
     // Оновити суму бонуса
     public static function update_bonus_sum($post)
     {
@@ -338,23 +314,6 @@ class Orders extends Model
                 'comment' => 'Створено автоматично!!!',
                 'storage_id' => $pts->storage_id
             ]);
-        }
-    }
-
-    private static function productsSum($order_id, $products)
-    {
-        $bean = R::load('orders', $order_id);
-        if ($bean->type == 'sending') {
-            $sum = 0;
-            $products = get_object($products);
-            foreach ($products as $item) {
-                $sum += $item->amount * $item->price;
-            }
-
-            $return_shipping = R::findOne('return_shipping', '`order_id` = ?', [$order_id]);
-            $return_shipping = self::create_return_shipping((object)['id' => $order_id], $return_shipping);
-            $return_shipping->sum = $sum - $bean->discount + $bean->delivery_cost;
-            R::store($return_shipping);
         }
     }
 

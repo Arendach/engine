@@ -533,10 +533,12 @@ function http_status($status)
  * @param $status - http код відповіді сервера
  * @param bool $messageOrArray - Повідомлення або масив,
  * який буде передано клієнту в виді JSON - строки
+ *
+ * @return null|\Web\App\Response
  */
-function response($status, $messageOrArray = false)
+function response($status = null, $messageOrArray = null)
 {
-    // header('Content-Type: application/json');
+    if (is_null($status) && is_null($messageOrArray)) return container(\Web\App\Response::class);
 
     http_status($status);
 

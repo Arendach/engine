@@ -8,7 +8,8 @@
     "sergeynezbritskiy/privatbank-api": "^2.0.0",
     "illuminate/database": "^6.6",
     "illuminate/pagination": "^6.6",
-    "illuminate/view": "^6.6"
+    "illuminate/view": "^6.6",
+    "ajcastro/eager-load-pivot-relations": "^0.2.2"
   },
   "autoload": {
     "psr-4": {

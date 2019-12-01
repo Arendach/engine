@@ -4,29 +4,34 @@ namespace Web\Orders;
 
 use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
+use Web\App\Collection;
+use Web\Eloquent\OrderProduct;
+use Web\Eloquent\Product;
 use Web\Model\OrderSettings;
 use stdClass;
+use Web\Eloquent\Order;
+use Web\Eloquent\OrderHistory as OrderHistoryModel;
 
 class OrderHistory
 {
     /**
-     * @var OODBBean
+     * @var Order
      */
     private $order;
 
     /**
-     * @var array|OODBBean
+     * @var OrderHistoryModel
      */
     private $history;
 
     /**
      * OrderHistory constructor.
-     * @param OODBBean $order
+     * @param Order $order
      */
-    public function __construct(OODBBean $order)
+    public function __construct(Order $order)
     {
         $this->order = $order;
-        $this->history = R::xdispense('changes');
+        $this->history = new OrderHistoryModel;
     }
 
     /**
@@ -100,7 +105,7 @@ class OrderHistory
      * @param OODBBean $product_id
      * @return void
      */
-    public function dropProduct(OODBBean $product): void
+    public function dropProduct(Product $product): void
     {
         $this->save('delete_product', ['id' => $product->id, 'name' => $product->name]);
     }
@@ -118,6 +123,58 @@ class OrderHistory
         $this->courierCheck($history, $data);
 
         $this->save('update_courier', $history['courier'] ?? '');
+    }
+
+    public function sum(Collection $data)
+    {
+        $history = [];
+
+        if ($this->order->discount != $data->discount)
+            $history['discount'] = "Знижка <b style='color: red'>{$this->order->discount}</b> => <b style='color: blue'>$data->discount</b>";
+
+        if ($this->order->delivery_cost != $data->delivery_cost)
+            $history['delivery_cost'] = "Ціна доставки <b style='color: red'>{$this->order->delivery_cost}</b> => <b style='color: blue'>{$data->delivery_cost}</b>";
+
+        if (count($history)) {
+            $history->full_sum = "Сума <b style='color: red'>" . nf($this->order->full_sum) . "</b> => <b style='color: blue'>" . nf($data->full_sum + $data->delivery_cost - $data->discount) . "</b>";
+            $this->save('update_price', $history);
+        }
+    }
+
+    /**
+     * @param OrderProduct $pivot
+     * @param Collection $product
+     */
+    public function changeProduct(OrderProduct $pivot, Collection $product): void
+    {
+        $history = [];
+
+        if ($pivot->amount != $product->amount)
+            $history['amount'] = "Кількість <b style='color: red'>{$pivot->amount}</b> => <b style='color: blue;'>{$product->amount}</b>";
+
+        if (isset($product->place) && $product->place != $pivot->place)
+            $history['place'] = "Місце <b style='color: red'>{$pivot->place}</b> => <b style='color: blue'>{$product->place}</b>";
+
+        if ($product->price != $pivot->price)
+            $history['price'] = "Ціна <b style='color: red'>{$pivot->price}</b> => <b style='color: blue'>{$product->price}</b>";
+
+        if (!count($history)) return;
+
+        $this->save('update_product', array_merge($history, [
+            'product_name' => $pivot->product->name,
+            'product_id' => $pivot->product->id
+        ]));
+
+        $product_history = new ProductHistory($pivot->product);
+
+        $product_history->updateInOrder(array_merge($history, [
+            'order' => $this->order->id
+        ]));
+    }
+
+    public function addProduct(array $data)
+    {
+
     }
 
     /**
@@ -225,7 +282,7 @@ class OrderHistory
         $this->history->date = date('Y-m-d H:i:s');
         $this->history->author = user()->id;
 
-        R::store($this->history);
+        $this->history->save();
     }
 
     /**
