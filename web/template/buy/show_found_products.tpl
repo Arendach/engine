@@ -1,38 +1,35 @@
+<?php $rand32 = rand32() ?>
+
 <?php foreach ($products as $product) { ?>
-    <tr data-id="<?= $product->id ?>" class="product" data-pto="0" data-hash="<?= rand32() ?>">
+    <tr class="product">
         <td class="product_name">
             <a target="_blank" href="<?= uri('product', ['section' => 'update', 'id' => $product->id]) ?>">
                 <?= $product->name ?>
             </a>
         </td>
 
-        <td><?= $product->identefire_storage ?></td>
+        <td>
+            <select name="products[<?= $rand32 ?>][storage]" id="" class="form-control">
+                <?php foreach ($product->storage_list as $item) { ?>
+                    <option value="<?= $item->storage->id ?>">
+                        <?= $item->count ?>: <?= $item->storage->name ?>
+                    </option>
+                <?php } ?>
+            </select>
+        </td>
 
         <td>
-            <?= $product->storage_name ?>
-            <input type="hidden" class="storage" value="<?= $product->storage_id ?>">
+            <input name="products[<?= $rand32 ?>][amount]" class="amount form-control" value="1" data-inspect="integer">
         </td>
 
-        <td><?= $product->articul ?></td>
-
-        <td class="price">
-            <div class="input-group">
-                <span class="input-group-addon remained">
-                    <?= ($product->combine || !$product->accounted) ? 'n' : $product->count ?>
-                </span>
-                <input class="el_amount count form-control product_field" value="0" data-name="amount"
-                       data-inspect="integer">
-                <input type="hidden" value="<?= ($product->combine || !$product->accounted) ? 'n' : $product->count ?>"
-                       class="count_on_storage">
-                <input type="hidden" class="amount_in_order" value="0">
-            </div>
+        <td>
+            <input name="products[<?= $rand32 ?>][price]" class="price form-control"
+                   value="<?= round($product->costs) ?>" data-inspect="decimal">
         </td>
 
-        <td class="price">
-            <input class="el_price count form-control product_field" data-name="price" value="<?= $product->costs ?>" data-inspect="decimal">
+        <td style="width: 71px">
+            <input style="width: 54px" disabled class="sum form-control" value="<?= round($product->costs) ?>">
         </td>
-
-        <td class="price"><input disabled class="el_sum count form-control" value="0"></td>
 
         <td class="attributes">
             <?php foreach ($product->attributes as $key => $attr) { ?>
@@ -49,7 +46,7 @@
 
         <?php if ($type == 'sending') { ?>
             <td>
-                <select class="place product_field" data-name="place">
+                <select name="products[<?= $rand32 ?>][place]" class="form-control">
                     <?php for ($i = 1; $i < 11; $i++) { ?>
                         <option value="<?= $i ?>"><?= $i ?></option>
                     <?php } ?>
@@ -57,7 +54,7 @@
             </td>
         <?php } ?>
 
-        <td>
+        <td style="width: 39px">
             <button class="btn btn-danger btn-xs drop_product" data-id="remove">
                 <span class="glyphicon glyphicon-remove"></span>
             </button>

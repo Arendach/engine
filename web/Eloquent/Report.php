@@ -9,7 +9,10 @@
 namespace Web\Eloquent;
 
 
-class Report
+use Illuminate\Database\Eloquent\Model;
+
+class Report extends Model
 {
+    protected $table = 'reports';
 
 }

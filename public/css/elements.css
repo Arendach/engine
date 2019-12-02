@@ -76,3 +76,27 @@
     font: normal normal normal 14px/1 FontAwesome;
     color: #34A853;
 }
+
+
+
+.select .item {
+    font-family: 'Roboto', sans-serif;
+    display: block;
+    cursor: pointer;
+    padding: 8px;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.select .item:hover {
+    background-color: rgba(0, 100, 200, .2);
+    color: #000;
+}
+
+.select .item:before {
+    content: "\f10c";
+    font: normal normal normal 14px/1 FontAwesome;
+    color: rgba(10, 0, 222, 0.3);
+}

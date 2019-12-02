@@ -39,7 +39,7 @@
         <?= isset($to_js) ? to_javascript($to_js) : '' ?>
         <?= isset($style) ? $style : '' ?>
     </head>
-<body style="background: #FBFDF3">
+<body>
     <input style="display: none" name="login" type="text">
     <input style="display: none" name="password" type="password">
     <input style="display: none" name="password" type="password">

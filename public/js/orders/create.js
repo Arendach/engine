@@ -5,35 +5,6 @@ $(document).ready(function () {
     $('#phone').inputmask("999-999-99-99");  //static mask
     $('#phone2').inputmask("999-999-99-99");  //static mask
 
-    function check_price() {
-        var sum = 0;
-        $('.product').each(function () {
-            var el = '[data-id=' + $(this).attr('data-id') + '] ';
-            var amount = $(el + '.el_amount').val();
-            var price = $(el + '.el_price').val();
-            $(el + '.el_sum').val(+amount * +price);
-            $(el + '.remained').html((+$(el + '.count_on_storage').val() + +$(el + '.amount_in_order').val()) - +amount);
-            sum += (+amount * +price);
-        });
-
-        $('#sum').val(sum);
-        $('#full_sum').val(+sum - +$('#discount').val() + +$('#delivery_cost').val());
-    }
-
-    $body.on('keyup', '.count', check_price);
-
-    function check_form() {
-        var success_form = true;
-        $.each($('#form_order [required]'), function (index, value) {
-            if (!$(value).val()) {
-                $(value).focus();
-                success_form = false;
-                return false;
-            }
-        });
-        return success_form;
-    }
-
     function get_products() {
         var data = [];
         $('.product').each(function () {
@@ -53,8 +24,6 @@ $(document).ready(function () {
         });
         return data;
     }
-
-    $body.on('click', '[href="#products"]', check_form);
 
     $body.on('click', '#select_products', function (event) {
         event.preventDefault();
@@ -80,29 +49,18 @@ $(document).ready(function () {
         return false;
     });
 
-    $body.on('submit', '#create_order', function (event) {
-        event.preventDefault();
+    $(document).on('submit', '#create_order', function (event) {
+        event.preventDefault()
 
-        var data = $(this).serializeJSON();
-        data.products = get_products();
-        data.action = 'create';
+        let data = $(this).serializeJSON()
 
         $.ajax({
             type: 'post',
-            url: url('orders/create_' + data.type),
-            data: data,
-            success: function (answer) {
-                successHandler(answer, function () {
-                    var result = JSON.parse(answer);
-                    redirect(url('orders?section=update&id=' + result.id));
-                });
-            },
-            error: function (answer) {
-                errorHandler(answer);
-            }
-        });
-
-        return false;
+            url: '/orders/create_' + type,
+            data,
+            //success: answer => //window.location.href = answer.location,
+            error: answer => errorHandler(answer)
+        })
     });
 
     $body.on('click', '.drop_product', function () {
@@ -203,8 +161,8 @@ $(document).ready(function () {
         $('.search_clients').html('');
     });
 
-    function cashless(is_cashless){
-        if (is_cashless){
+    function cashless(is_cashless) {
+        if (is_cashless) {
             $('#discount').attr('disabled', 'disabled').val('');
             $('#delivery_cost').attr('disabled', 'disabled').val('');
         } else {

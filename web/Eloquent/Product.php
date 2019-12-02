@@ -16,6 +16,13 @@ class Product extends Model
         return $this->belongsTo(Storage::class, 'storage_id');
     }
 
+    public function storage_list()
+    {
+        return $this->hasMany(ProductStorage::class)
+            ->orderByDesc('count')
+            ->with('storage');
+    }
+
     /**
      * @param static $json
      * @return array

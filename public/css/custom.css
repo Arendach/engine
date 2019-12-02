@@ -314,10 +314,6 @@ div.mini-bar {
     display: block;
 }
 
-.search_product {
-    overflow: hidden;
-}
-
 .form-filter {
     padding: 10px;
     background: #efefef;
@@ -340,7 +336,7 @@ div.mini-bar {
     display: none;
 }
 
-.pointer{
+.pointer {
     cursor: pointer;
 }
 
@@ -420,10 +416,23 @@ div#down {
     background: #eee;
 }
 
-.new_product_block {
-    background-color: #EEEEEE;
-    padding: 10px 20px;
-    border-radius: 10px;
+.order_search_products {
+    /*background-color: #fff;*/
+    /*padding: 20px;*/
+    margin-bottom: 40px;
+    overflow: hidden;
+    /*border: 1px solid #ddd;*/
+    /*box-shadow: ;*/
+}
+
+#product-list .form-control, #product-list .input-group-addon{
+    padding: 3px 6px;
+    height: auto;
+    font-size: 12px;
+}
+
+#product-list th{
+    background-color: #eee;
 }
 
 .mini-block {
@@ -629,7 +638,7 @@ table {
 }
 
 .edit-block {
-    padding: 20px 20px  0 20px;
+    padding: 20px 20px 0 20px;
     margin-bottom: 20px;
     background: #eee;
     border-radius: 10px;
@@ -722,14 +731,13 @@ table {
     background-color: #aaa;
 }
 
-.filter_more{
+.filter_more {
     border: 1px solid #ddd;
     margin-bottom: 15px;
     padding: 15px;
 }
 
-
-.client{
+.client {
     border: 1px solid #ddd;
     padding: 5px;
     color: #666;
@@ -737,41 +745,39 @@ table {
     margin-top: 5px;
 }
 
-
-.client:hover{
+.client:hover {
     border: 1px solid #aaa;
     color: #333;
 }
 
-.combine_products_item{
+.combine_products_item {
     background: #fff;
     padding: 15px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-.combine_products_item:last-child{
+
+.combine_products_item:last-child {
     margin-bottom: 0;
 }
 
-.combine_products_item input, .combine_products_item select{
+.combine_products_item input, .combine_products_item select {
     width: 100%;
     height: 26px;
 }
 
-
-.pts_item{
+.pts_item {
     padding: 5px;
     background-color: #fff;
     margin-bottom: 10px
 }
 
-.pts_item:last-child{
+.pts_item:last-child {
     margin-bottom: 0
 }
 
-
-.fake-input{
+.fake-input {
     height: 32px;
     width: 100%;
     padding: 5px;
@@ -779,26 +785,24 @@ table {
     border-radius: 4px
 }
 
-.client-order{
+.client-order {
     background-color: rgba(150, 150, 150, .1);
 }
 
-
-.characteristic{
+.characteristic {
     background-color: #fff;
-    position:relative;
+    position: relative;
     border: 1px solid #ccc;
     margin-bottom: 15px;
     padding: 10px;
 }
 
-
-.characteristic:last-child{
+.characteristic:last-child {
     margin-bottom: 0;
 }
 
-.delete_characteristic{
+.delete_characteristic {
     position: absolute;
-    top:0;
+    top: 0;
     right: 0;
 }

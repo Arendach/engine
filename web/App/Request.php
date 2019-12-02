@@ -93,9 +93,24 @@ class Request
      * @param string $key
      * @return bool
      */
-    public function has(string $key)
+    public function has(string $key): bool
     {
         return isset($this->query[$key]);
+    }
+
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function isEmpty(string $key): bool
+    {
+        if (!$this->has($key)) return false;
+
+        if (is_null($this->get($key))) return false;
+
+        if ($this->get($key) == '') return false;
+
+        return true;
     }
 
     /**

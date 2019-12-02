@@ -4,18 +4,23 @@ namespace Web\Orders;
 
 use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
+use Web\App\Collection;
+use Web\Eloquent\ClientOrder;
+use Web\Eloquent\Product;
 use Web\Model\Reports;
 use stdClass;
+use Web\Orders\Order as Basic;
+use Web\Eloquent\Order;
 
-class OrderCreate extends Order
+class OrderCreate extends Basic
 {
     /**
-     * @var OODBBean
+     * @var Order
      */
     private $order;
 
     /**
-     * @var stdClass
+     * @var Collection
      */
     private $products;
 
@@ -51,11 +56,11 @@ class OrderCreate extends Order
     }
 
     /**
-     * @param stdClass $data
-     * @param stdClass $products
+     * @param Collection $data
+     * @param $products
      * @return int
      */
-    public function delivery(stdClass $data, stdClass $products): int
+    public function delivery(Collection $data, $products): int
     {
         $this->products = $products;
 
@@ -108,43 +113,20 @@ class OrderCreate extends Order
     }
 
     /**
-     * @param stdClass $data
-     * @param stdClass $products
-     * @return int
+     * @param Collection $data
      */
-    public function shop(stdClass $data, stdClass $products): int
+    private function createAbstractOrder(Collection $data): void
     {
-        $this->products = $products;
+        $order = new Order;
 
-        // створення початкових даних
-        $this->createAbstractOrder($data);
+        foreach ($data->all() as $k => $v)
+            $order->{$k} = trim($v);
 
-        // додавання товарів до замовлення
-        $this->attachProducts();
+        $order->author_id = user()->id;
 
-        // створюємо оригінал історії замовлення
-        new OrderHistoryOriginal($data, $products, $this->order->id);
+        $id = $order->save();
 
-        return $this->order->id;
-    }
-
-    /**
-     * @param stdClass $data
-     * @return void
-     */
-    private function createAbstractOrder(stdClass $data): void
-    {
-        $order = R::dispense('orders');
-
-        foreach ($data as $k => $v)
-            $order->$k = trim($v);
-
-        $order->date = date('Y-m-d H:i:s');
-        $order->author = user()->id;
-
-        $id = R::store($order);
-
-        $this->order = R::load('orders', $id);
+        $this->order = Order::find($id);
     }
 
     /**
@@ -155,10 +137,10 @@ class OrderCreate extends Order
     {
         if (!isset($_POST['client_id'])) return;
 
-        $bean = R::xdispense('client_orders');
-        $bean->client_id = $_POST['client_id'];
-        $bean->order_id = $this->order->id;
-        R::store($bean);
+        $client_order = new ClientOrder;
+        $client_order->client_id = $_POST['client_id'];
+        $client_order->order_id = $this->order->id;
+        $client_order->save();
     }
 
     /**
@@ -183,7 +165,8 @@ class OrderCreate extends Order
             $history = [
                 'order_id' => $this->order->id,
                 'amount' => $product->amount,
-                'price' => $product->price
+                'price' => $product->price,
+                'place' => $product->place
             ];
 
             $this->historyProduct('add_to_order', $history, $product->id);
@@ -233,26 +216,23 @@ class OrderCreate extends Order
      */
     private function takeProductFromWarehouse($product): void
     {
-        $bean = R::load('products', $product->id);
+        $bean = Product::find($product->id);
 
         // якщо товар комбінований
         if ($bean->combine) {
 
-            // загружаємо аліаси компонентів
-            $components = R::findAll('combine_product', 'product_id = ?', [$product->id]);
-
-            foreach ($components as $component) {
+            foreach ($bean->linked as $component) {
                 // загружаємо pts компонента
-                $pts = $this->getPTS($component->linked_id, $product->storage);
+                $pts = $this->getPTS($component->pivot->linked_id, $product->storage);
 
                 // віднімаємо з складу
                 $pts->count -= $product->amount * $component->combine_minus;
 
                 // додаємо до закупки якщо <= 2
-                $this->createPurchase($pts, ($product->amount * $component->combine_minus));
+                $this->createPurchase($pts, ($product->amount * $component->pivot->combine_minus));
 
                 // зберігаємо
-                R::store($pts);
+                $pts->save();
             }
         } elseif (!$bean->combine && $bean->accounted) { // якщо товар одиничний і обіковий
             // загружаємо pts

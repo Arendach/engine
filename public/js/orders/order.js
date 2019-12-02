@@ -1,165 +1,123 @@
-$(document).ready(function () {
+function checkPrice() {
+    let sum = 0
+    let discount = $('#discount').val();
+    let delivery_cost = $('#delivery_cost').val();
 
-    var $body = $('body');
+    $('.product').each(function () {
+        sum += +$(this).find('.sum').val();
+    })
 
-    function check_price() {
-        var sum = 0;
-        $('.product').each(function () {
-            var $this = $(this);
-            var amount = $this.find('.el_amount').val();
-            var price = $this.find('.el_price').val();
+    $('#sum').val(sum)
+    $('#full_sum').val(+sum - +discount + +delivery_cost)
+}
 
-            var remained = +$('tr.product[data-id=' + $this.data('id') + ']').find('.count_on_storage').val();
-            $('tr.product[data-id=' + $this.data('id') + ']').each(function () {
-                remained += +$(this).find('.amount_in_order').val() - +$(this).find('.el_amount').val();
-            });
-            $this.find('.remained').html(remained);
+function search_warehouses(city_id) {
+    $.ajax({
+        type: 'post',
+        url: url('/api/search_warehouses'),
+        data: {
+            city: city_id
+        },
+        success: function (answer) {
+            $('#warehouse').html(answer).removeAttr('disabled');
+        }
+    });
+}
 
-            $this.find('.el_sum').val(+amount * +price);
-            sum += (+amount * +price);
-        });
+$(document).on('keyup', '.amount, .price', function () {
+    let $product = $(this).parents('.product')
+    let amount = $product.find('.amount').val()
+    let price = $product.find('.price').val()
 
-        $('#sum').val(sum);
-        $('#full_sum').val(+sum - +$('#discount').val() + +$('#delivery_cost').val());
+    console.log(amount * price);
+    $product.find('.sum').val(amount * price)
+
+    checkPrice();
+})
+
+$(document).on('change keyup', '#search_field, #search_category', function () {
+    let $this = $(this)
+
+    let data = {
+        search: $this.val(),
+        type: $this.data('search')
     }
 
-    function search_warehouses(city_id) {
+    $.post('/orders/search_products', data, res => $('.products').html(res))
+})
+
+$(document).on('click', '.searched', function () {
+    let id = $(this).data('id')
+
+    $.post('/orders/get_product', {type, id}, res => {
+        $('#product-list tbody').append(res)
+        checkPrice()
+    })
+})
+
+
+$(document).on('change', '#city_select', function () {
+    var $selected = $(this);
+    var text = $selected.find('option:selected').text(), value = $selected.val();
+    $('#city_input').val(text);
+    search_warehouses(value[0]);
+    $('#city').attr('value', value);
+})
+
+$(document).on('focus', '#city_input', function () {
+    $('#city_select').parents('.form-group').css('display', 'block');
+})
+
+$(document).on('keyup', '#city_input', function () {
+    if ($('#city_input').val().length > 2) {
         $.ajax({
             type: 'post',
-            url: url('/api/search_warehouses'),
+            url: url('/api/get_city'),
             data: {
-                city: city_id
+                key: '123',
+                str: $('#city_input').val()
             },
-            success: function (answer) {
-                $('#warehouse').html(answer).removeAttr('disabled');
+            success: function (a) {
+                $('#city_select').html(a);
+            },
+            error: function (answer) {
+                errorHandler(answer);
             }
         });
     }
+})
 
-    $body.on('change', '.search_product input', function () {
-        $('.search_product input').val('');
-    });
-
-    function search_products(data) {
-        data.type = type;
-        data.storage = $('#storage').val()
-
+$(document).on('keyup', '#coupon', function () {
+    if ($('#coupon').val().length > 0) {
         $.ajax({
             type: 'post',
-            url: url('orders/search_products'),
-            data,
-            success: data => $('.new_product_block .products').html(data)
+            url: url('/api/search_coupon'),
+            data: {
+                key: '123',
+                str: $('#coupon').val()
+            },
+            success: function (a) {
+                try {
+                    var answer = JSON.parse(a);
+                    $('#coupon_search').html('');
+                    for (var data in answer) {
+                        $('#coupon_search').prepend('<option value="' + answer[data]['code'] + '">' + answer[data]['code'] + '(' + answer[data]['name'] + ')</option>');
+                    }
+                } catch (err) {
+                    console.log('error parse');
+                }
+            }
         });
     }
+})
 
-    $body.on('keyup', '#search_ser_code', function (event) {
-        event.preventDefault();
+$(document).on('change', '#coupon_search', function () {
+    var val = $('#coupon_search :selected').val();
+    $('#coupon').val(val);
+    $('#coupon_search').html('');
+    $('#coupon_search').parents('.form-group').css('display', 'none');
+})
 
-        var $this = $(this);
-
-        if ($this.val().length < 3) return false;
-
-        search_products({
-            services_code: $this.val(),
-            action: 'search_products'
-        });
-
-    });
-
-    $body.on('keyup', '#search_name_product', function (event) {
-        event.preventDefault();
-
-        var $this = $(this);
-
-        if ($this.val().length < 3) return false;
-
-        search_products({
-            name: $this.val(),
-            action: 'search_products',
-            type: type
-        });
-    });
-
-    $body.on('change', '#categories_pr', function () {
-        var $this = $(this);
-        if (!$this.val()) {
-            $('.new_product_block .products').html('');
-            return false;
-        }
-        search_products({
-            category_id: $this.val(),
-            action: 'search_products'
-        });
-    });
-
-    $body.on('click', '.clear', function () {
-        $('#' + $(this).data('id')).val('');
-    });
-
-    $body.on('change', '#city_select', function () {
-        var $selected = $(this);
-        var text = $selected.find('option:selected').text(), value = $selected.val();
-        $('#city_input').val(text);
-        search_warehouses(value[0]);
-        $('#city').attr('value', value);
-    });
-
-    $body.on('focus', '#city_input', function () {
-        $('#city_select').parents('.form-group').css('display', 'block');
-    });
-
-    $body.on('keyup', '#city_input', function () {
-        if ($('#city_input').val().length > 2) {
-            $.ajax({
-                type: 'post',
-                url: url('/api/get_city'),
-                data: {
-                    key: '123',
-                    str: $('#city_input').val()
-                },
-                success: function (a) {
-                    $('#city_select').html(a);
-                },
-                error: function (answer) {
-                    errorHandler(answer);
-                }
-            });
-        }
-    });
-
-    $body.on('keyup', '#coupon', function () {
-        if ($('#coupon').val().length > 0) {
-            $.ajax({
-                type: 'post',
-                url: url('/api/search_coupon'),
-                data: {
-                    key: '123',
-                    str: $('#coupon').val()
-                },
-                success: function (a) {
-                    try {
-                        var answer = JSON.parse(a);
-                        $('#coupon_search').html('');
-                        for (var data in answer) {
-                            $('#coupon_search').prepend('<option value="' + answer[data]['code'] + '">' + answer[data]['code'] + '(' + answer[data]['name'] + ')</option>');
-                        }
-                    } catch (err) {
-                        console.log('error parse');
-                    }
-                }
-            });
-        }
-    });
-
-    $body.on('change', '#coupon_search', function () {
-        var val = $('#coupon_search :selected').val();
-        $('#coupon').val(val);
-        $('#coupon_search').html('');
-        $('#coupon_search').parents('.form-group').css('display', 'none');
-    });
-
-    $body.on('focus', '#coupon', function () {
-        $('#coupon_search').parents('.form-group').css('display', 'block');
-    });
-
-});
+$(document).on('focus', '#coupon', function () {
+    $('#coupon_search').parents('.form-group').css('display', 'block');
+})

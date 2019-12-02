@@ -217,53 +217,26 @@ $(document).ready(function () {
     $body.on('submit', '[data-type=update_order_status]', function (event) {
         event.preventDefault();
 
-        var data = $(this).serializeJSON();
+        let url, success
 
-        var close_status = data.type == 'shop' ? 2 : 4;
-
-        function update_status(data) {
-            data.action = 'update_status';
-
-            $.ajax({
-                type: 'post',
-                url: url('orders'),
-                data: data,
-                success: function (answer) {
-                    successHandler(answer, function () {
-                        // swal.close();
-                    });
-                },
-                error: function (answer) {
-                    errorHandler(answer);
-                }
-            });
-        }
-
-        function get_close_form(data) {
-            data.action = 'close_form';
-
-            $.ajax({
-                type: 'post',
-                url: url('orders'),
-                data: data,
-                success: function (answer) {
-                    myModalOpen(answer);
-                },
-                error: function (answer) {
-                    errorHandler(answer);
-                }
-            });
-        }
+        let data = $(this).serializeJSON()
 
         pin_code(function () {
-            if (data.status != close_status) {
-                update_status(data);
+            if (data.status != 4 || closed_order == 1) {
+                url = '/orders/update_status'
+                success = answer => successHandler(answer)
             } else {
-                data = {id: data.id, status: data.status, action: ''};
-                closed_order == 1 ? update_status(data) : get_close_form(data);
+                url = '/orders/close_form'
+                success = answer => myModalOpen(answer)
             }
-        });
-    });
+
+            $.ajax({
+                type: 'post',
+                url, data, success,
+                error: answer => errorHandler(answer)
+            })
+        })
+    })
 
     $(document).on('change', '#storage', function () {
         $('#products').html('');

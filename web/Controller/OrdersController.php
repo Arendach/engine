@@ -2,13 +2,17 @@
 
 namespace Web\Controller;
 
+use Illuminate\Database\Eloquent\Builder;
 use SergeyNezbritskiy\PrivatBank\AuthorizedClient;
 use SergeyNezbritskiy\PrivatBank\Merchant;
 use Web\App\Collection;
 use Web\App\Request;
+use Web\Eloquent\Logistic;
 use Web\Eloquent\Order;
+use Web\Eloquent\OrderHint;
+use Web\Eloquent\Pay;
 use Web\Eloquent\Product;
-use Web\Eloquent\ProductStorage;
+use Web\Eloquent\Report;
 use Web\Eloquent\Shop;
 use Web\Eloquent\SmsTemplate;
 use Web\Eloquent\Storage;
@@ -17,14 +21,15 @@ use Web\Model\Coupon;
 use Web\Model\Orders;
 use Web\App\Controller;
 use Web\Model\OrderSettings;
-use Web\Model\Products;
 use Web\Model\Api\NewPost;
 use Web\Model\Reports;
 use RedBeanPHP\R;
 use Web\Eloquent\User;
 use Web\Orders\OrderCreate;
 use Web\Orders\OrderUpdate;
+use Web\Requests\Orders\CreateDeliveryRequest;
 use Web\Requests\Orders\CreateSelfRequest;
+use Web\Requests\Orders\UpdateStatusRequest;
 
 class OrdersController extends Controller
 {
@@ -92,14 +97,14 @@ class OrdersController extends Controller
             'title' => 'Замовлення :: Нове замовлення',
             'categories' => Coupon::getCategories(),
             'type' => $type,
-            'hints' => Orders::getHints($type),
-            'pays' => OrderSettings::getAll('pays'),
-            'users' => OrderSettings::findAll('users', 'archive = 0'),
-            'deliveries' => OrderSettings::getAll('logistics'),
-            'storage' => Orders::findAll('storage', '`accounted` = 1 ORDER BY `sort` ASC'),
+            'hints' => OrderHint::whereIn('type', [0, $type])->get(),
+            'pays' => Pay::all(),
+            'users' => User::where('archive', 0)->get(),
+            'deliveries' => Logistic::all(),
+            'storage' => Storage::where('accounted', 1)->orderBy('sort')->get(),
             'breadcrumbs' => [
-                ['Замовлення', uri('orders', ['type' => 'delivery'])],
-                [type_parse($type), uri('orders', ['type' => $type])],
+                ['Замовлення', uri('orders/view', ['type' => 'delivery'])],
+                [type_parse($type), uri('orders/view', ['type' => $type])],
                 ['Нове замовлення']
             ]
         ];
@@ -208,47 +213,34 @@ class OrdersController extends Controller
     }
 
     // Пошук товарів
-    public function actionSearchProducts(Request $request)
+    public function actionSearchProducts(string $type, $search)
     {
-        $builder = Product::select('products.*', 'product_storage.count')
-            ->leftJoin('product_storage', 'product_storage.product_id', '=', 'products.id')
-            ->where('product_storage.storage_id', $request->storage);
+        $builder = Product::limit(50);
 
-        if ($request->has('category_id'))
-            $builder->where('products.category', $request->category_id);
-        elseif ($request->has('name'))
-            $builder->where('products.name', 'like', "%$request->name%");
-        elseif ($request->has('services_code'))
-            $builder->where('products.services_code', 'like', "%$request->name%");
+        if ($type == 'category') $builder->where('category', $search);
+        else
+            $builder->where(function (Builder $builder) use ($search) {
+                $builder->where('name', 'like', "%$search%")
+                    ->orWhere('services_code', 'like', "%$search%")
+                    ->orWhere('articul', 'like', "%$search%")
+                    ->orWhere('model', 'like', "%$search%")
+                    ->orWhere('name_ru', 'like', "%$search%");
+            });
 
         $result = '';
         foreach ($builder->get() as $product) {
-            if ($product->combine) $c = 'n';
-            else $c = $product->accounted ? $product->count : 'n';
-
-            $result .= "<div data-storage='{$request->storage}' data-id='{$product->id}' class='option'> ";
-            $result .= $product['name'];
-            $result .= " | ";
-            $result .= "<span style='color: blue;'>";
-            $result .= $c;
-            $result .= "</span></div>\n";
+            $result .= "<div data-id='{$product->id}' class='item searched'> ";
+            $result .= $product->name;
+            $result .= "</div>\n";
         }
 
         echo $result;
     }
 
     // Вивод вибраних товарів при пошуку
-    public function actionGetProducts(string $type, array $products)
+    public function actionGetProduct(string $type, int $id)
     {
-        $result = [];
-        foreach ($products as $product) {
-            $result[] = Product::select('products.*', 'product_storage.count', 'storage.name as storage_name')
-                ->leftJoin('product_storage', 'product_storage.product_id', '=', 'products.id')
-                ->leftJoin('storage', 'storage.id', '=', 'product_storage.storage_id')
-                ->where('product_storage.storage_id', $product['storage'])
-                ->where('products.id', $product['id'])
-                ->first();
-        }
+        $result[] = Product::find($id);
 
         $this->view->display('buy.show_found_products', ['products' => $result, 'type' => $type]);
     }
@@ -467,32 +459,16 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function action_create_delivery($post)
+    public function actionCreateDelivery(/*CreateDeliveryRequest $request,*/
+        Request $request, OrderCreate $order)
     {
-        if (empty($post->fio)) {
-            response('400', 'Заповніть імя!');
-        }
+        $data = new Collection($request->except(['products']));
+        $products = (new Collection($request->only(['products'])))->collect();
 
-        if (empty($post->phone)) {
-            response('400', 'Заповніть телефон!');
-        }
+        $id = $order->delivery($data, $products);
 
-        if (empty($post->city)) {
-            response('400', 'Заповніть місто!');
-        }
-
-        if (!isset($post->products))
-            response(400, 'Виберіть хоча-б один товар!');
-
-        $products = $post->products;
-        unset($post->products);
-
-        $id = (new OrderCreate)->delivery($post, $products);
-
-        response(200, [
-            'action' => 'redirect',
-            'uri' => uri('orders', ['section' => 'update', 'id' => $id]),
-            'message' => 'Замовлення вдало створено!'
+        response()->json([
+            'location' => uri('orders/update', ['id' => $id])
         ]);
     }
 
@@ -594,38 +570,35 @@ class OrdersController extends Controller
         response(200, DATA_SUCCESS_UPDATED);
     }
 
-    public function action_close_form($post)
+    public function actionCloseForm(int $id)
     {
+        $order = Order::findOrFail($id);
+
         $this->view->display('buy.update.close_form', [
-            'order' => Orders::getOrderById($post->id),
+            'order' => $order,
             'title' => 'Закрити замовлення'
         ]);
     }
 
-    public function action_close($post)
+    public function actionClose(Request $request, OrderUpdate $orderUpdate)
     {
-        if (!R::count('reports', '`data` = ? AND `type` = ?', [$post->id, 'order'])) {
-            Reports::createOrder($post);
+        if (Report::where('data', $request->id)->where('type', 'order')->count()) {
+            Reports::createOrder($request->toArray());
 
-            (new OrderUpdate($post->id))->status(4);
-
-            response(200, 'Замовлення вдало закрито!');
-        } else {
-            response(400, 'Замовленя вже закрите!!! Оновіть сторінку!');
+            $orderUpdate->status(4);
         }
+
+        response()->json([
+            'message' => 'Замовлення вдало закрито!'
+        ]);
+
     }
 
-    public function action_update_status($post)
+    public function actionUpdateStatus(UpdateStatusRequest $request, OrderUpdate $orderUpdate)
     {
-        $order = R::load('orders', $post->id);
+        $orderUpdate->status($request->status);
 
-        if (($order->type == 'delivery' || $order->type == 'self') && $order->courier == 0)
-            response(400, 'Для того щоб змінити статус виберіть курєра!');
-
-        (new OrderUpdate($post->id))
-            ->status($post->status);
-
-        response(200, [
+        response()->json([
             'message' => 'Статус вдало оновлено!',
             'action' => 'close'
         ]);

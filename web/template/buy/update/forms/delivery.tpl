@@ -30,10 +30,8 @@
     </div>
 
     <div class="type_block">
-        <form action="<?= uri('orders') ?>" data-type="update_order_status">
-
+        <form action="<?= uri('orders/update_status') ?>" data-type="update_order_status">
             <input type="hidden" name="id" value="<?= $order->id ?>">
-            <input type="hidden" name="type" value="<?= $order->type ?>">
             <input type="hidden" name="old_status" value="<?= $order->status ?>">
 
             <?php element('status', ['type' => $type, 'status' => $order->status]); ?>

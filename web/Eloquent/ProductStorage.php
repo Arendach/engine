@@ -18,4 +18,9 @@ class ProductStorage extends Model
             ->first()
             ->count;
     }
+
+    public function storage()
+    {
+        return $this->belongsTo(Storage::class, 'storage_id');
+    }
 }

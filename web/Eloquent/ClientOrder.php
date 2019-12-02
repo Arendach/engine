@@ -1,15 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: taras
- * Date: 02.12.2019
- * Time: 23:46
- */
 
 namespace Web\Eloquent;
 
+use Illuminate\Database\Eloquent\Model;
 
-class ClientOrder
+class ClientOrder extends Model
 {
+    protected $table = 'client_order';
 
+    public $timestamps = false;
 }

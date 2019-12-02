@@ -61,8 +61,7 @@ function element($element, $data = [])
             </label>
             <div class="col-md-5">
                 <select
-                    <?= isset($type) && $type == 'sending' ? 'required' : '' ?> id="hint" name="hint"
-                                                                                class="form-control">
+                    <?= isset($type) && $type == 'sending' ? 'required' : '' ?> name="hint_id" class="form-control">
                     <?php if (!isset($type) || $type != 'sending') { ?>
                         <option value="0"></option>
                     <?php } ?>
@@ -115,7 +114,7 @@ function element($element, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label" for="courier">Курєр</label>
             <div class="col-md-5">
-                <select id="courier" name="courier" class="form-control">
+                <select name="courier_id" class="form-control">
                     <option value="0">Не вибрано</option>
                     <?php foreach ($users as $user) { ?>
                         <option value="<?= $user->id ?>"><?= $user->name ?></option>
@@ -195,9 +194,9 @@ function element($element, $data = [])
 
     if ($element == 'pay_method') { ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="pay_method">Варіант оплати</label>
+            <label class="col-md-4 control-label">Варіант оплати</label>
             <div class="col-md-5">
-                <select id="pay_method" class="form-control" name="pay_method">
+                <select class="form-control" name="pay_id">
                     <?php foreach ($pays as $pay) { ?>
                         <option data-is_cashless="<?= $pay->is_cashless ?>" value="<?= $pay->id ?>">
                             <?= $pay->name ?>

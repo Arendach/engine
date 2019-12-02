@@ -18,35 +18,27 @@ if ($type == 'delivery') $scripts[] = 'orders/delivery.js';
 
 <?php include parts('head'); ?>
 
-    <!-- Buttons -->
-
     <div class="right" style="margin-bottom: 15px;">
         <a class="btn btn-<?= $type == 'delivery' ? 'primary' : 'default'; ?>"
-           href="<?= uri('orders', ['section' => 'create', 'type' => 'delivery']) ?>"> Доставка </a>
-
-        <a class="btn btn-<?= $type == 'shop' ? 'primary' : 'default'; ?>"
-           href="<?= uri('orders', ['section' => 'create', 'type' => 'shop']) ?>">Магазин</a>
+           href="<?= uri('orders/create', ['type' => 'delivery']) ?>">Доставка</a>
 
         <a class="btn btn-<?= $type == 'self' ? 'primary' : 'default'; ?>"
-           href="<?= uri('orders', ['section' => 'create', 'type' => 'self']) ?>">Самовивіз</a>
+           href="<?= uri('orders/create', ['type' => 'self']) ?>">Самовивіз</a>
 
         <a class="btn btn-<?= $type == 'sending' ? 'primary' : 'default'; ?>"
-           href="<?= uri('orders', ['section' => 'create', 'type' => 'sending']) ?>">Відправка</a>
+           href="<?= uri('orders/create', ['type' => 'sending']) ?>">Відправка</a>
     </div>
 
     <hr>
 
-    <!-- Content -->
-
     <div class="content-section">
-        <!-- Navigation -->
-
         <ul class="nav nav-pills nav-justified">
             <li class="active"><a data-toggle="tab" href="#main">Основна інформація</a></li>
             <li><a data-toggle="tab" href="#products">Товари</a></li>
         </ul>
 
         <hr>
+
         <form id="create_order">
             <input type="hidden" name="type" value="<?= $type ?>">
             <div class="tab-content">

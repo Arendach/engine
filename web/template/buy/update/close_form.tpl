@@ -1,9 +1,7 @@
 <?php include parts('modal_head') ?>
 
-    <form data-type="ajax" action="<?= uri('orders') ?>">
-
+    <form data-type="ajax" action="<?= uri('orders/close') ?>">
         <input type="hidden" name="id" value="<?= $order->id ?>">
-        <input type="hidden" name="action" value="close">
 
         <div class="form-group">
             <label for="name_operation">Назва операції</label>
@@ -11,13 +9,12 @@
         </div>
 
         <div class="form-group <?= cannot() ? 'none' : '' ?>">
-            <label for="sum">Сума(сума + доставка - знижка - предоплата)</label>
-            <input type="text" class="form-control" name="sum"
-                   value="<?= $order->full_sum - $order->prepayment ?>">
+            <label>Сума(сума + доставка - знижка - предоплата)</label>
+            <input  class="form-control" name="sum" value="<?= $order->full_sum - $order->prepayment ?>">
         </div>
 
         <div class="form-group <?= can() ? 'none' : '' ?>">
-            <label for="sum">Сума(сума + доставка - знижка - предоплата)</label>
+            <label>Сума(сума + доставка - знижка - предоплата)</label>
             <span style="display: block; border: 1px solid #ccc;padding: 8px; border-radius: 4px">
                 <?= $order->full_sum - $order->prepayment ?>
             </span>
@@ -26,7 +23,7 @@
 
         <div class="form-group">
             <label for="comment">Коментар</label>
-            <textarea class="form-control" name="comment"><?= date('d.m.Y', strtotime($order->date_delivery)) ?> <?= $order->courier != user()->id && $order->courier != 0 ? user($order->courier)->name : '' ?></textarea>
+            <textarea class="form-control" name="comment"><?= date('d.m.Y', strtotime($order->date_delivery)) ?> <?= $order->courier_id != user()->id && $order->courier_id != 0 ? user($order->courier_id)->name : '' ?></textarea>
         </div>
 
         <div class="form-group">

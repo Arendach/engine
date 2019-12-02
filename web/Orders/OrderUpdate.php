@@ -28,9 +28,9 @@ class OrderUpdate extends Basic implements Converter
      * OrderUpdate constructor.
      * @param $id
      */
-    public function __construct(int $order_id)
+    public function __construct(int $id)
     {
-        $this->order = Order::findOrFail($order_id);
+        $this->order = Order::findOrFail($id);
 
         $this->history = new OrderHistory(clone $this->order);
     }
