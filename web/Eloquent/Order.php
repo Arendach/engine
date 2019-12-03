@@ -12,7 +12,9 @@ class Order extends Model
 
     protected $table = 'orders';
 
-    protected $dates = ['created_at', 'date_delivery'];
+    protected $dates = ['created_at', 'date_delivery', 'updated_at', 'deleted_at'];
+
+    public $timestamps = true;
 
     public function hint()
     {

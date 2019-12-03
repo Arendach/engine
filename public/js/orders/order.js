@@ -29,11 +29,12 @@ $(document).on('keyup', '.amount, .price', function () {
     let amount = $product.find('.amount').val()
     let price = $product.find('.price').val()
 
-    console.log(amount * price);
-    $product.find('.sum').val(amount * price)
+    $product.find('.sum').val(+amount * +price)
 
     checkPrice();
 })
+
+$(document).on('keyup', '#delivery_cost, #discount', checkPrice)
 
 $(document).on('change keyup', '#search_field, #search_category', function () {
     let $this = $(this)

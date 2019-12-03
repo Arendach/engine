@@ -26,12 +26,12 @@ class Response
     {
         http_status($status);
         header('Content-Type: application/json');
-        echo json_encode($message);
+        echo json_encode($message, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         exit;
     }
 
     public function jsonValidateErrors(array $errors)
     {
-        throw new \Exception(json_encode($errors), 400);
+        throw new \Exception(json_encode($errors, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), 400);
     }
 }

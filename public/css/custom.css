@@ -401,13 +401,8 @@ div#down {
 }
 
 .open-product-block {
-    padding: 15px;
     text-align: center;
     cursor: pointer;
-}
-
-.but {
-    border-radius: 10px;
     border: 1px solid #ddd;
     display: block;
     padding: 10px;
@@ -417,22 +412,23 @@ div#down {
 }
 
 .order_search_products {
-    /*background-color: #fff;*/
-    /*padding: 20px;*/
     margin-bottom: 40px;
     overflow: hidden;
-    /*border: 1px solid #ddd;*/
-    /*box-shadow: ;*/
 }
 
-#product-list .form-control, #product-list .input-group-addon{
+#product-list .form-control, #product-list .input-group-addon {
     padding: 3px 6px;
     height: auto;
     font-size: 12px;
 }
 
-#product-list th{
+#product-list th {
     background-color: #eee;
+}
+
+.order-print-button {
+    margin-right: 20px;
+    color: #0a790f
 }
 
 .mini-block {
@@ -570,6 +566,10 @@ table.table > tbody > tr > td.vertical-centered {
 
 .orders-table {
     font-size: 12px;
+}
+
+.orders-table th {
+    background-color: #eee;
 }
 
 .orders-filter-container {

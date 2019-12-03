@@ -25,12 +25,12 @@
 <div class="order_search_products">
     <table id="product-list" class="table table-bordered">
         <thead>
-        <th>Назва товару</th>
+        <th>Товар</th>
         <th>Склад</th>
         <th>Кількість</th>
         <th>Вартість</th>
         <th style="width: 71px">Сума</th>
-        <th>Аттрибути</th>
+        <th>Атрибути</th>
         <?= $type != 'sending' ?: '<th>Місце</th>' ?>
         <th style="width: 39px">Дії</th>
         </thead>

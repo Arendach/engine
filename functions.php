@@ -135,17 +135,17 @@ function post($key)
 /**
  * @param mixed ...$params
  */
-function dd(...$params)
+/*function dd(...$params)
 {
     foreach ($params as $param)
         dump($param);
     exit;
-}
+}*/
 
 /**
  * @param mixed ...$params
  */
-function dump(...$params)
+/*function dump(...$params)
 {
     foreach ($params as $param) {
         echo '<pre style="z-index: 9999999;">';
@@ -153,7 +153,7 @@ function dump(...$params)
         echo '</pre>';
     }
     echo '<hr>';
-}
+}*/
 
 /**
  * @param $var
@@ -1232,11 +1232,14 @@ function abort_if(bool $bool, $code, $message = '')
 }
 
 /**
- * @param string $key
- * @param $default
- * @return mixed
+ * @param null $key
+ * @param null $default
+ * @return mixed|\Web\App\Request
  */
-function request(string $key, $default)
+function request($key = null, $default = null)
 {
+    if ($key == null && $default == null)
+        return container(\Web\App\Request::class);
+
     return container(\Web\App\Request::class)->get($key, $default);
 }

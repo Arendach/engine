@@ -95,7 +95,8 @@ $css = ['orders/common.css'];
                                 <select id="order_professional_id" class="search form-control">
                                     <option value=""></option>
                                     <?php foreach (\Web\Eloquent\OrderProfessional::all() as $item) { ?>
-                                        <option <?= $item->id != get('order_professional_id') ?: 'selected' ?> value="<?= $item->id ?>">
+                                        <option <?= $item->id != get('order_professional_id') ?: 'selected' ?>
+                                                value="<?= $item->id ?>">
                                             <?= $item->name ?>
                                         </option>
                                     <?php } ?>
@@ -121,7 +122,8 @@ $css = ['orders/common.css'];
                                 <select id="pay_id" class="search form-control">
                                     <option value=""></option>
                                     <?php foreach (\Web\Eloquent\Pay::all() as $item) { ?>
-                                        <option <?= $item->id != get('pay_id') ?: 'selected' ?> value="<?= $item->id ?>">
+                                        <option <?= $item->id != get('pay_id') ?: 'selected' ?>
+                                                value="<?= $item->id ?>">
                                             <?= $item->name ?>
                                         </option>
                                     <?php } ?>
@@ -139,23 +141,7 @@ $css = ['orders/common.css'];
 
         <?php include t_file("buy.view.$type") ?>
 
-        <?php /*if ($paginate['count_pages'] > 0) {  */ ?><!--
-        <div class="centered">
-            Показано з <? /*= $paginate['start'] + 1  */ ?> по <? /*= $paginate['start'] + my_count($data) */ ?>
-            з <? /*= $paginate['all'] */ ?> (всього сторінок - <? /* /*= ceil($paginate['all'] / $paginate['items']) */ ?>)
-            <br>
-            <?php /*/*include parts('paginate') */ ?>
-        </div>
-    --><?php /*/*} */ ?>
-        <?php
-
-        echo  $orders->links('parts.paginator');
-
-        $paginate = $orders;
-        include parts('paginate');
-
-        ?>
-
+        <?php $orders->links('parts.paginator') ?>
 
     </div>
 

@@ -15,13 +15,13 @@
         <td>Ціна</td>
         <td>Сума</td>
     </tr>
-    <?php foreach (get_object($products) as $item) { ?>
+    <?php foreach ($order->products as $item) { ?>
         <tr>
             <td><?= $item->name ?></td>
             <td><?= $item->model ?></td>
-            <td><?= $item->amount ?></td>
-            <td><?= number_format($item->price, 2) ?></td>
-            <td><?= number_format($item->amount * $item->price, 2) ?></td>
+            <td><?= $item->pivot->amount ?></td>
+            <td><?= number_format($item->pivot->price, 2) ?></td>
+            <td><?= number_format($item->pivot->amount * $item->pivot->price, 2) ?></td>
         </tr>
     <?php } ?>
     <tr>

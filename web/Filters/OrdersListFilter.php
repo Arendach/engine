@@ -109,6 +109,13 @@ class OrdersListFilter extends Filter
         else $this->builder->where('status', $value);
     }
 
+    public function type($value): void
+    {
+        if (!in_array($value, ['sending', 'self', 'delivery'])) $value = 'delivery';
+
+        $this->builder->where('type', $value);
+    }
+
     public function default_status(): void
     {
         $this->builder->whereIn('status', [0, 1, 4]);

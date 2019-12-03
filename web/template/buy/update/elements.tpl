@@ -23,8 +23,7 @@ function element($key, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label" for="date_delivery">Дата доставки <i class="text-danger">*</i></label>
             <div class="col-md-5">
-                <input id="date_delivery" required name="date_delivery" type="date" class="form-control"
-                       value="<?= $date_delivery ?>">
+                <input required name="date_delivery" type="date" class="form-control" value="<?= $date_delivery->format('Y-m-d') ?>">
             </div>
         </div>
     <?php }
@@ -45,7 +44,7 @@ function element($key, $data = [])
             </label>
             <div class="col-md-5">
                 <select required id="pay_method" name="pay_method" class="form-control">
-                    <?php if (isset($empty)){ ?>
+                    <?php if (isset($empty)) { ?>
                         <option value="0"></option>
                     <?php } ?>
                     <?php foreach (Web\App\Model::getAll('pays') as $item) { ?>
@@ -108,7 +107,7 @@ function element($key, $data = [])
 
     if ($key == 'hint') { ?>
         <div class="form-group">
-            <label for="hints" class="col-md-4 control-label">
+            <label class="col-md-4 control-label">
                 <?php if (isset($type) && $type == 'sending') { ?>
                     <span style="color: red">Підказка</span> <i class="text-danger">*</i>
                 <?php } else { ?>
@@ -116,12 +115,12 @@ function element($key, $data = [])
                 <?php } ?>
             </label>
             <div class="col-md-5">
-                <select required id="hint" name="hint" class="form-control">
+                <select required name="hint_id" class="form-control">
                     <?php if ($type != 'sending') { ?>
                         <option value="0"></option>
                     <?php } ?>
-                    <?php foreach (\Web\Eloquent\OrderHint::whereIn('type', [0, $type]) as $item) { ?>
-                        <option <?= htmlspecialchars($hint) == $item->id ? 'selected' : ''; ?> value="<?= $item->id; ?>">
+                    <?php foreach (\Web\Eloquent\OrderHint::whereIn('type', [0, $type])->get() as $item) { ?>
+                        <option <?= $hint_id == $item->id ? 'selected' : ''; ?> value="<?= $item->id; ?>">
                             <?= $item->description; ?>
                         </option>
                     <?php } ?>
@@ -159,16 +158,15 @@ function element($key, $data = [])
 
     if ($key == 'courier') { ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="courier">Курєр</label>
+            <label class="col-md-4 control-label">Курєр</label>
             <div class="col-md-5">
-                <select id="courier" name="courier" class="form-control">
-                    <option <?= $status != 0 ? 'disabled' : '' ?> <?= $courier == '0' ? 'selected' : '' ?> value="0">
+                <select name="courier_id" class="form-control">
+                    <option <?= !$status ?: 'disabled' ?> <?= $courier_id ?: 'selected' ?> value="0">
                         Не вибрано
                     </option>
-                    <?php foreach (Web\App\Model::findAll('users', 'archive = 0') as $user) { ?>
-                        <option <?= htmlspecialchars($courier) == $user->id ? 'selected' : ''; ?>
-                                value="<?= $user->id ?>">
-                            <?= $user->name ?>
+                    <?php foreach (\Web\Eloquent\User::couriers()->get() as $courier) { ?>
+                        <option <?= $courier_id == $courier->id ? 'selected' : '' ?> value="<?= $courier->id ?>">
+                            <?= $courier->name ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -262,7 +260,8 @@ function element($key, $data = [])
             <div class="col-md-5">
                 <select id="warehouse" name="warehouse" class="form-control">
                     <?php foreach (\Web\Model\OrderSettings::getAll('shops') as $item) { ?>
-                        <option <?= htmlspecialchars($warehouse) == $item->id ? 'selected' : '' ?> value="<?= $item->id ?>">
+                        <option <?= htmlspecialchars($warehouse) == $item->id ? 'selected' : '' ?>
+                                value="<?= $item->id ?>">
                             <?= $item->name ?>
                         </option>
                     <?php } ?>
@@ -271,14 +270,13 @@ function element($key, $data = [])
         </div>
     <?php }
 
-    if ($key == 'delivery') { ?>
+    if ($key == 'logistic') { ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="delivery">Транспортна компанія</label>
+            <label class="col-md-4 control-label">Транспортна компанія</label>
             <div class="col-md-5">
-                <select id="delivery" name="delivery" class="form-control">
-                    <?php foreach (Web\App\Model::getAll('logistics') as $item) { ?>
-                        <option <?= htmlspecialchars(htmlspecialchars($delivery)) == $item->id ? 'selected' : ''; ?>
-                                value="<?= $item->id ?>">
+                <select name="logistic_id" class="form-control">
+                    <?php foreach (\Web\Eloquent\Logistic::all() as $item) { ?>
+                        <option <?= $logistic_id != $item->id ?: 'selected' ?> value="<?= $item->id ?>">
                             <?= $item->name ?>
                         </option>
                     <?php } ?>
@@ -406,11 +404,11 @@ function element($key, $data = [])
 
     if ($key == 'site') { ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="site">Сайт</label>
+            <label class="col-md-4 control-label">Сайт</label>
             <div class="col-md-5">
-                <select id="site" name="site" class="form-control">
-                    <option value=""></option>
-                    <?php foreach (\Web\App\Model::getAll('sites') as $item) { ?>
+                <select name="site" class="form-control">
+                    <option value="0"></option>
+                    <?php foreach (\Web\Eloquent\Site::all() as $item) { ?>
                         <option <?= $site == $item->id ? 'selected' : '' ?> value="<?= $item->id ?>">
                             <?= $item->name ?>
                         </option>

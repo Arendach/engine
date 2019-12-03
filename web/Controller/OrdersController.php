@@ -5,7 +5,7 @@ namespace Web\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use SergeyNezbritskiy\PrivatBank\AuthorizedClient;
 use SergeyNezbritskiy\PrivatBank\Merchant;
-use Web\App\Collection;
+use Illuminate\Support\Collection;
 use Web\App\Request;
 use Web\Eloquent\Logistic;
 use Web\Eloquent\Order;
@@ -27,9 +27,10 @@ use RedBeanPHP\R;
 use Web\Eloquent\User;
 use Web\Orders\OrderCreate;
 use Web\Orders\OrderUpdate;
-use Web\Requests\Orders\CreateDeliveryRequest;
 use Web\Requests\Orders\CreateSelfRequest;
+use Web\Requests\Orders\UpdateContactsRequest;
 use Web\Requests\Orders\UpdateStatusRequest;
+use Web\Requests\Orders\UpdateWorkingRequest;
 
 class OrdersController extends Controller
 {
@@ -122,7 +123,6 @@ class OrdersController extends Controller
             'files',
             'pay',
             'products.pivot.storage'
-
         ])->findOrFail($id);
 
         $data = [
@@ -140,7 +140,6 @@ class OrdersController extends Controller
             'storage' => Storage::where('accounted', 1)->orderBy('sort')->get(),
             'closed_order' => Orders::count('reports', "`data` = ? AND `type` = 'order'", [$id])
         ];
-
 
         $add_transaction = false;
 
@@ -254,12 +253,7 @@ class OrdersController extends Controller
 
     public function actionPreview(int $id)
     {
-        $data = [
-            'products' => Orders::getProductsByOrderId($id),
-            'order' => get_object(Orders::getOne($id))
-        ];
-
-        $this->view->display('orders.preview', $data);
+        $this->view->display('orders.preview', ['order' => Order::findOrFail($id)]);
     }
 
     public function action_create_user_bonus($post)
@@ -509,30 +503,23 @@ class OrdersController extends Controller
     }
 
     // Оновлення контактної інформації
-    public function action_update_contacts($post)
+    public function actionUpdateContacts(UpdateContactsRequest $request, OrderUpdate $orderUpdate)
     {
-        if (empty($post->fio)) response(400, 'Заповніть імя!');
+        $orderUpdate->contacts($request->toArray());
 
-        if (empty($post->phone)) response(400, 'Заповніть телефон!');
-
-        (new OrderUpdate($post->id))->contacts($post);
-
-        response(200, ['message' => 'Контакти вдало оновлені!', 'action' => 'close']);
+        response()->json(['message' => 'Контакти вдало оновлені!', 'action' => 'close']);
     }
 
     // Оновлення службової інформації
-    public function action_update_working($post)
+    public function actionUpdateWorking(UpdateWorkingRequest $request, OrderUpdate $orderUpdate)
     {
-        if (isset($post->date_delivery) && empty($post->date_delivery))
-            response(400, 'Заповніть дату доставки!');
-
-        (new OrderUpdate($post->id))->working($post);
+        $orderUpdate->working($request->toCollection());
 
         response(200, ['action' => 'close', 'message' => DATA_SUCCESS_UPDATED]);
     }
 
     // Оновлення інформаціїї про адресу
-    public function action_update_address($post)
+    public function actionUpdateAddress($post)
     {
         if (isset($post->type) && $post->type == 'delivery') {
             if (empty($post->city)) response(400, 'Введіть назву міста!');

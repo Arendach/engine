@@ -3,6 +3,7 @@
 namespace Web\App;
 
 use stdClass;
+use Illuminate\Support\Collection;
 
 class Request
 {
@@ -98,19 +99,42 @@ class Request
         return isset($this->query[$key]);
     }
 
+
+    /**
+     * @param string $key
+     * @param $value
+     * @param bool $strict
+     */
+    public function is(string $key, $value, $strict = true)
+    {
+        if ($strict) return $this->get($key) === $value;
+        else return $this->get($key) == $value;
+    }
+
+    /**
+     * @param string $key
+     * @param $value
+     * @param bool $strict
+     * @return null|string
+     */
+    public function selected(string $key, $value, $strict = true)
+    {
+        return $this->is($key, $value, $strict) ? 'selected' : null;
+    }
+
     /**
      * @param string $key
      * @return bool
      */
     public function isEmpty(string $key): bool
     {
-        if (!$this->has($key)) return false;
+        if (!$this->has($key)) return true;
 
-        if (is_null($this->get($key))) return false;
+        if (is_null($this->get($key))) return true;
 
-        if ($this->get($key) == '') return false;
+        if ($this->get($key) == '') return true;
 
-        return true;
+        return false;
     }
 
     /**
@@ -162,6 +186,14 @@ class Request
     public function toJson(): string
     {
         return json_encode($this->query);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function toCollection(): Collection
+    {
+        return new Collection($this->query);
     }
 
     /**

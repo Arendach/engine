@@ -4,9 +4,12 @@ namespace Web\Orders;
 
 use RedBeanPHP\OODBBean;
 use RedBeanPHP\R;
-use Web\App\Collection;
+use Illuminate\Support\Collection;
+use Web\Eloquent\Logistic;
+use Web\Eloquent\OrderHint;
 use Web\Eloquent\OrderProduct;
 use Web\Eloquent\Product;
+use Web\Eloquent\Site;
 use Web\Model\OrderSettings;
 use stdClass;
 use Web\Eloquent\Order;
@@ -68,29 +71,27 @@ class OrderHistory
     }
 
     /**
-     * @param stdClass $data
+     * @param array $data
      * @return void
      */
-    public function contacts(stdClass $data): void
+    public function contacts(array $data): void
     {
         $edited = $this->getEdited($data);
-
-        if (!count($edited)) return;
 
         $this->save('update_contact', $edited);
     }
 
     /**
-     * @param stdClass $data
+     * @param array $data
      * @return void
      */
-    public function working(stdClass $data): void
+    public function working(Collection $data): void
     {
         $history = [];
 
         $this->courierCheck($history, $data);
 
-        $this->deliveryCheck($history, $data);
+        $this->logisticCheck($history, $data);
 
         $this->siteCheck($history, $data);
 
@@ -179,16 +180,16 @@ class OrderHistory
 
     /**
      * @param array $history
-     * @param stdClass $data
+     * @param Collection $data
      */
-    private function courierCheck(array &$history, stdClass $data): void
+    private function courierCheck(array &$history, Collection $data): void
     {
-        if (!isset($data->courier)) return;
+        if (!$data->has('courier_id')) return;
 
-        if ($this->order->courier == $data->courier) return;
+        if ($this->order->courier_id == $data->get('courier_id')) return;
 
-        $old = $this->order->courier == 0 ? 'Не вибраний' : user($this->order->courier)->name;
-        $new = $data->courier == 0 ? 'Не вибраний' : user($data->courier)->name;
+        $old = $this->order->courier_id == 0 ? 'Не вибраний' : $this->order->courier->name;
+        $new = $data->get('courier_id') == 0 ? 'Не вибраний' : user($data->get('courier_id'))->name;
 
         $history['courier'] = "<span><i class='text-info'>$old</i> => <i class='text-success'>$new</i></span>";
     }
@@ -196,55 +197,58 @@ class OrderHistory
     /**
      * Транспортна компанія
      * @param array $history
-     * @param stdClass $data
+     * @param Collection $data
      */
-    private function deliveryCheck(array &$history, stdClass $data): void
+    private function logisticCheck(array &$history, Collection $data): void
     {
-        if (!isset($dat->delivery)) return;
+        if (!$data->has('logistic_id')) return;
 
-        if ($this->order->delivery == $data->delivery) return;
+        if ($this->order->logistic_id == $data->logistic_id) return;
 
-        $delivery = R::load('logistics', $data->delivery);
-        $history['delivery'] = $delivery->name;
+        $logistic = Logistic::find($data->logistic_id);
+        $history['logistic'] = $logistic->name;
     }
 
     /**
      * Зміна сайту
      * @param array $history
-     * @param stdClass $data
+     * @param Collection $data
      * @return void
      */
-    private function siteCheck(array &$history, stdClass $data): void
+    private function siteCheck(array &$history, Collection $data): void
     {
-        if (!isset($data->site)) return;
+        if ($data->has('site')) return;
 
         if ($this->order->site == $data->site) return;
 
-        $site = R::load('sites', $data->site);
+        $site = Site::find($data->site);
         $history['site'] = $site->name;
     }
 
     /**
      * Підказка(кольоровий маркер)
      * @param array $history
-     * @param stdClass $data
+     * @param Collection $data
      * @return void
      */
-    private function hintCheck(array &$history, stdClass $data): void
+    private function hintCheck(array &$history, Collection $data): void
     {
-        if (!isset($data->hint) || ($this->order->hint == $data->hint)) return;
+        if (!$data->has('hint_id')) return;
 
-        $hint = R::load('colors', $data->hint);
+        if ($this->order->hint_id == $data->get('hint_id')) return;
+
+        $hint = OrderHint::find($data->get('hint_id'));
+
         $history['hint'] = '<span style="color: #' . $hint->color . '">' . $hint->description . '</span>';
     }
 
     /**
      * Дата доставки, коментар, купон, градація по часу доставки
      * @param array $history
-     * @param stdClass $data
+     * @param Collection $data
      * @return void
      */
-    private function workingFieldsCheck(array &$history, stdClass $data): void
+    private function workingFieldsCheck(array &$history, Collection $data): void
     {
         $fields = [
             'date_delivery',
@@ -255,11 +259,11 @@ class OrderHistory
         ];
 
         foreach ($fields as $field) {
-            if (!isset($data->{$field})) continue;
+            if (!$data->has($field)) continue;
 
-            if ($this->order->{$field} == $data->{$field}) continue;
+            if ($this->order->{$field} == $data->get($field)) continue;
 
-            $history[$field] = $data->{$field};
+            $history[$field] = $data->get($field);
         }
     }
 
@@ -286,10 +290,10 @@ class OrderHistory
     }
 
     /**
-     * @param stdClass $data
+     * @param array $data
      * @return array
      */
-    private function getEdited(stdClass $data): array
+    private function getEdited(array $data): array
     {
         $edited = [];
         foreach ($data as $field => $value)

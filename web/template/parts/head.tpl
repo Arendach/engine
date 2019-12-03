@@ -3,6 +3,9 @@
     <!DOCTYPE html>
     <html lang="uk">
     <head>
+
+        <?= app('bar')->renderHead() ?>
+
         <meta charset="UTF-8">
         <title><?= isset($title) ? $title : 'ENTER TITLE' ?></title>
 

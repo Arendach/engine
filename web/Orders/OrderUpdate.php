@@ -4,12 +4,11 @@ namespace Web\Orders;
 
 use RedBeanPHP\R;
 use stdClass;
-use Web\App\Collection;
+use Illuminate\Support\Collection;
 use Web\App\Interfaces\Converter;
 use Web\Eloquent\Order;
 use Web\Eloquent\OrderProduct;
 use Web\Eloquent\Product;
-use Web\Eloquent\ProductStorage;
 use Web\Orders\Order as Basic;
 
 class OrderUpdate extends Basic implements Converter
@@ -71,22 +70,27 @@ class OrderUpdate extends Basic implements Converter
     }
 
     // Оновлення контактів
-    public function contacts(stdClass $post)
+
+    /**
+     * @param array $data
+     * @return void
+     */
+    public function contacts(array $data): void
     {
-        foreach ($post as $field => $value)
+        foreach ($data as $field => $value)
             $this->order->{$field} = trim($value);
 
         $this->save();
 
-        $this->history->contacts($post);
+        $this->history->contacts($data);
     }
 
     /**
      * Оновлення загальної інформації
-     * @param stdClass $data
+     * @param Collection $data
      * @return void
      */
-    public function working(stdClass $data): void
+    public function working(Collection $data): void
     {
         if (isset($data->time_with))
             $data->time_with = time_to_string($data->time_with);
@@ -94,7 +98,7 @@ class OrderUpdate extends Basic implements Converter
         if (isset($data->time_to))
             $data->time_to = time_to_string($data->time_to);
 
-        $this->setFields($data);
+        $this->setFields($data->all());
 
         $this->save();
 
@@ -335,10 +339,10 @@ class OrderUpdate extends Basic implements Converter
 
 
     /**
-     * @param stdClass $data
+     * @param array $data
      * @return void
      */
-    private function setFields(stdClass $data): void
+    private function setFields(array $data): void
     {
         foreach ($data as $field => $value)
             $this->order->{$field} = trim($value);

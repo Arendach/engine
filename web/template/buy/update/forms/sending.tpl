@@ -1,29 +1,16 @@
-<?php
-
-include t_file('buy.update.elements');
-
-$card_class = $return_shipping->type == 'remittance' && $return_shipping->type_remittance == 'on_the_card' ? '' : ' none ';
-$field_class = $return_shipping->type != 'none' ? '' : ' none ';
-$remittance_class = $return_shipping->type == 'remittance' ? '' : ' none ';
-$payer_class = $return_shipping->payer == 'none' ? 'none ' : '';
-
-?>
+<?php include t_file('buy.update.elements') ?>
 
 <div class="centered" style="background: #eee; padding: 15px; margin-bottom: 10px;">
-    <a target="_blank" style="margin-right: 20px; color: #0a790f"
-       href="<?= uri('orders', ['section' => 'receipt', 'id' => $id]) ?>">
+    <a target="_blank" class="order-print-button" href="<?= uri('orders/receipt', ['id' => $id]) ?>">
         <i class="fa fa-print"></i> Товарний чек
     </a>
-    <a style="margin-right: 20px; color: #0a790f" target="_blank"
-       href="<?= uri('orders', ['section' => 'receipt', 'id' => $id, 'official' => 1]) ?>">
+    <a class="order-print-button" target="_blank" href="<?= uri('orders/receipt', ['id' => $id, 'official' => 1]) ?>">
         <i class="fa fa-print"></i> Товарний чек для бугалетрії
     </a>
-    <a target="_blank" style="margin-right: 20px; color: #0a790f"
-       href="<?= uri('orders', ['section' => 'invoice', 'id' => $id]) ?>">
+    <a target="_blank" class="order-print-button" href="<?= uri('orders/invoice', ['id' => $id]) ?>">
         <i class="fa fa-print"></i> Рахунок-фактура
     </a>
-    <a target="_blank" style="margin-right: 20px; color: #0a790f"
-       href="<?= uri('orders', ['section' => 'sales_invoice', 'id' => $id]) ?>">
+    <a target="_blank" class="order-print-button" href="<?= uri('orders/sales_invoice', ['id' => $id]) ?>">
         <i class="fa fa-print"></i> Видаткова накладна
     </a>
 </div>
@@ -35,7 +22,7 @@ $payer_class = $return_shipping->payer == 'none' ? 'none ' : '';
     </div>
 
     <div class="type_block">
-        <form action="<?= uri('orders') ?>" data-type="update_order_status">
+        <form action="<?= uri('orders/update_status') ?>" data-type="update_order_status">
 
             <input type="hidden" name="id" value="<?= $order->id ?>">
             <input type="hidden" name="type" value="<?= $order->type ?>">
@@ -76,25 +63,15 @@ $payer_class = $return_shipping->payer == 'none' ? 'none ' : '';
         </div>
 
         <div class="type_block">
-            <form action="<?= uri('orders') ?>" data-type="ajax">
-
+            <form action="<?= uri('orders/update_working') ?>" data-type="ajax">
                 <input type="hidden" name="id" value="<?= $order->id ?>">
-                <input type="hidden" name="action" value="update_working">
-
-                <?php element('hint', ['hint' => $order->hint, 'type' => $type]) ?>
-
+                <?php element('hint', ['hint_id' => $order->hint_id, 'type' => $type]) ?>
                 <?php element('delivery', ['delivery' => $order->delivery]) ?>
-
                 <?php element('date_delivery', ['date_delivery' => $order->date_delivery]) ?>
-
                 <?php element('site', ['site' => $order->site]) ?>
-
-                <?php element('courier', ['courier' => $order->courier, 'status' => $order->status]) ?>
-
+                <?php element('courier', ['courier_id' => $order->courier_id, 'status' => $order->status]) ?>
                 <?php element('coupon', ['coupon' => $order->coupon]) ?>
-
                 <?php element('comment', ['comment' => $order->comment]) ?>
-
                 <?php element('button') ?>
             </form>
         </div>
@@ -154,78 +131,6 @@ $payer_class = $return_shipping->payer == 'none' ? 'none ' : '';
                 <?php element('pay_delivery', ['pay_delivery' => $order->pay_delivery]) ?>
 
                 <?php element('prepayment', ['prepayment' => $order->prepayment]) ?>
-
-                <?php element('button') ?>
-
-            </form>
-        </div>
-
-        <div class="row right">
-            <div class="col-md-4">
-                <h4><b>Зворотня доставка</b></h4>
-            </div>
-        </div>
-
-        <div class="type_block">
-            <form action="<?= uri('orders') ?>" data-type="ajax">
-
-                <input type="hidden" name="action" value="update_return_shipping">
-                <input type="hidden" name="id" value="<?= $order->id ?>">
-
-                <div class="form-group">
-                    <label class="col-md-4 control-label">Тип</label>
-                    <div class="col-md-5">
-                        <select name="type" class="form-control" id="return_shipping_type">
-                            <option <?= $return_shipping->type == 'none' ? 'selected' : ''; ?> value="none">Немає</option>
-                            <option <?= $return_shipping->type == 'documents' ? 'selected' : ''; ?> value="documents">Документ
-                            </option>
-                            <option <?= $return_shipping->type == 'remittance' ? 'selected' : ''; ?> value="remittance">Грошовий
-                                переказ
-                            </option>
-                            <option <?= $return_shipping->type == 'other' ? 'selected' : ''; ?> value="other">Інше</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group<?= $remittance_class; ?>" id="return_shipping_remittance_type_container">
-                    <label class="col-md-4 control-label">Грошовий переказ</label>
-                    <div class="col-md-5">
-                        <select class="form-control" name="type_remittance">
-                            <option value="imposed">У відділенні</option>
-                            <option disabled value="on_the_card">На картку</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group<?= $card_class; ?>" id="return_shipping_card_container">
-                    <label class="col-md-4 control-label">Карточка</label>
-                    <div class="col-md-5">
-                        <select disabled class="form-control" name="card">
-                            <?php foreach ($cards as $item) { ?>
-                                <option <?= $return_shipping->card == $item['Ref'] ? 'selected' : '' ?> value="<?= $item['Ref'] ?>">
-                                    <?= $item['MaskedNumber'] ?>
-                                </option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                </div>
-
-     <!--           <div class="form-group<?/*= $field_class; */?>" id="return_shipping_sum_container">
-                    <label class="col-md-4 control-label">Дані/сума</label>
-                    <div class="col-md-5">
-                        <input required pattern="[0-9\.]+" class="form-control" name="sum" value="<?/*= $return_shipping->sum */?>">
-                    </div>
-                </div>-->
-
-                <div class="form-group<?= $payer_class; ?><?= $field_class ?>" id="return_shipping_payer_container">
-                    <label class="col-md-4 control-label">Платник зворотньої відправки</label>
-                    <div class="col-md-5">
-                        <select name="payer" class="form-control">
-                            <option <?= $return_shipping->payer == 'receiver' ? 'selected' : '' ?> value="receiver">Отримувач             </option>
-                            <option <?= $return_shipping->payer == 'sender' ? 'selected' : '' ?> value="sender">Відправник</option>
-                        </select>
-                    </div>
-                </div>
 
                 <?php element('button') ?>
 

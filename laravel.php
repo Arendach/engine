@@ -12,6 +12,7 @@ use Illuminate\View\Engines\EngineResolver;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Container\Container;
+use DebugBar\StandardDebugBar;
 
 (new Whoops)->pushHandler($_SERVER['REQUEST_METHOD'] == 'GET' ? new PrettyPageHandler : new JsonResponseHandler)->register();
 
@@ -56,3 +57,8 @@ $capsule->addConnection([
 $capsule->setEventDispatcher($events);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
+
+$debugbar = new StandardDebugBar();
+$debugbarRenderer = $debugbar->getJavascriptRenderer();
+
+app('bar', $debugbarRenderer);
