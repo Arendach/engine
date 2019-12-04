@@ -35,20 +35,23 @@ class Location
     }
 
     /**
-     * @param $city
      * @param $street
-     * @return bool|string
+     * @param $city
+     * @return array
      */
-    public static function search_streets($street, $city)
+    public static function searchStreets($street, $city)
     {
-        $streets = R::findAll('streets', "`city` = ? AND `name` LIKE ? LIMIT 5", [$city, '%' . $street . '%']);
-        if (my_count($streets) > 0) {
-            $str = '';
-            foreach ($streets as $k => $street)
-                $str .= '<option>' . $street->street_type . ' ' . $street->name . ' (' . $street->district . ')</option>';
-            return $str;
-        } else {
-            return false;
-        }
+        $streets = R::findAll('streets', "`city` = ? AND `name` LIKE ? LIMIT 10", [$city, '%' . $street . '%']);
+
+        $result = [];
+        foreach ($streets as $street)
+           $result[] =  "$street->street_type $street->name ($street->district)";
+
+        /*$result[] = [
+                'id' => $street->id,
+                'value' => "$street->street_type $street->name ($street->district)"
+            ];*/
+
+        return $result;
     }
 }

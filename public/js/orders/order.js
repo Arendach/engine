@@ -59,7 +59,8 @@ $(document).on('click', '.searched', function () {
 
 $(document).on('change', '#city_select', function () {
     var $selected = $(this);
-    var text = $selected.find('option:selected').text(), value = $selected.val();
+    var text = $selected.find('option:selected').text(),
+        value = $selected.val();
     $('#city_input').val(text);
     search_warehouses(value[0]);
     $('#city').attr('value', value);

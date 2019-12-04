@@ -2,19 +2,26 @@
 
 $components = ['modal', 'inputmask'];
 
-$scripts = ['elements.js', 'orders/order.js', 'orders/update.js'];
+// $scripts = ['elements.js', 'orders/order.js', 'orders/update.js'];
 
 $css = ['elements.css'];
-
+/*
 if ($type == 'sending')
     $scripts[] = 'orders/sending.js';
 
 if ($type == 'delivery')
-    $scripts[] = 'orders/delivery.js';
+    $scripts[] = 'orders/delivery.js';*/
 
 ?>
 
 <?php include parts('head') ?>
+
+<!--    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">-->
+    <link rel="stylesheet" href="/public/css/autocomplete.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="/js/orders/common.js"></script>
+    <script src="/js/orders/update.js"></script>
+
 
     <ul class="nav nav-pills nav-justified">
         <li class="active"><a data-toggle="tab" href="#main">Основне</a></li>

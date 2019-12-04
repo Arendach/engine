@@ -8,3 +8,5 @@
 /server/black_dates.txt
 /backup/*
 /cache/*
+/node_modules
+/js

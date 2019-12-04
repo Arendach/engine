@@ -3,6 +3,7 @@
 namespace Web\Controller;
 
 use Web\App\Controller;
+use Web\App\Request;
 use Web\Model\Api\Location;
 use Web\Model\Coupon;
 use Web\Model\Api\NewPost;
@@ -45,20 +46,12 @@ class APIController extends Controller
         }
     }
 
-    /**
-     * @param $post
-     */
-    public function search_streets($post)
-    {
-        $city = [
-            'Київ' => 'Kyiv'
-        ];
 
-        $result = Location::search_streets($post->street, $city[$post->city]);
-        if ($result != false)
-            echo $result;
-        else
-            echo '';
+    public function actionSearchStreets(Request $request)
+    {
+        $result = Location::searchStreets($request->street, 'Kyiv');
+
+        response()->json($result);
     }
 
     /**

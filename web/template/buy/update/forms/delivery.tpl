@@ -74,7 +74,7 @@
                 <input type="hidden" name="id" value="<?= $order->id ?>">
                 <input type="hidden" name="action" value="update_working">
 
-                <?php element('hint', ['hint' => $order->hint->id, 'type' => $type]) ?>
+                <?php element('hint', ['hint_id' => $order->hint_id, 'type' => $type]) ?>
 
                 <?php element('date_delivery', ['date_delivery' => $order->date_delivery]) ?>
 
@@ -84,7 +84,7 @@
 
                 <?php element('time_to', ['time_to' => $order->time_to]) ?>
 
-                <?php element('courier', ['courier' => $order->courier->id, 'status' => $order->status]) ?>
+                <?php element('courier', ['courier_id' => $order->courier_id, 'status' => $order->status]) ?>
 
                 <?php element('coupon', ['coupon' => $order->coupon]) ?>
 
