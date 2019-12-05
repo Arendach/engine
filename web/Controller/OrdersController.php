@@ -692,4 +692,16 @@ class OrdersController extends Controller
         response(200, 'Транзакція вдало видалена!');
     }
 
+    public function actionViewAutoComplete(string $search, string $field, string $type)
+    {
+        $response = Order::where($field, 'like', "%$search%")
+            ->where('type', $type)
+            ->limit(5)
+            ->get()
+            ->pluck('fio')
+            ->toArray();
+
+        response()->json($response);
+    }
+
 }

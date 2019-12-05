@@ -16,13 +16,22 @@ $(document).ready ->
     $('[data-toggle="tooltip"]').tooltip()
     $('[data-toggle="popover"]').popover()
 
+    url = document.location.toString()
+    if url.match '#'
+        $('.nav-pills a[href="#' + url.split('#')[1] + '"]').tab('show')
+
+
+$('.nav-pills a').on 'shown.bs.tab', (event) ->
+    window.location.hash = event.target.hash
+
+
 #Валідація поля типу decimal
-$(document).on 'focus', '[data-inspect]', -> document.inputCache = $(@).val
+$(document).on 'focus', '[data-inspect]', -> document.inputCache = $(@).val()
 
 $(document).on 'focusout', '[data-inspect]', -> document.inputCache = ''
 
 $(document).on 'keyup', '[data-inspect="decimal"]', ->
-    value = $(@).val
+    value = $(@).val()
     
     return if value is ''
   
@@ -45,17 +54,17 @@ $(document).on 'keyup', '[data-inspect="decimal"]', ->
 
     
 $(document).on 'keyup', '[data-inspect="integer"]', ->
-    value = $(@).val
+    value = $(@).val()
     return if value is ''
     minus = value.match patterns.hyphen
     value = value.replaceAll patterns.number, ''
     value = "-#{value}" if minus
     $(@).val value
 
-$(document).on 'submit', '[data-type="ajax"]', event ->
-    event.preventDefault
+$(document).on 'submit', '[data-type="ajax"]', (event) ->
+    event.preventDefault()
     
-    data = $(@).serializeJSON
+    data = $(@).serializeJSON()
     url = $(@).attr 'action'
     redirectTo = $(@).data 'redirect-to'
     success = $(@).data 'success'
@@ -82,61 +91,58 @@ $(document).on 'submit', '[data-type="ajax"]', event ->
 
     if $(@).data('pin_code')? then pin_code -> send else send
 
-$(document).on 'click', '[data-type="delete"]', event ->
+$(document).on 'click', '[data-type="delete"]', (event) ->
     event.preventDefault()
 
-    $this = $(@)
-    id = $this.data 'id'
-    url = $this.data 'uri'
-    action = $this.data 'action'
-    data = $this.data 'post'
+    id = $(@).data 'id'
+    url = $(@).data 'uri'
+    action = $(@).data 'action'
+    data = $(@).data 'post'
 
-    data? ? "#{data}&action=#{action}": {id, action}
+    data = if data isnt undefined then "#{data}&action=#{action}" else {id, action}
 
     delete_on_click ->
         $.ajax
             type: 'post', url: url, data: data
-            success: answer -> successHandler(answer)
-            error: answer -> errorHandler(answer)
+            success: (answer) -> successHandler(answer)
+            error: (answer) -> errorHandler(answer)
 
-$(document).on 'click', '[data-type="get_form"]', event ->
+$(document).on 'click', '[data-type="get_form"]', (event) ->
     event.preventDefault()
 
-    $this = $(@)
-    url = $this.data 'uri'
-    action = $this.data 'action'
-    post = $this.data 'post'
-    data = post is undefined ? "action=#{action}": "#{post}&action=#{action}"
+    url = $(@).data 'uri'
+    action = $(@).data 'action'
+    post = $(@).data 'post'
+    data = if post is undefined then "action=#{action}" else "#{post}&action=#{action}"
 
-    $this.attr 'disabled', yes
+    $(@).attr 'disabled', yes
 
     $.ajax
         type: 'post', url: url, data: data
-        success: answer ->
+        success: (answer) ->
             myModalOpen answer
-            $this.attr 'disabled', no
-        error: answer ->
+            $(@).attr 'disabled', no
+        error: (answer) ->
             errorHandler answer
-            $this.attr 'disabled', no
+            $(@).attr 'disabled', no
 
 
-$(document).on 'click', '[data-type="ajax_request"]', event ->
-    event.preventDefault
+$(document).on 'click', '[data-type="ajax_request"]', (event) ->
+    event.preventDefault()
 
-    $this = $(@)
-    url = $this.data 'uri'
-    data = $this.data 'post'
-    action = $this.data 'action'
+    url = $(@).data 'uri'
+    data = $(@).data 'post'
+    action = $(@).data 'action'
 
     data = "#{data}&action=#{action}"
 
     $.ajax
-        type: 'post', url, data
-        success: answer -> successHandler answer
-        error: answer -> errorHandler answer
+        type: 'post', url: url, data: data
+        success: (answer) -> successHandler answer
+        error: (answer) -> errorHandler answer
 
 
-$(document).on 'click', '#map-signs', event ->
+$(document).on 'click', '#map-signs', (event) ->
     event.preventDefault()
     left_bar = $('#left_bar')
     content = $('#content')
@@ -163,39 +169,31 @@ $(document).on 'click', '#map-signs', event ->
 $(document).on 'hide.bs.modal', '.modal', -> $(@).remove()
 
 
-url = document.location.toString()
-
-if url.match('#')
-    $('.nav-pills a[href="#' + url.split('#')[1] + '"]').tab('show')
-
-
-$('.nav-pills a').on 'shown.bs.tab', event -> window.location.hash = event.target.hash
-
-
 $('a[data-type="pin_code"]').on 'click', ->
     href = $(@).data('href')
     pin_code -> window.location.href = href
 
-str_to_int = (str) -> str.replace(/\D+/g, "")
+window.str_to_int = (str) -> str.replace(/\D+/g, "")
 
-getParameters = ->
+window.getParameters = ->
     Pattern = /[\?][\w\W]+/
     params = document.location.href.match(Pattern)
     params = '' if params?
 
-log = (type, desc) ->
+window.log = (type, desc) ->
     $.ajax
         type: 'post',
         url: '/log'
         data: {type, desc}
 
 
-elog = (desc) -> log('error_in_javascript_file', desc)
+window.elog = (desc) -> log('error_in_javascript_file', desc)
 
 
-redirect = url ->  window.location.href = url
+window.redirect = (url) ->
+    window.location.href = url
 
 
-url = path ->
+window.url = (path) ->
     path = path.replace(/^\//, '')
     "#{my_url}/#{path}"

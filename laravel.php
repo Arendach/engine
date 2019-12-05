@@ -58,7 +58,7 @@ $capsule->setEventDispatcher($events);
 $capsule->setAsGlobal();
 $capsule->bootEloquent();
 
-$debugbar = new StandardDebugBar();
+/*$debugbar = new StandardDebugBar();
 $debugbarRenderer = $debugbar->getJavascriptRenderer();
 
-app('bar', $debugbarRenderer);
+app('bar', $debugbarRenderer);*/

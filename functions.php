@@ -412,6 +412,7 @@ function date_to_day($date)
  */
 function parts($file)
 {
+    if ($file == 'footer') $file = 'foot';
     return TEMPLATE_PATH . "parts/$file.tpl";
 }
 

@@ -12,7 +12,7 @@ $s = isset($_GET['status']) ? true : false;
         <th>ПІБ</th>
         <th>Номер</th>
         <th style="width: 88px;">Час доставки</th>
-        <th>Регіон</th>
+        <th>Адреса</th>
         <th>Кур`єр</th>
         <th>Сума</th>
         <th>Статус</th>
@@ -41,14 +41,7 @@ $s = isset($_GET['status']) ? true : false;
         </td>
 
         <td>
-            <select id="region" class="search">
-                <option value=""></option>
-                <?php foreach (Settings::regions() as $region) { ?>
-                    <option <?= $region != get('region') ?: 'selected' ?> value="<?= $region ?>">
-                        <?= $region ?>
-                    </option>
-                <?php } ?>
-            </select>
+            <input id="street" class="search" value="<?= get('region') ?>">
         </td>
         <td>
             <select class="search" id="courier_id">

@@ -1,10 +1,17 @@
 <?php
 
-$scripts = ['orders/view.js'];
+$scripts = [
+    'orders/view.js',
+    'orders/common.js'
+];
 
 $components = ['inputmask'];
 
 $css = ['orders/common.css'];
+
+$toJs = [
+    'type' => $type
+];
 
 ?>
 

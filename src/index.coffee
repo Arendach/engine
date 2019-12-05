@@ -7,7 +7,7 @@ $(document).on 'click', '.close_notification', ->
             id: notification_id,
             action: 'close_notification'
         success: window.location.reload
-        error: answer -> errorHandler answer
+        error: (answer) -> errorHandler answer
 
 
 $(document).on 'click', '.close_task', ->
@@ -23,18 +23,18 @@ $(document).on 'click', '.close_task', ->
         type: 'post'
         url: '/task'
         data: data,
-        success: answer -> myModalOpen answer
-        error: answer -> errorHandler answer
+        success: (answer) -> myModalOpen answer
+        error: (answer) -> errorHandler answer
 
-$(document).on 'submit', '#close_task', event ->
-    event.preventDefault
+$(document).on 'submit', '#close_task', (event) ->
+    event.preventDefault()
     
-    data = $(@).serializeJSON
+    data = $(@).serializeJSON()
     data.action = 'close'
     
     $.ajax
         type: 'post'
         url: '/task'
         data: data,
-        success: answer -> successHandler answer
-        error: answer -> errorHandler answer
+        success: (answer) -> successHandler answer
+        error: (answer) -> errorHandler answer

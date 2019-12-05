@@ -71,11 +71,6 @@ class OrdersListFilter extends Filter
         $this->builder->where('time_to', '<=', $value);
     }
 
-    public function region($value): void
-    {
-        $this->builder->where('street', 'like', "%$value%");
-    }
-
     public function warehouse($value): void
     {
         $this->builder->where('warehouse', $value);

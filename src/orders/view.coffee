@@ -1,16 +1,17 @@
-
-filterOrders ->
+filterOrders = ->
     data = {}
     $('.search').each((i, e) -> data[$(e).attr('id')] = $(e).val())
     GET.setObject(data).unsetEmpty().unset('page').go()
 
 
-$(document).on 'click change', '#search, select.search', filterOrders
+$(document).on 'change', 'select.search', filterOrders
+
+$(document).on 'click', '#search', filterOrders
 
 
 $(document).on 'keyup', '.search', (e) ->
     if e.which == 13
-        do filterOrders
+        filterOrders()
 
 
 $(document).on 'click', '#export_xml', ->
@@ -81,3 +82,22 @@ $(document).ready ->
     $('.search#phone').inputmask '999-999-99-99'
     $('#phone').inputmask "999-999-99-99"
     $('#phone2').inputmask "999-999-99-99"
+
+    cache = {}
+    $('#fio, #street').autocomplete
+        source: (request, response) =>
+            term = request.term
+            if term of cache
+                return response cache[term]
+
+            $.ajax
+                type: 'post'
+                url: '/orders/view_auto_complete'
+                data:
+                    search: term
+                    field: 'fio'
+                    type: JData.type
+                success: (data) ->
+                    cache[term] = data
+                    response(data)
+        minLength: 3
