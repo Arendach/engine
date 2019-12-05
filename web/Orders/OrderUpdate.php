@@ -118,6 +118,56 @@ class OrderUpdate extends Basic implements Converter
         $this->history->courier($courier_id);
     }
 
+    public function sendingAddress(Collection $data)
+    {
+        $history = [];
+
+        if ($bean->type == 'sending') {
+            $delivery_company = R::load('logistics', $bean->delivery);
+            if ($delivery_company->name == 'НоваПошта') {
+                $history = self::history_address($bean, $post);
+            }
+        }
+
+        // Іторія - Адреса
+        if (isset($post->address)) {
+            if ($bean->address != $post->address) {
+                $history['address'] = $post->address;
+            }
+        }
+
+        // Іторія - Адреса
+        if (isset($post->street)) {
+            if ($bean->street != $post->street) {
+                $history['street'] = $post->street;
+            }
+        }
+
+        // Дані в таблиці
+        foreach ($post as $k => $v)
+            $bean->$k = trim($v);
+
+        self::save_changes_log('update_address', json($history), $post->id);
+
+        R::store($bean);
+    }
+
+    public function deliveryAddress(Collection $data)
+    {
+        $fields = $data->only([
+            'city',
+            'street',
+            'address',
+            'comment_address'
+        ])->toArray();
+
+        $this->setFields($fields);
+
+        $this->save();
+
+        $this->history->deliveryAddress($data);
+    }
+
     /**
      * Видалити товар з замовлення
      * @param $data

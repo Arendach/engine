@@ -17,6 +17,7 @@ echo $history->getHistory('warehouse', 'Відділення');
 echo $history->getHistory('address', 'Адреса');
 echo $history->getHistory('region', 'Регіон');
 echo $history->getHistory('street', 'Вулиця');
+echo $history->getHistory('comment_address', 'Коментар до адреси');
 
 /**
  * Footer

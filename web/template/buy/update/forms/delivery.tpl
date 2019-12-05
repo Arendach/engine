@@ -8,16 +8,16 @@
        data-post="<?= params(['id' => $id, 'type' => 'self']) ?>" href="#">
         <i class="fa fa-cog"></i> Змінити тип на Самовивіз
     </a>
-    <a style="margin-right: 20px; color: #0a790f" target="_blank" href="<?= uri('orders', ['section' => 'receipt', 'id' => $id]) ?>">
+    <a style="margin-right: 20px; color: #0a790f" target="_blank" href="<?= uri('orders/receipt', ['id' => $id]) ?>">
         <i class="fa fa-print"></i> Товарний чек
     </a>
-    <a style="margin-right: 20px; color: #0a790f" target="_blank" href="<?= uri('orders', ['section' => 'receipt', 'id' => $id, 'official' => 1]) ?>">
+    <a style="margin-right: 20px; color: #0a790f" target="_blank" href="<?= uri('orders/receipt', ['id' => $id, 'official' => 1]) ?>">
         <i class="fa fa-print"></i> Товарний чек для бугалетрії
     </a>
-    <a target="_blank" style="margin-right: 20px; color: #0a790f" href="<?= uri('orders', ['section' => 'invoice', 'id' => $id]) ?>">
+    <a target="_blank" style="margin-right: 20px; color: #0a790f" href="<?= uri('orders/invoice', ['id' => $id]) ?>">
         <i class="fa fa-print"></i> Рахунок-фактура
     </a>
-    <a target="_blank" style="margin-right: 20px; color: #0a790f" href="<?= uri('orders', ['section' => 'sales_invoice', 'id' => $id]) ?>">
+    <a target="_blank" style="margin-right: 20px; color: #0a790f" href="<?= uri('orders/sales_invoice', ['id' => $id]) ?>">
         <i class="fa fa-print"></i> Видаткова накладна
     </a>
 </div>
@@ -101,11 +101,8 @@
         </div>
 
         <div class="type_block">
-            <form action="<?= uri('orders') ?>" data-type="ajax">
-
+            <form action="<?= uri('orders/update_delivery_address') ?>" data-type="ajax">
                 <input type="hidden" name="id" value="<?= $order->id ?>">
-                <input type="hidden" name="action" value="update_address">
-                <input type="hidden" name="type" value="delivery">
 
                 <?php element('city_delivery', ['city' => $order->city]); ?>
 

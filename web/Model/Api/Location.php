@@ -47,11 +47,6 @@ class Location
         foreach ($streets as $street)
            $result[] =  "$street->street_type $street->name ($street->district)";
 
-        /*$result[] = [
-                'id' => $street->id,
-                'value' => "$street->street_type $street->name ($street->district)"
-            ];*/
-
         return $result;
     }
 }

@@ -73,6 +73,12 @@ class Order extends Model
             ->withPivot('amount', 'price', 'storage_id', 'id', 'attributes');
     }
 
+    public function history()
+    {
+        return $this->hasMany(OrderHistory::class, 'id_order', 'id')
+            ->orderByDesc('id');
+    }
+
     public function getTypeNameAttribute()
     {
         if ($this->type == 'sending') return 'Відправка';

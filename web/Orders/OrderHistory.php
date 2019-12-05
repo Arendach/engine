@@ -126,6 +126,18 @@ class OrderHistory
         $this->save('update_courier', $history['courier'] ?? '');
     }
 
+    public function deliveryAddress(Collection $data)
+    {
+        $fields = $this->getEdited($data->only([
+            'city',
+            'street',
+            'address',
+            'comment_address'
+        ])->toArray());
+
+        $this->save('update_address', $fields);
+    }
+
     public function sum(Collection $data)
     {
         $history = [];

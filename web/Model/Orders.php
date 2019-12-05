@@ -95,24 +95,6 @@ class Orders extends Model
             $items[$i]['bonuses'] = R::findAll('bonuses', "`data` = {$item['id']} AND `source` = 'order'");
     }
 
-    // Історія замовлення
-    public static function get_changes_by_id($id)
-    {
-        $result = R::getAll('
-            SELECT
-                `changes`.*,
-                `users`.`login` AS `login`
-            FROM
-                `changes`
-            LEFT JOIN `users` ON(`users`.`id` = `changes`.`author`)
-            WHERE
-                `changes`.`id_order` = ?
-            ORDER BY `changes`.`id` DESC
-        ', [$id]);
-
-        return (get_object($result));
-    }
-
     // Товари привязані до замовлення
     public static function getProductsByOrderId($id)
     {

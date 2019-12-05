@@ -65,7 +65,7 @@ include parts('head')
 
 <div class="panel-group" id="accordion">
     <?php $i = 0;
-    foreach ($changes as $item) {
+    foreach ($order->history as $item) {
 
         // Include File
         $name = 'buy.changes.' . $item->type;

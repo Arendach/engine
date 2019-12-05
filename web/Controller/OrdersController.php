@@ -27,7 +27,9 @@ use RedBeanPHP\R;
 use Web\Eloquent\User;
 use Web\Orders\OrderCreate;
 use Web\Orders\OrderUpdate;
+use Web\Requests\Orders\CreateDeliveryRequest;
 use Web\Requests\Orders\CreateSelfRequest;
+use Web\Requests\Orders\UpdateDeliveryAddressRequest;
 use Web\Requests\Orders\UpdateContactsRequest;
 use Web\Requests\Orders\UpdateStatusRequest;
 use Web\Requests\Orders\UpdateWorkingRequest;
@@ -167,41 +169,21 @@ class OrdersController extends Controller
 
     public function sectionChanges(int $id)
     {
-        $order = Orders::getOne($id);
+        $order = Order::findOrFail($id);
 
         $data = [
             'order' => $order,
-            'title' => 'Історія змін замовлення',
-            'changes' => Orders::get_changes_by_id($id),
+            'title' => 'Історія замовлення',
             'id' => $id,
             'breadcrumbs' => [
-                ['Замовлення', uri('orders', ['type' => 'delivery'])],
-                [type_parse($order->type), uri('orders', ['type' => $order->type])],
-                ['Замовлення #' . $order->id, uri('orders', ['section' => 'update', 'id' => $order->id])],
+                ['Замовлення', uri('orders/view', ['type' => 'delivery'])],
+                [$order->type_name, uri('orders/view', ['type' => $order->type])],
+                ['Замовлення #' . $order->id, uri('orders/update', ['id' => $order->id])],
                 ['Історія']
             ]
         ];
 
         $this->view->display('buy.changes.main', $data);
-    }
-
-    public function action_create($post)
-    {
-        unset($post->storage);
-        $arr = ['sending', 'delivery', 'self'];
-        if (isset($post->client_id)) unset($post->client_id);
-
-        if (!preg_match('/[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}/', $post->phone))
-            response(400, 'Заповніть телефон в правильному форматі!');
-
-        if (isset($post->date_delivery))
-            if (strtotime($post->date_delivery) < strtotime(date('Y-m-d')))
-                $post->date_delivery = date('Y-m-d');
-
-        if (in_array($post->type, $arr)) {
-            $m = "action_create_{$post->type}";
-            $this->$m($post);
-        } else response(400, 'Такого типу замовлень не існує!');
     }
 
     public function actionDropProduct(OrderUpdate $order, int $pto)
@@ -323,11 +305,9 @@ class OrdersController extends Controller
     }
 
     // Товарний чек
-    public function section_receipt()
+    public function sectionReceipt(int $id, bool $official = false)
     {
-        if (!get('id')) $this->display_404();
-
-        $order = Orders::getOne(get('id'));
+        $order = Orders::getOne($id);
 
         $products = Orders::getProducts(get('id'));
 
@@ -383,11 +363,9 @@ class OrdersController extends Controller
             $this->view->display('orders.print.receipt', $data);
     }
 
-    // Роздруковка рахунку фактури
-    public function section_invoice()
+    // Рахунок фактура
+    public function sectionInvoice(int $id)
     {
-        if (!get('id')) $this->display_404();
-
         $order = Orders::getOne(get('id'));
 
         $pay = Orders::getOne($order->pay_method, 'pays');
@@ -403,10 +381,8 @@ class OrdersController extends Controller
     }
 
     // Роздруковка видаткової накладної
-    public function section_sales_invoice()
+    public function sectionSalesInvoice(int $id)
     {
-        if (!get('id')) $this->display_404();
-
         $order = Orders::getOne(get('id'));
 
         $pay = Orders::getOne($order->pay_method, 'pays');
@@ -453,8 +429,7 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function actionCreateDelivery(/*CreateDeliveryRequest $request,*/
-        Request $request, OrderCreate $order)
+    public function actionCreateDelivery(CreateDeliveryRequest $request, OrderCreate $order)
     {
         $data = new Collection($request->except(['products']));
         $products = (new Collection($request->only(['products'])))->collect();
@@ -480,28 +455,6 @@ class OrdersController extends Controller
         ]);
     }
 
-    private function return_shipping_parse(&$data)
-    {
-        $temp = new \stdClass();
-
-        foreach (OrderSettings::getSendingVariant($data->sending_variant)['params'] as $key => $value) {
-            if (in_array($key, ['type', 'type_remittance', 'payer']))
-                $temp->$key = $value;
-            else
-                $data->$key = $value;
-        }
-
-        return $temp;
-    }
-
-    // Оновлення інформації по зворотній доставці
-    public function action_update_return_shipping($post)
-    {
-        Orders::update_return_shipping($post);
-
-        response(200, DATA_SUCCESS_UPDATED);
-    }
-
     // Оновлення контактної інформації
     public function actionUpdateContacts(UpdateContactsRequest $request, OrderUpdate $orderUpdate)
     {
@@ -518,16 +471,14 @@ class OrdersController extends Controller
         response(200, ['action' => 'close', 'message' => DATA_SUCCESS_UPDATED]);
     }
 
-    // Оновлення інформаціїї про адресу
-    public function actionUpdateAddress($post)
+    // Оновлення адреси
+    public function actionUpdateDeliveryAddress(UpdateDeliveryAddressRequest $request, OrderUpdate $orderUpdate)
     {
-        if (isset($post->type) && $post->type == 'delivery') {
-            if (empty($post->city)) response(400, 'Введіть назву міста!');
-        }
+        $orderUpdate->deliveryAddress($request->toCollection());
 
-        Orders::update_address($post);
-
-        response(200, ['action' => 'close', 'message' => 'Адресу вдало змінено!']);
+        response()->json([
+            'message' => 'Адресу вдало змінено!'
+        ]);
     }
 
     // Оновлення інформаціїї про оплату

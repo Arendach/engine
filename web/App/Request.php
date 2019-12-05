@@ -316,4 +316,14 @@ class Request
 
         throw new \Exception();
     }
+
+    /**
+     * @param string $name
+     * @param $value
+     * @return void
+     */
+    public function __set(string $name, $value): void
+    {
+        $this->query[$name] = $value;
+    }
 }

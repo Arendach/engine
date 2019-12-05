@@ -202,34 +202,18 @@ function element($key, $data = [])
 
     if ($key == 'city_delivery') { ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="city">Місто <i class="text-danger">*</i></label>
+            <label class="col-md-4 control-label">Місто <i class="text-danger">*</i></label>
             <div class="col-md-5">
                 <input id="city" required name="city" class="form-control" value="<?= htmlspecialchars($city) ?>">
-            </div>
-        </div>
-
-        <div class="form-group none" id="city_select_container">
-            <label class="col-md-4 control-label" for="city_select"></label>
-            <div class="col-md-5">
-                <select id="city_select" class="form-control" multiple></select>
-                <span class="btn btn-danger btn-xs hiden close_multiple" data-id="city_select_container">X</span>
             </div>
         </div>
     <?php }
 
     if ($key == 'street') { ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="street">Вулиця</label>
+            <label class="col-md-4 control-label">Вулиця</label>
             <div class="col-md-5">
                 <input id="street" name="street" class="form-control" value="<?= htmlspecialchars($street) ?>">
-            </div>
-        </div>
-
-        <div class="form-group none" id="street_select_container">
-            <label class="col-md-4 control-label" for="street_select"></label>
-            <div class="col-md-5">
-                <select id="street_select" class="form-control" multiple></select>
-                <span class="btn btn-danger btn-xs hiden close_multiple" data-id="street_select_container">X</span>
             </div>
         </div>
     <?php }

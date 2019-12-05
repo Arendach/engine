@@ -20,7 +20,13 @@ class CreateDeliveryRequest extends RequestValidator
 
         if ($request->isEmpty('products'))
             $this->error('products', 'Виберіть хоча-б один товар!');
-        dd($this->errors);
+
+        if (!preg_match('/[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}/', $request->get('phone')))
+            $this->error('phone', 'Заповніть телефон в правильному форматі!');
+
+        if($request->has('date_delivery'))
+            if (strtotime($request->date_delivery) < strtotime(date('Y-m-d')))
+                $request->date_delivery = date('Y-m-d');
     }
 
     public function authorize(): bool
