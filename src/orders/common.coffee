@@ -72,15 +72,16 @@ $(document).ready ->
                     street: $('#street').val()
                 success: (data) -> response(data)
         minLength: 3
-    ###
+        
+###
         select: (event, ui) ->
             console.log(ui)
         open: ->
             $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
         close: ->
-            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");###
+            $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
 
-        ###$(document).on 'keyup', '#street', ->
+    $(document).on 'keyup', '#street', ->
             $this = $(@)
             $('#street_select_container').show();
             $.ajax({
@@ -94,11 +95,9 @@ $(document).ready ->
                     $('#street_select').html(answer);
             },
             error: function (answer) {
-                errorHandler(answer);###
+                errorHandler(answer)
 
 
-
-        ###
 
         $body.on('change', '#street_select', function () {
             $('#street').val($('#street_select :selected').text());
@@ -127,4 +126,6 @@ $(document).ready ->
             $('#city').val($(this).find(':selected').val());
         $('#city_select_container').hide();
         });
-        })###;
+        })
+    
+###

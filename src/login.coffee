@@ -9,6 +9,6 @@ $(document).on 'click', '#submit', (event) ->
         url: '/login'
         data: {login, password, remember_me}
         success: =>
-            if window.location.pathname is '/login' then window.location.href = site
+            if window.location.pathname is '/login' then window.location.href = '/'
             else window.location.reload()
         error: (answer) => alert answer.message
