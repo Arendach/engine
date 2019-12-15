@@ -51,7 +51,7 @@ class View
      * @param $template
      * @param array $data
      */
-    public function display($template, $data = array())
+    public function display($template, $data = array()): void
     {
         echo $this->render($template, $data);
     }

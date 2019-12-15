@@ -138,6 +138,15 @@ class Request
     }
 
     /**
+     * @param string $key
+     * @return bool
+     */
+    public function isNotEmpty(string $key): bool
+    {
+        return !$this->isEmpty($key);
+    }
+
+    /**
      * @param array $keys
      * @return array
      */

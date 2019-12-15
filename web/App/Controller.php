@@ -45,6 +45,19 @@ abstract class Controller extends Entity
     public function __construct()
     {
         $this->view = new View;
+
+        $this->view->share('controller', $this->controllerName());
+    }
+
+    private function controllerName():string
+    {
+        $controllerName = class_basename($this);
+
+        $controllerName = str_replace("Controller", '', $controllerName);
+        $controllerName = c2s($controllerName);
+        $controllerName = lcfirst($controllerName);
+
+        return $controllerName;
     }
 
     /**

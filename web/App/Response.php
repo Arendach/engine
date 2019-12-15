@@ -32,6 +32,17 @@ class Response
 
     public function jsonValidateErrors(array $errors)
     {
-        throw new \Exception(json_encode($errors, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), 400);
+        http_status(400);
+        header('Content-Type: application/json');
+
+        echo json_encode([
+            'success' => false,
+            'title' => 'Помилка',
+            'message' => 'Дані не пройшли провірку',
+            'errors' => $errors
+        ]);
+
+        exit;
+        //throw new \Exception(json_encode($errors, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), 400);
     }
 }

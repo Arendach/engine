@@ -16,7 +16,7 @@ class UserController extends Controller
 
     public $main_section = 'section_list';
 
-    public function section_login()
+    public function sectionLogin()
     {
         $this->view->display('login');
     }
@@ -142,7 +142,7 @@ class UserController extends Controller
         if (isset($data->login) && !empty($data->login) && isset($data->password) && !empty($data->password)) {
             User::post_login($data);
         } else {
-            response(400, 'Введіть логін і пароль');
+            response()->json(['message' => 'Введіть логін і пароль'], 400);
         }
     }
 

@@ -82,15 +82,14 @@ $toJs = [
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="items">Кількість пунктів на сторінку</label>
-                            <input id="items" class="search form-control"
-                                   value="<?= get('items') ? get('items') : ITEMS ?>">
+                            <input id="items" class="search form-control" value="<?= get('items') ?>">
                         </div>
                         <div class="form-group">
                             <label for="site">Сайт</label>
                             <select id="site" class="search form-control">
                                 <option value=""></option>
                                 <?php foreach (\Web\Model\Orders::getAll('sites') as $item) { ?>
-                                    <option <?= $item->id != get('site') ?: 'selected' ?> value="<?= $item->id ?>">
+                                    <option <?= request()->selected('site', $item->id) ?> value="<?= $item->id ?>">
                                         <?= $item->name ?>
                                     </option>
                                 <?php } ?>

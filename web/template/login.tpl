@@ -1,4 +1,3 @@
-<?php //dd($_COOKIE) ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -12,14 +11,16 @@
     <div class="login">
         <h1>Авторизація</h1>
         <form>
+            <input type="hidden" id="after" value="<?= request()->is('after', 'close') ? 'close' : 'reload' ?>">
             <p><input type="text" id="login" value="" placeholder="Логін"></p>
             <p><input type="password" id="password" value="" placeholder="Пароль"></p>
             <p class="submit"><input type="submit" id="submit" value="Вхід"></p>
         </form>
     </div>
 </section>
-<script>var site = '<?= SITE ?>'</script>
-<script src="<?= asset('js/jquery.js') ?>"></script>
-<script src="<?= asset('/js/login.js') ?>"></script>
+
+<script src="<?= asset('js/app.js') ?>"></script>
+<script src="<?= asset('js/login.js') ?>"></script>
+
 </body>
 </html>

@@ -7,6 +7,7 @@ use Web\Model\Index;
 use Web\Model\Notification;
 use Web\Model\Products;
 use Web\Model\Task;
+use Web\Eloquent\User;
 
 class IndexController extends Controller
 {
@@ -42,6 +43,13 @@ class IndexController extends Controller
         }
 
         $this->view->display('index', $data);
+    }
+
+    public function actionChangeTheme(string $theme)
+    {
+        User::find(user()->id)->update([
+            'theme' => $theme,
+        ]);
     }
 }
 

@@ -22,15 +22,11 @@
     </a>
 </div>
 
-<div class="form-horizontal">
-    <div class="row right">
-        <div class="col-md-4">
-            <h4><b>Статус</b></h4>
-        </div>
-    </div>
+<hr>
 
+<div class="form-horizontal">
     <div class="type_block">
-        <form action="<?= uri('orders/update_status') ?>" data-type="update_order_status">
+        <form action="<?= uri('orders/update_status') ?>" data-type="update_order_status" data-toggle="validator">
             <input type="hidden" name="id" value="<?= $order->id ?>">
             <input type="hidden" name="old_status" value="<?= $order->status ?>">
 
@@ -39,13 +35,9 @@
         </form>
     </div>
 
-    <?php if (htmlspecialchars($order->status) == 1 || htmlspecialchars($order->status) == 0) { ?>
-        <div class="row right">
-            <div class="col-md-4">
-                <h4><b>Контакти</b></h4>
-            </div>
-        </div>
+    <hr>
 
+    <?php if (htmlspecialchars($order->status) == 1 || htmlspecialchars($order->status) == 0) { ?>
         <div class="type_block">
             <form action="<?= uri('orders/update_contacts') ?>" data-type="ajax">
                 <input type="hidden" name="id" value="<?= $order->id ?>">
@@ -62,17 +54,12 @@
             </form>
         </div>
 
-        <div class="row right">
-            <div class="col-md-4">
-                <h4><b>Загальні дані</b></h4>
-            </div>
-        </div>
+        <hr>
 
         <div class="type_block">
-            <form action="<?= uri('orders') ?>" data-type="ajax">
+            <form action="<?= uri('orders/update_working') ?>" data-type="ajax">
 
                 <input type="hidden" name="id" value="<?= $order->id ?>">
-                <input type="hidden" name="action" value="update_working">
 
                 <?php element('hint', ['hint_id' => $order->hint_id, 'type' => $type]) ?>
 
@@ -80,9 +67,7 @@
 
                 <?php element('site', ['site' => $order->site]) ?>
 
-                <?php element('time_with', ['time_with' => $order->time_with]) ?>
-
-                <?php element('time_to', ['time_to' => $order->time_to]) ?>
+                <?php element('time', ['time_with' => $order->time_with, 'time_to' => $order->time_to]) ?>
 
                 <?php element('courier', ['courier_id' => $order->courier_id, 'status' => $order->status]) ?>
 
@@ -94,11 +79,7 @@
             </form>
         </div>
 
-        <div class="row right">
-            <div class="col-md-4">
-                <h4><b>Адреса</b></h4>
-            </div>
-        </div>
+        <hr>
 
         <div class="type_block">
             <form action="<?= uri('orders/update_delivery_address') ?>" data-type="ajax">
@@ -117,12 +98,6 @@
         </div>
 
     <?php } else { ?>
-        <div class="row right">
-            <div class="col-md-4">
-                <h4><b>Купон</b></h4>
-            </div>
-        </div>
-
         <div class="type_block">
             <form action="<?= uri('orders') ?>" data-type="ajax">
                 <input type="hidden" name="id" value="<?= $order->id ?>">
