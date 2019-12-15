@@ -1,4 +1,4 @@
-<ol class="breadcrumb breadcrumb-arrow" style="margin-bottom: 15px">
+<ol class="breadcrumb">
     <li><a href="<?= uri('/'); ?>"><i class="fa fa-dashboard"></i></a></li>
     <?php $i = 1; foreach ($breadcrumbs as $item) { ?>
         <?php if ($i == count($breadcrumbs)) { ?>

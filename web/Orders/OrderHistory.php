@@ -245,7 +245,7 @@ class OrderHistory
      */
     private function hintCheck(array &$history, Collection $data): void
     {
-        if (!$data->has('hint_id')) return;
+        if (!$data->has('hint_id') || $data->get('hint') == '') return;
 
         if ($this->order->hint_id == $data->get('hint_id')) return;
 

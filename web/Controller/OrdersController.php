@@ -468,7 +468,9 @@ class OrdersController extends Controller
     {
         $orderUpdate->working($request->toCollection());
 
-        response(200, ['action' => 'close', 'message' => DATA_SUCCESS_UPDATED]);
+        response()->json([
+            'message' => DATA_SUCCESS_UPDATED
+        ]);
     }
 
     // Оновлення адреси

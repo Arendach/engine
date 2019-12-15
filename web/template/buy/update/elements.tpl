@@ -23,7 +23,8 @@ function element($key, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label" for="date_delivery">Дата доставки <i class="text-danger">*</i></label>
             <div class="col-md-5">
-                <input required name="date_delivery" type="date" class="form-control" value="<?= $date_delivery->format('Y-m-d') ?>">
+                <input required name="date_delivery" type="date" class="form-control"
+                       value="<?= $date_delivery->format('Y-m-d') ?>">
             </div>
         </div>
     <?php }
@@ -61,7 +62,7 @@ function element($key, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label" for="fio">Імя <i class="text-danger">*</i></label>
             <div class="col-md-5">
-                <input id="fio" required name="fio" class="form-control" value="<?= htmlspecialchars($fio); ?>">
+                <input id="fio" name="fio" class="form-control" value="<?= htmlspecialchars($fio); ?>">
             </div>
         </div>
     <?php }
@@ -70,8 +71,7 @@ function element($key, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label" for="phone">Номер телефону <i class="text-danger">*</i></label>
             <div class="col-md-5">
-                <input pattern="[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}" id="phone" required name="phone"
-                       class="form-control" value="<?= htmlspecialchars($phone) ?>">
+                <input id="phone" name="phone" class="form-control" value="<?= htmlspecialchars($phone) ?>">
             </div>
         </div>
 
@@ -129,28 +129,24 @@ function element($key, $data = [])
         </div>
     <?php }
 
-    if ($key == 'time_with') { ?>
+    if ($key == 'time') { ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="time_with">Градація по часу доставки</label>
+            <label class="col-md-4 control-label" for="time_with">Час доставки</label>
             <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-addon">ВІД</span>
-                    <input name="time_with" id="time_with" class="form-control"
-                           value="<?= string_to_time(htmlspecialchars($time_with)) ?>">
-                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon">ВІД</span>
+                            <input name="time_with" class="form-control" value="<?= string_to_time($time_with) ?>">
+                        </div>
+                    </div>
 
-            </div>
-        </div>
-    <?php }
-
-    if ($key == 'time_to') { ?>
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="time_to"></label>
-            <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-addon">ДО</span>
-                    <input name="time_to" id="time_to" class="form-control"
-                           value="<?= string_to_time(htmlspecialchars($time_to)) ?>">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon">ДО</span>
+                            <input name="time_to" class="form-control" value="<?= string_to_time($time_to) ?>">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -192,9 +188,9 @@ function element($key, $data = [])
 
     if ($key == 'comment') { ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="comment">Коментар до замовлення</label>
+            <label class="col-md-4 control-label">Коментар</label>
             <div class="col-md-5">
-                <textarea class="form-control" name="comment" id="comment"><?= htmlspecialchars($comment) ?></textarea>
+                <textarea class="form-control" name="comment"><?= $comment ?></textarea>
             </div>
         </div>
 
@@ -213,7 +209,14 @@ function element($key, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label">Вулиця</label>
             <div class="col-md-5">
-                <input id="street" name="street" class="form-control" value="<?= htmlspecialchars($street) ?>">
+                <div class="input-group">
+                    <input id="street" name="street" class="form-control" value="<?= htmlspecialchars($street) ?>">
+                    <div class="input-group-btn">
+                        <button class="btn btn-md btn-default" type="button" id="street-reset">
+                            <i class="fa fa-remove"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     <?php }

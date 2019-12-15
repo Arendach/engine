@@ -1,16 +1,6 @@
 <?php
 
 /**
- * @param $id
- * @param string $default
- * @return string
- */
-function template_class($id, $default = 'default')
-{
-    return isset($_COOKIE[$id . '_template_class']) ? $_COOKIE[$id . '_template_class'] : $default;
-}
-
-/**
  * @param $array
  * @return bool|object
  */
@@ -275,12 +265,30 @@ function pages($file)
 
 
 /**
- * @param $file
+ * @param string $file
  * @return string
  */
-function asset($file)
+function asset(string $file): string
 {
     return ASSET_PATH . $file . parameters(['v' => VERSION]);
+}
+
+/**
+ * @param string $path
+ * @return string
+ */
+function public_path(string $path): string
+{
+    return trim(ROOT, '/') . '/public/' . trim($path, '/');
+}
+
+/**
+ * @param string $path
+ * @return string
+ */
+function base_path(string $path): string
+{
+    return trim(ROOT, '/') . '/' . trim($path, '/');
 }
 
 /**
@@ -1243,4 +1251,44 @@ function request($key = null, $default = null)
         return container(\Web\App\Request::class);
 
     return container(\Web\App\Request::class)->get($key, $default);
+}
+
+function mix($path, $manifestDirectory = '')
+{
+    static $manifest;
+    $publicFolder = '/public';
+    $rootPath = $_SERVER['DOCUMENT_ROOT'];
+    $publicPath = $rootPath . $publicFolder;
+    if ($manifestDirectory && ! starts_with($manifestDirectory, '/')) {
+        $manifestDirectory = "/{$manifestDirectory}";
+    }
+    if (! $manifest) {
+        if (! file_exists($manifestPath = ($rootPath . $manifestDirectory.'/mix-manifest.json') )) {
+            throw new Exception('The Mix manifest does not exist.');
+        }
+        $manifest = json_decode(file_get_contents($manifestPath), true);
+    }
+    if (! starts_with($path, '/')) {
+        $path = "/{$path}";
+    }
+    $path = $publicFolder . $path;
+    if (! array_key_exists($path, $manifest)) {
+        throw new Exception(
+            "Unable to locate Mix file: {$path}. Please check your ".
+            'webpack.mix.js output paths and try again.'
+        );
+    }
+    return file_exists($publicPath . ($manifestDirectory.'/hot'))
+        ? "http://localhost:8080{$manifest[$path]}"
+        : $manifestDirectory.$manifest[$path];
+}
+
+
+/**
+ * @param string $asset
+ * @return array
+ */
+function assets(string $asset): array
+{
+    return require base_path("assets/$asset.php");
 }

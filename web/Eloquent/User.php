@@ -12,9 +12,19 @@ class User extends Model
 
     protected $table = 'users';
 
+    protected $fillable = [
+        'theme'
+    ];
+
     public function scopeCouriers(Builder $query)
     {
         $query->where('is_courier', 1);
+    }
+
+    public function getThemeAttribute($theme)
+    {
+        if (is_null($theme)) return asset("css/themes/flatfly.css");
+        else return asset("css/themes/$theme.css");
     }
 
 }

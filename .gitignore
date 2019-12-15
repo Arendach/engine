@@ -10,4 +10,10 @@
 /cache/*
 /node_modules
 /js
-public/js-old/
+/public/js-old/
+/public/ckeditor/
+/public/ckeditor_basic/
+/public/css/
+/public/fonts/
+/public/js/
+/public-old/

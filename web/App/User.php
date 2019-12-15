@@ -29,7 +29,8 @@ class User extends Entity
             'name' => $user->name,
             'reserve_funds' => $user->reserve_funds,
             'schedule_notice' => $user->schedule_notice,
-            'rate' => $user->rate
+            'rate' => $user->rate,
+            'theme' => $user->theme
         ];
     }
 
