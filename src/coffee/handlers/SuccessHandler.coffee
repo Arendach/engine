@@ -1,23 +1,41 @@
 class SuccessHandler
-    driver = 'toastr'
-    after = 'close'
+    constructor: (@answer, @res) ->
+        @driver = 'toastr'
+        @after = 'close'
 
-    constructor: (@answer) ->
+        @message = @answer.message
+        @title = @answer.title
+
+    setMessages: ->
+        if @res.status is 200
+            @status200Handler()
+        else if @res.status is 301
+            @status301Handler()
+        else
+            @title ?= 'Виконано'
+            @message ?= 'Дані успішно збережені'
+
+    status200Handler: ->
+        @title ?= 'Виконано'
+        @message ?= 'Дані успішно збережені'
+
+    status301Handler: ->
+        @title ?= 'Виконано'
+        @message ?= 'Дані успішно збережені'
 
     setDriver: (@driver) -> @
 
-    setRedirectTo: (@redirectTo) -> @
+    setAfter: (@after) -> @
 
-    setAfter: (@after) ->
-        @answer.title ?= 'Виконано'
-        @answer.message ?= 'Дані успішно збережено'
-        @
+    setRedirectTo: (@redirectTo) -> @
 
     setAfterCallable: (@callable) -> @
 
     apply: () ->
-        if @.driver is 'toastr' then @applyToastr()
-        if @.driver is 'sweetalert' then @applySweetalert()
+        @setMessages()
+
+        if @driver is 'toastr' then @applyToastr()
+        else if @driver is 'sweetalert' then @applySweetalert()
 
     applyToastr: () ->
         toastr.options.escapeHtml = true
@@ -30,7 +48,7 @@ class SuccessHandler
         toastr.options.hideMethod = 'slideUp';
         toastr.options.closeMethod = 'slideUp';
 
-        toastr.success @answer.message, @answer.title
+        toastr.success @message, @title
 
     applySweetalert: () ->
         swal.fire

@@ -7,7 +7,7 @@ use Web\App\Controller;
 
 class TestController extends Controller
 {
-    public function section_main()
+    /*public function section_main()
     {
         if (get('file') && is_file(ROOT . '/server/stat/' . get('file'))) {
 
@@ -51,7 +51,7 @@ class TestController extends Controller
 
 
         $this->view->display('pages.test', $data);
-    }
+    }*/
 
     public function section_test()
     {

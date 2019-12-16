@@ -304,54 +304,12 @@ function script($path)
  * @param $name
  * @return string
  */
-function get_order($name)
-{
-    $default = 'desc';
-    if (get('order_field') == $name)
-        return get('order') == 'asc' ? 'desc' : 'asc';
-    else
-        return $default;
-}
-
-/**
- * @param $name
- * @return string
- */
 function get_sym($name)
 {
     if (get('order_field') == $name)
         return get('order') == 'asc' ? '&#9650;' : '&#9660;';
     else
         return '';
-}
-
-/**
- * @param $id - Статус
- * @param $type - Тип замовлення
- * @return string - <span style="color: #000">Description</span>
- */
-function get_order_status($id, $type)
-{
-    $id = $id == 'default' ? '0' : $id;
-    $status = \Web\Model\OrderSettings::statuses($type);
-
-    if (!isset($status[$id])) return '';
-
-    return '<span style="color: ' . $status[$id]->color . ';">' . $status[$id]->text . '</span>';
-}
-
-/**
- * @param $type - Тип замовлення
- * @param null $sel - Вибраний статус
- * @return string - <option value="1">Description</option>.....
- */
-function get_order_statuses($type)
-{
-    $str = '<option value=""></option>';
-    foreach (\Web\Model\OrderSettings::statuses($type) as $k => $status) {
-        $str .= '<option value="' . $k . '">' . $status->text . '</option>';
-    }
-    return $str;
 }
 
 /**

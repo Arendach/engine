@@ -29,6 +29,7 @@ use Web\Orders\OrderCreate;
 use Web\Orders\OrderUpdate;
 use Web\Requests\Orders\CreateDeliveryRequest;
 use Web\Requests\Orders\CreateSelfRequest;
+use Web\Requests\Orders\UpdateCourierRequest;
 use Web\Requests\Orders\UpdateDeliveryAddressRequest;
 use Web\Requests\Orders\UpdateContactsRequest;
 use Web\Requests\Orders\UpdateStatusRequest;
@@ -544,11 +545,11 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function actionUpdateCourier(OrderUpdate $order, int $courier_id = 0)
+    public function actionUpdateCourier(UpdateCourierRequest $request, OrderUpdate $order)
     {
-        $order->courier($courier_id);
+        $order->courier($request->toCollection());
 
-        response(200, ['action' => 'close', 'message' => DATA_SUCCESS_UPDATED]);
+        response()->json(['message' => 'Курєр успішно змінений!']);
     }
 
     public function action_export($post)

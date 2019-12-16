@@ -10,8 +10,6 @@ class UpdateWorkingRequest extends RequestValidator
 {
     public function validate(Request $request): void
     {
-        abort(401);
-
         $order = Order::findOrFail($request->id);
 
         if ($request->isEmpty('date_delivery'))

@@ -106,16 +106,15 @@ class OrderUpdate extends Basic implements Converter
     }
 
     /**
-     * @param stdClass $data
-     * @return void
+     * @param Collection $data
      */
-    public function courier(int $courier_id): void
+    public function courier(Collection $data): void
     {
-        $this->order->courier = $courier_id;
+        $this->order->courier_id = $data->get('courier_id');
 
         $this->save();
 
-        $this->history->courier($courier_id);
+        $this->history->courier($data);
     }
 
     public function sendingAddress(Collection $data)

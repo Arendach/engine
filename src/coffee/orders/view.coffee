@@ -41,15 +41,17 @@ $(document).on 'hover', '.print_button', ->
 
 
 $(document).on 'change', '.courier', ->
-    order_id = $(@).parents('tr').attr('id')
+    id = $(@).parents('tr').attr('id')
     courier_id = $(@).find(':selected').val()
 
     $.ajax
         type: 'post'
         url: '/orders/update_courier'
-        data: {order_id, courier_id},
-        success: answer -> successHandler(answer, true)
-        error: answer -> errorHandler(answer)
+        data: {id, courier_id},
+        success: (answer, status, jqXHR) -> new SuccessHandler(answer, jqXHR).apply()
+        error: (answer) =>
+            new ErrorHandler answer
+                .apply()
 
 
 $(document).on 'click', '.preview', ->

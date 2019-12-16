@@ -114,12 +114,9 @@ class OrderHistory
     /**
      * @param int $courier_id
      */
-    public function courier(int $courier_id)
+    public function courier(Collection $data)
     {
         $history = [];
-
-        $data = new stdClass;
-        $data->courier = $courier_id;
 
         $this->courierCheck($history, $data);
 

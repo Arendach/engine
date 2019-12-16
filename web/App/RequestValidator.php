@@ -57,7 +57,7 @@ abstract class RequestValidator extends Request
     {
         if (!count($this->errors)) return;
 
-        $this->response->jsonValidateErrors($this->errors);
+        $this->response->jsonValidateErrors($this->errors, $this->message());
     }
 
     /**
@@ -88,6 +88,11 @@ abstract class RequestValidator extends Request
             $this->errors[$field] = [];
 
         $this->errors[$field][] = $message;
+    }
+
+    protected function message(): string
+    {
+        return 'Дані не пройшли провірку!';
     }
 
     /**

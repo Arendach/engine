@@ -64,7 +64,8 @@ $(document).on 'keyup', '#city_input', ->
 $(document).on 'click', '#street-reset', -> $('#street').val('')
 
 $(document).ready ->
-    CKEDITOR.replace 'comment', window.editorConfig.basic
+    if $('#comment').length then CKEDITOR.replace 'comment'
+
     $('#street').typeahead
         source: (query, result) ->
             $.ajax

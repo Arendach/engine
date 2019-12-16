@@ -87,6 +87,36 @@ class Order extends Model
         else return '';
     }
 
+    public function getStatusNameAttribute()
+    {
+        return assets('order_statuses')[$this->status]['text'] ?? 'Невідомий';
+    }
+
+    public function getStatusColorAttribute()
+    {
+        return assets('order_statuses')[$this->status]['color'] ?? '#f0f';
+    }
+
+    public function getSendingStatusNameAttribute()
+    {
+        return assets('sending_statuses')[$this->phone2]['text'] ?? 'Невідомий';
+    }
+
+    public function getSendingStatusColorAttribute()
+    {
+        return assets('sending_statuses')[$this->phone2]['color'] ?? '#f0f';
+    }
+
+    public function getDateDeliveryHumanAttribute()
+    {
+        $date  = $this->date_delivery;
+
+        if ($date->format('Y') == date('Y'))
+            return (int)$date->format('d') . ' ' . int_to_month($date->format('m'), true);
+        else
+            return date_for_humans($date->format('Y-m-d'));
+    }
+
     /**
      * @param Builder $builder
      * @param $filters

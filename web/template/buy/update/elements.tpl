@@ -9,9 +9,9 @@ function element($key, $data = [])
             <label for="status" class="control-label col-md-4">Статус <i class="text-danger">*</i></label>
             <div class="col-md-5">
                 <select id="status" class="form-control status_field" name="status">
-                    <?php foreach (\Web\Model\OrderSettings::statuses($type) as $k => $item) { ?>
+                    <?php foreach (assets('order_statuses') as $k => $item) { ?>
                         <option <?= $k == $status ? 'selected' : '' ?> value="<?= $k ?>">
-                            <?= $item->text ?>
+                            <?= $item['text'] ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -190,7 +190,7 @@ function element($key, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label">Коментар</label>
             <div class="col-md-5">
-                <textarea class="form-control" name="comment"><?= $comment ?></textarea>
+                <textarea class="form-control" id="comment" name="comment"><?= $comment ?></textarea>
             </div>
         </div>
 

@@ -30,7 +30,7 @@ class Response
         exit;
     }
 
-    public function jsonValidateErrors(array $errors)
+    public function jsonValidateErrors(array $errors, string $message = 'Дані не пройшли провірку')
     {
         http_status(400);
         header('Content-Type: application/json');
@@ -38,7 +38,7 @@ class Response
         echo json_encode([
             'success' => false,
             'title' => 'Помилка',
-            'message' => 'Дані не пройшли провірку',
+            'message' => $message,
             'errors' => $errors
         ]);
 

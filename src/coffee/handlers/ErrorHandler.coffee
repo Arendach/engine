@@ -1,9 +1,9 @@
 class ErrorHandler
-    driver = 'toastr'
-    after = 'close'
-    @form = 'form'
+    driver: 'toastr'
+    after: 'close'
+    form: 'form'
 
-    constructor: (@answer, status) ->
+    constructor: (@answer) ->
         if @answer.responseJSON?
             @title = @answer.responseJSON.title
             @message = @answer.responseJSON.message
@@ -107,9 +107,9 @@ class ErrorHandler
 
     apply: () ->
         @setMessages()
-
-        if @.driver is 'toastr' then @applyToastr()
-        if @.driver is 'sweetalert' then @applySweetalert()
+        
+        if @driver is 'toastr' then @applyToastr()
+        if @driver is 'sweetalert' then @applySweetalert()
 
     applyToastr: () ->
         toastr.options.escapeHtml = true

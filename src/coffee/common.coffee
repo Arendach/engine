@@ -1,5 +1,5 @@
-SuccessHandler = require './handlers/SuccessHandler.coffee'
-ErrorHandler = require './handlers/ErrorHandler.coffee'
+window.SuccessHandler = require './handlers/SuccessHandler.coffee'
+window.ErrorHandler = require './handlers/ErrorHandler.coffee'
 
 patterns =
   comma: /\,/
@@ -97,8 +97,8 @@ $(document).on 'submit', '[data-type="ajax"]', (event) ->
             type: type
             url: url
             data: data
-            success: (answer) =>
-                new SuccessHandler answer
+            success: (answer, status, jqXHR) =>
+                new SuccessHandler answer, jqXHR
                     .setDriver success
                     .setRedirectTo redirectTo
                     .setAfter after

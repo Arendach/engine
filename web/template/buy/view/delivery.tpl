@@ -1,11 +1,3 @@
-<?php
-
-use Web\Model\OrderSettings as Settings;
-
-$s = isset($_GET['status']) ? true : false;
-
-?>
-
 <table class="table table-bordered orders-table table-responsive">
     <tr>
         <th class="action-2">№</th>
@@ -21,80 +13,46 @@ $s = isset($_GET['status']) ? true : false;
     </tr>
 
     <tr class="tr_search">
-        <td>
-            <input autocomplete="false" class="search" id="id" value="<?= $request->get('id', '') ?>">
-        </td>
-
-        <td>
-            <input class="search" id="fio" value="<?= get('fio') ?>">
-        </td>
-
-        <td>
-            <input class="search" id="phone" value="<?= get('phone') ?>">
-        </td>
-
+        <td><input class="search form-control input-sm" id="id" value="<?= $request->get('id') ?>"></td>
+        <td><input class="search form-control input-sm" id="fio" value="<?= get('fio') ?>"></td>
+        <td><input class="search form-control input-sm" id="phone" value="<?= get('phone') ?>"></td>
         <td style="width: 88px;">
-            <input class="search filter_time_input" id="time_with" placeholder="Від"
-                <?= get('time_with') ? 'value="' . string_to_time(get('time_with')) . '"' : '' ?>>
-            <input class="search filter_time_input" id="time_to" placeholder="До"
-                <?= get('time_with') ? 'value="' . string_to_time(get('time_with')) . '"' : '' ?>>
+            <input class="search form-control input-sm filter_time_input" id="time_with" placeholder="Від" <?= get('time_with') ? 'value="' . string_to_time(get('time_with')) . '"' : '' ?>>
+            <input class="search form-control input-sm filter_time_input" id="time_to" placeholder="До"<?= get('time_with') ? 'value="' . string_to_time(get('time_with')) . '"' : '' ?>>
         </td>
-
+        <td><input id="street" class="search form-control input-sm" value="<?= get('region') ?>"></td>
         <td>
-            <input id="street" class="search" value="<?= get('region') ?>">
-        </td>
-        <td>
-            <select class="search" id="courier_id">
+            <select class="search form-control input-sm" id="courier_id">
                 <option value=""></option>
-                <option <?= isset($_GET['courier_id']) && $_GET['courier_id'] == 0 ? 'selected' : '' ?> value="0">
-                    Не вибрано
-                </option>
+                <option <?= request()->selected('courier_id', 0) ?> value="0">Не вибрано</option>
                 <?php foreach ($couriers as $courier) { ?>
-                    <option <?= $courier->id != get('courier_id') ?: 'selected' ?> value="<?= $courier->id ?>">
+                    <option <?= request()->selected('courier_id', $courier->id) ?> value="<?= $courier->id ?>">
                         <?= $courier->name ?>
                     </option>
                 <?php } ?>
             </select>
         </td>
-
+        <td><input class="search form-control input-sm" id="full_sum" value="<?= get('full_sum') ?>"></td>
         <td>
-            <input class="search" id="full_sum" value="<?= get('full_sum') ?>">
-        </td>
-
-        <td>
-            <select id="status" class="search">
+            <select id="status" class="search form-control input-sm">
                 <option value=""></option>
-                <?php foreach (\Web\Model\OrderSettings::statuses($type) as $k => $status) {
-                    if ($s === true)
-                        $selected = get('status') == $k ? 'selected' : '';
-                    else
-                        $selected = ''; ?>
-                    <option <?= $selected ?> value="<?= $k ?>">
-                        <?= $status->text ?>
-                    </option>
+                <?php foreach (assets('order_statuses') as $k => $status) { ?>
+                    <option <?= request()->selected('status', $k) ?> value="<?= $k ?>"><?= $status['text'] ?></option>
                 <?php } ?>
                 <option disabled value="">-------------</option>
-                <option <?= get('status') === 'open' ? 'selected' : '' ?> value="open">Відкриті</option>
-                <option <?= get('status') === 'close' ? 'selected' : '' ?> value="close">Закриті</option>
+                <option <?= request()->selected('status', 'open') ?> value="open">Відкриті</option>
+                <option <?= request()->selected('status', 'close') ?> value="close">Закриті</option>
             </select>
         </td>
-
-        <td>
-            <input type="date" class="search" id="date" value="<?= get('date'); ?>">
-        </td>
-
+        <td><input type="date" class="search form-control input-sm" id="date" value="<?= get('date'); ?>"></td>
         <td class="centered">
-            <button class="btn btn-primary btn-xs" id="search">
-                <span class="fa fa-search"></span>
-            </button>
+            <button class="btn btn-primary btn-xs" id="search"><i class="fa fa-search"></i></button>
         </td>
-
     </tr>
 
     <?php if ($orders->count()) { ?>
         <?php foreach ($orders as $item) { ?>
             <tr id="<?= $item->id; ?>" class="order-row<?= $item->client_id != '' ? ' client-order' : '' ?>">
-
                 <td>
                     <?= $item->id; ?>
                     <?php if (!is_null($item->professional)) { ?>
@@ -127,7 +85,7 @@ $s = isset($_GET['status']) ? true : false;
                 <td><?= $item->street . ' ' . $item->address ?></td>
 
                 <td>
-                    <select class="courier">
+                    <select class="courier form-control input-sm">
                         <option <?= !$item->status ?: 'disabled' ?> <?= $item->courier ?: 'selected' ?> value="0">Не вибрано</option>
                         <?php foreach ($couriers as $courier) { ?>
                             <option <?= $courier->id == $item->courier_id ? 'selected' : '' ?> value="<?= $courier->id ?>">
@@ -137,11 +95,11 @@ $s = isset($_GET['status']) ? true : false;
                     </select>
                 </td>
 
-                <td><?= number_format($item->full_sum, 2) ?></td>
+                <td><?= number_format($item->full_sum) ?></td>
 
-                <td><?= get_order_status($item->status, $type) ?></td>
+                <td><span style="color: <?= $item->status_color ?>"><?= $item->status_name ?></span></td>
 
-                <td><?= $item->date_delivery ?></td>
+                <td><?= $item->date_delivery_human ?></td>
 
                 <td class="action-2 relative">
                     <div id="preview_<?= $item->id ?>" class="preview_container"></div>
