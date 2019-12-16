@@ -1,32 +1,11 @@
-<?php
-
-$scripts = [
-    'elements.js',
-    'orders/order.js',
-    'orders/create.js'
-];
-
-$components = ['inputmask'];
-
-$css = ['elements.css'];
-
-if ($type == 'sending') $scripts[] = 'orders/sending.js';
-
-if ($type == 'delivery') $scripts[] = 'orders/delivery.js';
-
-?>
-
 <?php include parts('head'); ?>
 
     <div class="right" style="margin-bottom: 15px;">
-        <a class="btn btn-<?= $type == 'delivery' ? 'primary' : 'default'; ?>"
-           href="<?= uri('orders/create', ['type' => 'delivery']) ?>">Доставка</a>
-
-        <a class="btn btn-<?= $type == 'self' ? 'primary' : 'default'; ?>"
-           href="<?= uri('orders/create', ['type' => 'self']) ?>">Самовивіз</a>
-
-        <a class="btn btn-<?= $type == 'sending' ? 'primary' : 'default'; ?>"
-           href="<?= uri('orders/create', ['type' => 'sending']) ?>">Відправка</a>
+       <?php foreach (assets('order_types') as $k => $item) { ?>
+           <a class="btn btn-<?= request()->is('type', $k) ? 'primary' : 'default' ?>" href="<?= uri('orders/create', ['type' => $k]) ?>">
+               <?= $item['one'] ?>
+           </a>
+       <?php } ?>
     </div>
 
     <hr>

@@ -21,6 +21,7 @@ mix.js('src/coffee/app.coffee', 'public/js/app.js')
     .js('src/coffee/orders/orders.coffee', 'public/js/controllers/orders.js')
     .less('src/less/login.less', 'public/css/login.css')
     .less('src/less/app.less', 'public/css/app.css')
+    .less('src/less/print.less', 'public/css/print.css')
 
 
     // themes

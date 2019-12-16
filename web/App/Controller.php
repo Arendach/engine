@@ -125,24 +125,6 @@ abstract class Controller extends Entity
                 response(400, 'Невідомий екшн!!!');
             }
     }
-
-    /**
-     * @param array $keys
-     */
-    public function required(array $keys, $message = false)
-    {
-        foreach ($keys as $key) {
-            if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-                if (!get($key))
-                    $this->display_404();
-            } else {
-                if (!post($key)){
-                    $message = !$message ? 'Заповніть всі поля позначені зірочкою!' : $message;
-                    response(400, $message);
-                }
-            }
-        }
-    }
 }
 
 ?>

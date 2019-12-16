@@ -1,11 +1,5 @@
 <?php include t_file('buy.create.elements') ?>
 
-<div class="row right">
-    <div class="col-md-4">
-        <h4><b>Контактна інформація</b></h4>
-    </div>
-</div>
-
 <div class="type_block">
 
    <?php element('fio') ?>
@@ -18,11 +12,7 @@
 
 </div>
 
-<div class="row right">
-    <div class="col-md-4">
-        <h4><b>Службова інформація</b></h4>
-    </div>
-</div>
+<hr>
 
 <div class="type_block">
 
@@ -32,9 +22,7 @@
 
     <?php element('site') ?>
 
-    <?php element('time_with') ?>
-
-    <?php element('time_to') ?>
+    <?php element('time') ?>
 
     <?php element('courier', ['users' => $users]) ?>
 
@@ -44,11 +32,7 @@
 
 </div>
 
-<div class="row right">
-    <div class="col-md-4">
-        <h4><b>Адреса</b></h4>
-    </div>
-</div>
+<hr>
 
 <div class="type_block">
 
@@ -62,11 +46,7 @@
 
 </div>
 
-<div class="row right">
-    <div class="col-md-4">
-        <h4><b>Оплата</b></h4>
-    </div>
-</div>
+<hr>
 
 <div class="type_block">
 

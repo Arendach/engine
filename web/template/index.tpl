@@ -1,7 +1,7 @@
 <?php include parts('head') ?>
     <h1 class="sub-header"><?= $section ?></h1>
 
-<?php if ($notification || my_count($not_moving_money) > 0 || my_count($product_moving) > 0) { ?>
+<?php if ($notification || count($not_moving_money) > 0 || count($product_moving) > 0) { ?>
 
     <h2><i style="color: red" class="fa fa-bell"></i> Сповіщення</h2>
 
@@ -14,7 +14,7 @@
                         <?= $item->content ?>
                     </div>
                     <div class="col-md-3 right">
-                        <?= diff_for_humans($item->date) ?>
+                        <?= $item->date ?>
                         <button data-id="<?= $item->id ?>" type="button" class="close close_notification"
                                 data-dismiss="alert">&times;
                         </button>
@@ -24,7 +24,7 @@
         <?php } ?>
     <?php } ?>
 
-    <?php if (my_count($not_moving_money) > 0) { ?>
+    <?php if (count($not_moving_money) > 0) { ?>
         <div class="alert alert-info">
             <?php foreach ($not_moving_money as $item) {
                 list($user_id, $status) = explode(':', $item->data); ?>
@@ -37,7 +37,7 @@
         </div>
     <?php } ?>
 
-    <?php if (my_count($product_moving) > 0) { ?>
+    <?php if (count($product_moving) > 0) { ?>
         <?php foreach ($product_moving as $item) { ?>
             <div class="alert alert-success alert-dismissable">
                 <div class="row">
@@ -48,7 +48,7 @@
                         </a>
                     </div>
                     <div class="col-md-3 right">
-                        <?= diff_for_humans($item->date) ?> <br>
+                        <?= ($item->date) ?> <br>
                         <button data-type="ajax_request"
                                 data-uri="<?= uri('product') ?>"
                                 data-action="close_moving"
@@ -152,11 +152,11 @@
 <?php } ?>
 
 
-<?php if (my_count($moving_money) > 0 || my_count($tasks) > 0) { ?>
+<?php if (count($moving_money) > 0 || count($tasks) > 0) { ?>
 
     <h2><i style="color: red" class="fa fa-automobile"></i> Задачі</h2>
 
-    <?php if (my_count($moving_money) > 0) {
+    <?php if (count($moving_money) > 0) {
         foreach ($moving_money as $item) { ?>
             <div class="alert alert-info">
                 <div class="row">
@@ -166,7 +166,7 @@
                         грн
                     </div>
                     <div class="col-md-3 right">
-                        <?= diff_for_humans($item->date) ?> <br>
+                        <?= ($item->date) ?> <br>
                         <button data-type="get_form"
                                 data-uri="<?= uri('reports') ?>"
                                 data-action="close_moving_form"
@@ -178,7 +178,7 @@
             </div>
         <?php }
     }
-    if (my_count($tasks) > 0) { ?>
+    if (count($tasks) > 0) { ?>
         <?php foreach ($tasks as $item) { ?>
             <div class="alert alert-<?= $item->type ?>">
                 <div class="row">
@@ -190,7 +190,7 @@
                         <?= htmlspecialchars_decode($item->content) ?>
                     </div>
                     <div class="right col-md-3">
-                        <?= diff_for_humans($item->date) ?> <br>
+                        <?= ($item->date) ?> <br>
                         <button data-type="success" data-id="<?= $item->id ?>"
                                 class="close_task btn btn-xs btn-success">Виконано
                         </button>

@@ -82,7 +82,7 @@
 
                 <td><?= $item->fio ?></td>
                 <td><?= $item->phone ?></td>
-                <td><?= string_to_time($item->time_with) . ' - ' . string_to_time($item->time_to) ?></td>
+                <td><?= $item->time ?></td>
                 <td><?= $item->shop_name ?></td>
                 <td>
                     <select class="courier form-control input-sm">

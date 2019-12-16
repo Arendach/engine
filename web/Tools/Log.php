@@ -11,8 +11,8 @@ class Log
     public function getNewPostLogs(): array
     {
         // створюємо папку і сам файл лога якщо не існує
-        create_folder_if_not_exists('/server/logs/');
-        create_file_if_not_exists('/server/logs/new_post.json', '[]');
+        create_folder('/server/logs/');
+        create_file('/server/logs/new_post.json', '[]');
 
         // шлях до лога
         $file_path = ROOT . '/server/logs/new_post.json';

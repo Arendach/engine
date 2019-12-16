@@ -42,33 +42,6 @@ function get_array($object)
     }
 }
 
-function get_keys($array)
-{
-    $temp = [];
-
-    foreach ($array as $k => $v) $temp[] = $k;
-
-    return $temp;
-}
-
-/**
- * @param $param
- * @return int
- */
-function my_count($param)
-{
-    if (is_object($param)) {
-        $tmp = (array)$param;
-        $result = count($tmp);
-    } elseif (is_array($param)) {
-        $result = count($param);
-    } else {
-        $result = 0;
-    }
-
-    return (int)$result;
-}
-
 function my_file_size($bytes, $precision = 2)
 {
     $units = array('B', 'KB', 'MB', 'GB', 'TB');
@@ -81,114 +54,20 @@ function my_file_size($bytes, $precision = 2)
 
 /**
  * @param string $key
- * @param bool $assoc
- * @return array|bool|float|int|object|string
+ * @param null $default
+ * @return mixed
  */
-function get($key = 'get_all_in_object', $value = false)
+function get($key, $default = null)
 {
-    if ($key == 'get_all_in_object') {
-        return get_object($_GET);
-    } elseif ($key == 'page') {
-        if (isset($_GET['page']) && is_numeric($_GET['page'])) {
-            return abs(intval($_GET['page']));
-        } else
-            return 1;
-    } else {
-        if ($value !== false) {
-            $_GET[$key] = $value;
-            return $value;
-        }
-
-        if (isset($_GET[$key])) {
-            if (is_numeric($_GET[$key]))
-                return (int)htmlspecialchars($_GET[$key]);
-            else
-                return (string)htmlspecialchars($_GET[$key]);
-        } else
-            return false;
-    }
-}
-
-/**
- * @param $key
- * @return bool|string
- */
-function post($key)
-{
-    if (isset($_POST[$key])):
-        return (string)$_POST[$key];
-    else:
-        return (bool)false;
-    endif;
-}
-
-/**
- * @param mixed ...$params
- */
-/*function dd(...$params)
-{
-    foreach ($params as $param)
-        dump($param);
-    exit;
-}*/
-
-/**
- * @param mixed ...$params
- */
-/*function dump(...$params)
-{
-    foreach ($params as $param) {
-        echo '<pre style="z-index: 9999999;">';
-        print_r($param);
-        echo '</pre>';
-    }
-    echo '<hr>';
-}*/
-
-/**
- * @param $var
- */
-function res($var)
-{
-    echo json_encode($var);
-}
-
-/**
- * @param $str
- * @return string
- */
-function to_bd($str)
-{
-    return htmlspecialchars($str);
-}
-
-/**
- * @param $var
- * @return bool
- */
-function val($var)
-{
-    if ($var == '0')
-        return false;
-    elseif ($var === false)
-        return false;
-    elseif ($var === 0)
-        return false;
-    elseif ($var == 'null')
-        return false;
-    elseif ($var === null)
-        return false;
-    elseif ($var == '')
-        return false;
-    else
-        return $var;
+    return request($key, $default);
 }
 
 /**
  * Очищення папки від файлів
+ *
  * @param $dir
  */
-function dir_clean($dir)
+function dir_clean(string $dir): void
 {
     dir_delete($dir);
     mkdir($dir);
@@ -196,13 +75,14 @@ function dir_clean($dir)
 
 /**
  * Видалення папки з файлами
+ *
  * @param $dir
  */
-function dir_delete($dir)
+function dir_delete(string $dir): void
 {
-    if (!is_dir($dir)) {
-        mkdir($dir);
-    }
+    if (!is_dir($dir))
+        return;
+
     if (substr($dir, strlen($dir) - 1, 1) != '/') {
         $dir .= '/';
     }
@@ -212,37 +92,6 @@ function dir_delete($dir)
     }
     rmdir($dir);
 }
-
-/**
- * Валідацтор, провіряє перемінну на пустоту, число, строку, масив
- * @param $value
- * @param string $rule
- * @return bool
- */
-function validator($value, $rule = 'required')
-{
-    switch ($rule) {
-        case 'required':
-            return $value == '' ? false : true;
-            break;
-        case 'int':
-            return !is_numeric($value) ? false : true;
-            break;
-        case 'string':
-            return !is_string($value) ? false : true;
-            break;
-        case 'array':
-            if (my_count($value) == 0)
-                return false;
-            else
-                return true;
-            break;
-        default:
-            return false;
-            break;
-    }
-}
-
 
 /**
  * @param $file
@@ -262,7 +111,6 @@ function pages($file)
 {
     return TEMPLATE_PATH . "pages/$file.tpl";
 }
-
 
 /**
  * @param string $file
@@ -289,27 +137,6 @@ function public_path(string $path): string
 function base_path(string $path): string
 {
     return trim(ROOT, '/') . '/' . trim($path, '/');
-}
-
-/**
- * @param $path
- * @return string
- */
-function script($path)
-{
-    return '<script src="' . tpl($path) . '"></script>';
-}
-
-/**
- * @param $name
- * @return string
- */
-function get_sym($name)
-{
-    if (get('order_field') == $name)
-        return get('order') == 'asc' ? '&#9650;' : '&#9660;';
-    else
-        return '';
 }
 
 /**
@@ -380,19 +207,6 @@ function parts($file)
 {
     if ($file == 'footer') $file = 'foot';
     return TEMPLATE_PATH . "parts/$file.tpl";
-}
-
-/**
- * @param $arr - асоціативний масив виду [key => value]
- * @return mixed - строка виду <script> var key = 'value'; </script>
- */
-function to_javascript($arr)
-{
-    $core = '<script>%s</script>';
-    $obj = '';
-    foreach ($arr as $key => $item)
-        $obj .= "var $key = " . json_encode($item, JSON_UNESCAPED_UNICODE) . ';';
-    return str_replace('%s', $obj, $core);
 }
 
 /**
@@ -510,9 +324,9 @@ function response($status = null, $messageOrArray = null)
     http_status($status);
 
     if (is_array($messageOrArray))
-        echo json($messageOrArray);
+        echo json_encode($messageOrArray);
     elseif (is_string($messageOrArray))
-        echo json(['message' => $messageOrArray]);
+        echo json_encode(['message' => $messageOrArray]);
 
     exit;
 }
@@ -523,31 +337,6 @@ function response($status = null, $messageOrArray = null)
 function redirect($url)
 {
     header('Location: ' . $url);
-}
-
-/**
- * @param $type
- * @return string - Тип замовлення на українській
- */
-function type_parse($type)
-{
-    switch ($type) {
-        case 'delivery':
-            return 'Доставка';
-            break;
-        case 'shop':
-            return 'Магазин';
-            break;
-        case 'self':
-            return 'Самовивіз';
-            break;
-        case 'sending':
-            return 'Відправка';
-            break;
-        default:
-            return '';
-            break;
-    }
 }
 
 /**
@@ -574,7 +363,7 @@ function cannot($key = 'ROOT')
         return false;
     } elseif ($my_access === false) {
         return true;
-    } elseif (my_count($my_access) > 0) {
+    } elseif (count($my_access) > 0) {
         $my_access = get_array($my_access);
         if (!in_array($key, $my_access)) {
             return true;
@@ -597,7 +386,7 @@ function can($key = 'ROOT')
         return true;
     } elseif ($my_access === false) {
         return false;
-    } elseif (my_count($my_access) > 0) {
+    } elseif (count($my_access) > 0) {
         $my_access = get_array(user()->access);
         if (!in_array($key, $my_access)) {
             return false;
@@ -616,10 +405,10 @@ function can($key = 'ROOT')
 function can_keys(array $array)
 {
     foreach ($array as $key)
-        if (can($key))
-            return true;
+        if (cannot($key))
+            return false;
 
-    return false;
+    return true;
 }
 
 /**
@@ -680,17 +469,13 @@ function type_year($year)
 
 /**
  * @param int $id
- * @return bool|object|\RedBeanPHP\OODBBean
+ * @return bool|object|\Web\Eloquent\User
  */
 function user($id = 0)
 {
-
-    if ($id == 0)
-        return get_object(app()->me);
-    else
-        return \Web\Model\User::getOne($id);
+    if ($id == 0) return get_object(app()->me);
+    else return \Web\Eloquent\User::find($id);
 }
-
 
 /**
  * @param $string
@@ -808,119 +593,14 @@ function morph($n, $f1, $f2, $f5)
     return $f5;
 }
 
-
-/**
- * @param $string
- * @return array
- */
-function parse_street($string)
-{
-    preg_match('/^([А-яії]+)(.*)\(([А-я\'ІЇ]+)\)$/ui', $string, $matches);
-    $result = [];
-
-    $result['type'] = isset($matches[1]) ? $matches[1] : 'Вулиця';
-    $result['name'] = isset($matches[2]) ? $matches[2] : 'Не заповнено';
-    $result['region'] = isset($matches[3]) ? $matches[3] : 'Не заповнено';
-
-    return $result;
-}
-
-/**
- * @param $time
- * @param string $format
- * @return string
- */
-function my_df($time, $format = 'd-m-Y')
-{
-    $date = new DateTime($time);
-    return $date->format($format);
-}
-
-/**
- * @param $date
- * @return string
- */
-function diff_for_humans($date)
-{
-    \Carbon\Carbon::setLocale('uk');
-    $d = date_parse($date);
-    $parts = ['year', 'month', 'day', 'hour', 'minute', 'second'];
-    foreach ($parts as $item)
-        if (!isset($d[$item]) || empty($d[$item]))
-            $d[$item] = '00';
-
-    return \Carbon\Carbon::create(
-        $d['year'],
-        $d['month'],
-        $d['day'],
-        $d['hour'],
-        $d['minute'],
-        $d['second'],
-        'Europe/Kiev')
-        ->diffForHumans();
-}
-
-/**
- * @return string
- */
-function date_for_humans($string = false)
-{
-    if ($string == false) {
-        return date('d') . ' ' . int_to_month(date('m'), 1) . ' ' . date('Y');
-    } else {
-        $d = date_parse($string);
-        return $d['day'] . ' ' . int_to_month($d['month'], 1) . ' ' . $d['year'];
-    }
-}
-
-function get_number($string)
-{
-    return preg_replace('/-/', '', $string);
-}
-
-/**
- * @param $code
- */
-function nova_statuses($code)
-{
-    $arr = [
-        '1' => 'Нова пошта очікує надходження від відправника',
-        '2' => 'Видалено',
-        '3' => 'Номер не знайдено',
-        '4' => 'Відправлення у місті.',
-        '41' => 'Відправлення у місті.',
-        '5' => 'Відправлення прямує до міста.',
-        '6' => 'Відправлення у місті.',
-        '7' => 'Прибув на відділення',
-        '8' => 'Прибув на відділення',
-        '9' => 'Відправлення отримано',
-        '10' => 'Відправлення отримано! Протягом доби ви одержите SMS-повідомлення про надходження грошового переказу та зможете отримати його в касі відділення «Нова пошта».',
-        '11' => 'Відправлення отримано. Грошовий переказ видано одержувачу.',
-        '14' => 'Відправлення передано до огляду отримувачу',
-        '101' => 'На шляху до одержувача',
-        '102' => 'Відмова одержувача',
-        '103' => 'Відмова одержувача',
-        '108' => 'Відмова одержувача',
-        '104' => 'Змінено адресу',
-        '105' => 'Припинено зберігання',
-        '106' => 'Одержано і є ТТН грошовий переказ',
-        '107' => 'Нараховується плата за зберігання'
-    ];
-
-    return isset($arr[$code]) ? $arr[$code] : 'Невідомо';
-}
-
 /**
  * @param $int
  * @return string
  */
 function month_valid($int)
 {
-    if (mb_strlen($int) == 1)
-        return "0" . $int;
-    else
-        return $int;
-
+    if (mb_strlen($int) == 1) return "0" . $int;
+    else return $int;
 }
 
 /**
@@ -1009,37 +689,49 @@ function app($key = null, $value = null)
     return null;
 }
 
-function rand32()
+/**
+ * @return string
+ */
+function rand32(): string
 {
     return md5(md5(rand(1000, 9999) . date('YmdHis') . rand(10000, 99999)));
 }
 
-function p2s($str)
+/**
+ * Point to slash
+ *
+ * @param $str
+ * @return mixed
+ */
+function p2s(string $str): string
 {
     $str = str_replace('.js', '', $str);
     $str = str_replace('.css', '', $str);
     $str = str_replace('.', '/', $str);
-    return $str;
+    return (string)$str;
 }
+
 
 /**
- * @param $date
- * @return bool
+ * snake_case to CamelCase
+ *
+ * @param string $str
+ * @return string
  */
-function is_online($date)
-{
-    return time() - $date < 300 ? true : false;
-}
-
-
-function s2c($str)
+function s2c(string $str): string
 {
     $str = ucwords($str, "_");
     $str = str_replace('_', '', $str);
     return ($str);
 }
 
-function c2s($str)
+/**
+ * CamelCase to snake_case
+ *
+ * @param string $str
+ * @return string
+ */
+function c2s(string $str): string
 {
     preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $str, $matches);
     $ret = $matches[0];
@@ -1052,7 +744,7 @@ function c2s($str)
 
 function time_load_stat()
 {
-    create_folder_if_not_exists('/server/stat/');
+    create_folder('/server/stat/');
     $file = fopen(ROOT . '/server/stat/' . date('Y-m-d') . '.txt', 'a+');
 
     if (preg_match('/\/[a-zA-Z_]+/', $_SERVER['REQUEST_URI'], $matches)) {
@@ -1075,13 +767,24 @@ function time_load_stat()
     fclose($file);
 }
 
-function create_folder_if_not_exists($name)
+/**
+ * Створює папку якщо не існує
+ *
+ * @param string $name
+ */
+function create_folder(string $name): void
 {
     if (!file_exists(ROOT . $name))
         mkdir(ROOT . $name, 0777, true);
 }
 
-function create_file_if_not_exists($name, $content = '')
+/**
+ * Створює файл якщо не існує
+ *
+ * @param string $name
+ * @param string $content
+ */
+function create_file(string $name, string $content = '')
 {
     if (!file_exists(ROOT . $name)) {
         $fp = fopen(ROOT . $name, 'w');
@@ -1097,7 +800,7 @@ function start($name = 'test')
 
 function finish($name = 'test')
 {
-    create_folder_if_not_exists('/server/stat/');
+    create_folder('/server/stat/');
 
     $file = fopen(ROOT . '/server/stat/stat.txt', 'a+');
     $name = 'process_time_' . $name;
@@ -1112,42 +815,6 @@ function finish($name = 'test')
     fclose($file);
 
     return $string;
-}
-
-/**
- * @param $object
- * @return string
- */
-function json($object)
-{
-    return json_encode($object, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-}
-
-/**
- * @param string $string
- * @return stdClass
- */
-function with_json($string)
-{
-    return json_decode(htmlspecialchars_decode($string));
-}
-
-/**
- * @param $number
- * @return string
- */
-function nf($number)
-{
-    return number_format($number, 2);
-}
-
-/**
- * @param $array
- * @return bool|object
- */
-function object($array)
-{
-    return get_object($array);
 }
 
 function count_working_days($year = null, $month = null): int
@@ -1178,6 +845,11 @@ function count_holidays($year = null, $month = null)
     return $holidays;
 }
 
+/**
+ * @param $abstract
+ * @param null $parameter
+ * @return object|mixed
+ */
 function container($abstract, $parameter = null)
 {
     return (new \Web\App\Container())->getClassObject($abstract, $parameter);
@@ -1187,12 +859,17 @@ function container($abstract, $parameter = null)
  * @param int $code
  * @param string $message
  */
-function abort(int $code, string $message = '')
+function abort(int $code, string $message = ''): void
 {
     container(\Web\App\Response::class)->abort($code, $message);
 }
 
-function abort_if(bool $bool, $code, $message = '')
+/**
+ * @param bool $bool
+ * @param $code
+ * @param string $message
+ */
+function abort_if(bool $bool, $code, $message = ''): void
 {
     if ($bool)
         abort($code, $message);
@@ -1210,37 +887,6 @@ function request($key = null, $default = null)
 
     return container(\Web\App\Request::class)->get($key, $default);
 }
-
-function mix($path, $manifestDirectory = '')
-{
-    static $manifest;
-    $publicFolder = '/public';
-    $rootPath = $_SERVER['DOCUMENT_ROOT'];
-    $publicPath = $rootPath . $publicFolder;
-    if ($manifestDirectory && ! starts_with($manifestDirectory, '/')) {
-        $manifestDirectory = "/{$manifestDirectory}";
-    }
-    if (! $manifest) {
-        if (! file_exists($manifestPath = ($rootPath . $manifestDirectory.'/mix-manifest.json') )) {
-            throw new Exception('The Mix manifest does not exist.');
-        }
-        $manifest = json_decode(file_get_contents($manifestPath), true);
-    }
-    if (! starts_with($path, '/')) {
-        $path = "/{$path}";
-    }
-    $path = $publicFolder . $path;
-    if (! array_key_exists($path, $manifest)) {
-        throw new Exception(
-            "Unable to locate Mix file: {$path}. Please check your ".
-            'webpack.mix.js output paths and try again.'
-        );
-    }
-    return file_exists($publicPath . ($manifestDirectory.'/hot'))
-        ? "http://localhost:8080{$manifest[$path]}"
-        : $manifestDirectory.$manifest[$path];
-}
-
 
 /**
  * @param string $asset

@@ -74,13 +74,7 @@
 
                 <td><?= $item->phone ?></td>
 
-                <td style="width: 88px;">
-                    <?php if (string_to_time($item->time_with) != '00:00' && string_to_time($item->time_to) != '00:00')
-                        echo string_to_time($item->time_with) . ' - ' . string_to_time($item->time_to);
-                    else
-                        echo '<span style="color: blue">Цілодобово</span>';
-                    ?>
-                </td>
+                <td style="width: 88px;"><?= $item->time ?></td>
 
                 <td><?= $item->street . ' ' . $item->address ?></td>
 

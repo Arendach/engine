@@ -103,8 +103,8 @@ class Statistic
         $file = $this->get_file(day);
 
         // створюємо файл і папку якщо таких не існує
-        create_folder_if_not_exists($folder);
-        create_file_if_not_exists($folder . $file, '{}');
+        create_folder($folder);
+        create_file($folder . $file, '{}');
 
         // відкриваємо файл і поміщаємо поток в $this->stream
         $this->stream = fopen(ROOT . $folder . $file, 'r+');

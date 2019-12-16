@@ -27,4 +27,9 @@ class User extends Model
         else return asset("css/themes/$theme.css");
     }
 
+    public function getIsOnlineAttribute(): bool
+    {
+        return ((time() - $this->updated_at->timestamp) < 300);
+    }
+
 }

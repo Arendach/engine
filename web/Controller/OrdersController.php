@@ -34,6 +34,7 @@ use Web\Requests\Orders\UpdateDeliveryAddressRequest;
 use Web\Requests\Orders\UpdateContactsRequest;
 use Web\Requests\Orders\UpdateStatusRequest;
 use Web\Requests\Orders\UpdateWorkingRequest;
+use Web\Services\NewPostService;
 
 class OrdersController extends Controller
 {
@@ -46,7 +47,7 @@ class OrdersController extends Controller
 
     private function checkBlackDate()
     {
-        if (!post('date_delivery'))
+        if (!request('date_delivery'))
             return;
 
         $filepath = ROOT . '/server/black_dates.txt';
@@ -62,7 +63,7 @@ class OrdersController extends Controller
 
         $black_dates = array_map('trim', $black_dates);
 
-        if (in_array(trim(post('date_delivery')), $black_dates))
+        if (in_array(trim(request('date_delivery')), $black_dates))
             response(400, 'На цю дату неможливо завести замовлення!');
     }
 
@@ -79,7 +80,7 @@ class OrdersController extends Controller
         $orders->appends($request->toArray());
 
         $data = [
-            'title' => 'Замовлення :: ' . type_parse($type),
+            'title' => "Замовлення :: " . assets('order_types')[$type]['many'],
             'full' => $full,
             'type' => $type,
             'orders' => $orders,
@@ -88,7 +89,7 @@ class OrdersController extends Controller
             'request' => $request,
             'breadcrumbs' => [
                 ['Замовлення', uri('orders/view', ['type' => 'delivery'])],
-                [type_parse($type)]
+                [assets('order_types')[$type]['many']]
             ]
         ];
 
@@ -108,7 +109,7 @@ class OrdersController extends Controller
             'storage' => Storage::where('accounted', 1)->orderBy('sort')->get(),
             'breadcrumbs' => [
                 ['Замовлення', uri('orders/view', ['type' => 'delivery'])],
-                [type_parse($type), uri('orders/view', ['type' => $type])],
+                [assets('order_types')[$type]['many'], uri('orders/view', ['type' => $type])],
                 ['Нове замовлення']
             ]
         ];
@@ -308,60 +309,18 @@ class OrdersController extends Controller
     // Товарний чек
     public function sectionReceipt(int $id, bool $official = false)
     {
-        $order = Orders::getOne($id);
+        $order = Order::with([
+            'products',
+            'pay',
+            'hint'
+        ])->findOrFail($id);
 
-        $products = Orders::getProducts(get('id'));
+        $data = ['order' => $order];
 
-        $payer = Orders::getOne($order->pay_method, 'pays');
+        if ($order->type == 'sending' && $order->street != '')
+            $data['marker'] = container(NewPostService::class)->getMarker($order);
 
-        $data = [
-            'order' => $order,
-            'id' => get('id'),
-            'type' => $order->type,
-            'products' => $products->products,
-            'sum' => $products->sum,
-            'places' => $products->places,
-            'payer' => $payer
-        ];
-
-        if ($order->type == 'sending' && $order->street != '') {
-            $address = 'https://my.novaposhta.ua/orders/printMarkings/orders[]/' . $order->street . '/type/html/apiKey/' . NEW_POST_KEY;
-
-            $dom = new Document($address, true);
-
-            $body = $dom->first('body');
-
-            $imgs = $body->findInDocument('img');
-
-            foreach ($imgs as $k => $img) {
-                $attr = $img->attr('src');
-                $body->findInDocument('img')[$k]->attr('src', 'http://my.novaposhta.ua' . $attr);
-            }
-
-            $markers = $body->findInDocument('.page-100-100');
-            $data['marker'] = '';
-            foreach ($markers as $marker) {
-                $data['marker'] .= $marker->html();
-            }
-        }
-
-        if ($order->type == 'delivery') {
-            $data['street'] = parse_street($order->street);
-        } elseif ($order->type == 'sending') {
-            $data['order']['delivery_name'] = Orders::getDeliveryName($order->delivery);
-            if ($data['order']['delivery_name'] == 'НоваПошта') {
-                $new_post = new NewPost();
-                $address = $new_post->get_address($order->city, $order->warehouse);
-                $data['order']['city'] = $address['city'];
-                $data['order']['warehouse'] = $address['warehouse'];
-            }
-            $data['pay'] = Orders::getPay(get('id'));
-        }
-
-        if (get('official'))
-            $this->view->display('orders.print.receipt_official', $data);
-        else
-            $this->view->display('orders.print.receipt', $data);
+        $this->view->display('orders.print.receipt' . ($official ? '_official' : '_new'), $data);
     }
 
     // Рахунок фактура
@@ -594,7 +553,7 @@ class OrdersController extends Controller
     {
         $file = $_FILES['0'];
 
-        create_folder_if_not_exists('/server/uploads/orders/');
+        create_folder('/server/uploads/orders/');
 
         $pi = pathinfo($file['name']);
 

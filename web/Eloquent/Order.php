@@ -126,4 +126,35 @@ class Order extends Model
     {
         return $filters->apply($builder);
     }
+
+    public function getSumAttribute()
+    {
+        $this->products->sum(function ($item){
+            return $item->pivot->amount * $item->pivot->price;
+        });
+    }
+
+    public function getSendingCityNameAttribute()
+    {
+
+    }
+
+
+    public function getSendingWarehouseNameAttribute()
+    {
+
+    }
+
+    public function getTimeAttribute()
+    {
+        if (is_null($this->time_with) && is_null($this->time_to)){
+            return '<span class="text-primary">Не важливо</span>';
+        } elseif (is_null($this->time_with) && !is_null($this->time_to)){
+            return "до " . string_to_time($this->time_to);
+        } elseif (!is_null($this->time_with) && is_null($this->time_to)){
+            return "з " . string_to_time($this->time_with);
+        } else {
+            return string_to_time($this->time_with) . ' - ' . string_to_time($this->time_to);
+        }
+    }
 }

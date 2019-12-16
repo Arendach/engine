@@ -85,30 +85,28 @@ function element($element, $data = [])
         </div>
     <?php }
 
-    if ($element == 'time_with') { ?>
+    if ($element == 'time') { ?>
         <div class="form-group">
-            <label class="col-md-4 control-label" for="time_with">Градація по часу доставки</label>
+            <label class="col-md-4 control-label">Час доставки</label>
             <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-addon">Від</span>
-                    <input id="time_with" name="time_with" class="form-control">
-                </div>
-
-            </div>
-        </div>
-    <?php }
-
-    if ($element == 'time_to') { ?>
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="time_to"></label>
-            <div class="col-md-5">
-                <div class="input-group">
-                    <span class="input-group-addon">ДО</span>
-                    <input id="time_to" name="time_to" class="form-control">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon">З</span>
+                            <input name="time_with" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon">По</span>
+                            <input name="time_to" class="form-control">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     <?php }
+
 
     if ($element == 'courier') { ?>
         <div class="form-group">

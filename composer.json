@@ -10,7 +10,8 @@
     "illuminate/pagination": "^6.6",
     "illuminate/view": "^6.6",
     "ajcastro/eager-load-pivot-relations": "^0.2.2",
-    "maximebf/debugbar": "^1.16"
+    "maximebf/debugbar": "^1.16",
+    "imangazaliev/didom": "^1.14"
   },
   "autoload": {
     "psr-4": {
