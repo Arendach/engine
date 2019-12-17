@@ -97,8 +97,8 @@ class SimpleRouter extends MainRouter
      */
     private function get_action_name($object)
     {
-        if (post('action')) {
-            return method_exists($object, 'action_' . post('action')) ? 'action_' . post('action') : false;
+        if (request('action')) {
+            return method_exists($object, 'action_' . request('action')) ? 'action_' . request('action') : false;
         } else {
             return method_exists($object, $object->main_action) ? $object->main_action : false;
         }

@@ -55,8 +55,6 @@ class ErrorHandler
         @title ?= 'Помилка'
         @message ?= 'Не знайдено елемент або невірна адреса'
 
-        window.location.open window.location.href
-
     error500Handler: () ->
         @title ?= 'Помилка'
         @message ?= 'Помилка сервера: 500. Дзвони до Тараса :('

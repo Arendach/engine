@@ -87,7 +87,7 @@
                                        name="products[<?= $product->id ?>][attributes][<?= $rand ?>][key]"
                                        value="<?= $key ?>">
                                 <select name="products[<?= $product->id ?>][attributes][<?= $rand ?>][value]"
-                                        class="attr" data-key="<?= $key ?>">
+                                        class="form-control" data-key="<?= $key ?>">
                                     <?php foreach ($attr as $val) { ?>
                                         <option <?= isset($product->pivot->attributes[$key]) && $val == $product->pivot->attributes[$key] ? 'selected' : '' ?>
                                                 value="<?= $val ?>">

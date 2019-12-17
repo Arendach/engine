@@ -1,25 +1,17 @@
 <?php include parts('head') ?>
     <ul class="nav nav-pills nav-justified">
         <li class="active"><a data-toggle="tab" href="#main">Основне</a></li>
-
         <li><a data-toggle="tab" href="#products_tab">Товари</a></li>
-
         <li><a data-toggle="tab" href="#sms">СМС розсилка</a></li>
-
         <li><a data-toggle="tab" href="#clients">Постійний клієнт</a></li>
-
         <?php if (can('bonuses') || $order->liable->id == user()->id) { ?>
             <li><a data-toggle="tab" href="#bonuses">Бонуси</a></li>
         <?php } ?>
-
         <?php if ($order->type == 'delivery' || $order->type == 'self') { ?>
             <li><a data-toggle="tab" href="#prof">Тип замовлення</a></li>
         <?php } ?>
-
         <li><a data-toggle="tab" href="#transactions">Оплата</a></li>
-
         <li><a data-toggle="tab" href="#photo">Файли</a></li>
-
     </ul>
 
     <hr>
@@ -34,7 +26,7 @@
         </div>
 
         <div id="sms" class="fade tab-pane">
-            <?php // include t_file('buy.update.parts.sms') ?>
+            <?php include t_file('buy.update.parts.sms') ?>
         </div>
 
         <?php if ($order->type != 'shop') { ?>

@@ -2,11 +2,13 @@
 
 namespace Web\Controller;
 
-use RedBeanPHP\R;
 use Web\App\Controller;
-use Web\Model\Orders;
+use Web\Eloquent\Site;
+use Web\Eloquent\SmsTemplate;
 use Web\Model\Sms;
 use Mobizon\MobizonApi;
+use Web\Eloquent\Order;
+use Web\Requests\Sms\SendOrderSmsRequest;
 
 class SmsController extends Controller
 {
@@ -54,16 +56,15 @@ class SmsController extends Controller
         response(200, DATA_SUCCESS_CREATED);
     }
 
-    public function action_prepare_template($post)
+    public function actionPrepareTemplate(int $order_id, int $template_id)
     {
-        $order = Orders::getOrderById($post->order_id);
-        $template = Sms::getOne($post->template_id);
-        $site = R::load('sites', $order->site);
-        $site_name = isset($site->name) ? $site->name : '';
-        $site_url = isset($site->url) ? $site->url : '';
+        $order = Order::findOrFail($order_id);
+        $template = SmsTemplate::findOrFail($template_id);
+
+        $site = Site::find($order->site);
 
         $patterns = [
-            ['@date@', date_for_humans(date('Y-m-d'))],
+            ['@date@', date('d.m.Y')],
             ['@date2@', date('Y-m-d')],
             ['@datetime@', date('Y-m-d H:i:s')],
             ['@ttn@', $order->street],
@@ -75,19 +76,20 @@ class SmsController extends Controller
             ['@id@', $order->id],
             ['@date_delivery@', $order->date_delivery],
             ['@full_sum@', $order->full_sum],
-            ['@site_name@', $site_name],
-            ['@site_url@', $site_url]
+            ['@site_name@', $site->name ?? ''],
+            ['@site_url@', $site->url ?? '']
         ];
 
         $result = $template->text;
-        foreach ($patterns as $pattern) {
+        foreach ($patterns as $pattern)
             $result = preg_replace("/{$pattern[0]}/", $pattern[1], $result);
-        }
 
-        echo $result;
+        response()->json([
+            'text' => $result
+        ]);
     }
 
-    public function action_send_message($post)
+    public function actionSendMessage(SendOrderSmsRequest $request): void
     {
         $api = new MobizonApi(SMS_API_KEY);
 

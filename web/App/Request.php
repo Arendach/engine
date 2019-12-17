@@ -147,6 +147,26 @@ class Request
     }
 
     /**
+     * @param string $key
+     * @param string $pattern
+     * @return bool
+     */
+    public function match(string $key, string $pattern): bool
+    {
+        return preg_match($pattern, $this->get($key));
+    }
+
+    /**
+     * @param string $key
+     * @param string $pattern
+     * @return bool
+     */
+    public function notMatch(string $key, string $pattern): bool
+    {
+        return !$this->match($key, $pattern);
+    }
+
+    /**
      * @param array $keys
      * @return array
      */

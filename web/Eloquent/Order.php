@@ -157,4 +157,9 @@ class Order extends Model
             return string_to_time($this->time_with) . ' - ' . string_to_time($this->time_to);
         }
     }
+
+    public function getPhoneFormatAttribute()
+    {
+        return get_number_world_format(str_replace('-', '', $this->phone));
+    }
 }

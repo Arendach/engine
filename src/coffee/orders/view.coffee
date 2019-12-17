@@ -81,6 +81,16 @@ $(document).on 'click', '#route_list', ->
 
 $(document).on 'click', '#more_filters', -> $('.filter_more').toggleClass 'none'
 
+$(document).on 'change', '#sms-template', (event) ->
+    order_id = JData.id
+    template_id = $(event.currentTarget).val()
+
+    $.ajax
+        type: 'post'
+        url: '/sms/prepare_template'
+        data: {order_id, template_id}
+        success: (answer) -> $('#sms-text').val(answer.text)
+
 
 $(document).ready ->
     Inputmask '999-999-99-99'
@@ -88,22 +98,3 @@ $(document).ready ->
 
     Inputmask '999-999-99-99'
         .mask '#phone2'
-
-#    cache = {}
-#    $('#fio, #street').autocomplete
-#        source: (request, response) =>
-#            term = request.term
-#            if term of cache
-#                return response cache[term]
-#
-#            $.ajax
-#                type: 'post'
-#                url: '/orders/view_auto_complete'
-#                data:
-#                    search: term
-#                    field: 'fio'
-#                    type: JData.type
-#                success: (data) ->
-#                    cache[term] = data
-#                    response(data)
-#        minLength: 3
