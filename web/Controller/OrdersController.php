@@ -7,6 +7,7 @@ use SergeyNezbritskiy\PrivatBank\AuthorizedClient;
 use SergeyNezbritskiy\PrivatBank\Merchant;
 use Illuminate\Support\Collection;
 use Web\App\Request;
+use Web\Eloquent\Client;
 use Web\Eloquent\Logistic;
 use Web\Eloquent\Order;
 use Web\Eloquent\OrderHint;
@@ -142,6 +143,7 @@ class OrdersController extends Controller
             'categories' => Coupon::getCategories(),
             'sms_templates' => SmsTemplate::where('type', $order->type)->get(),
             'storage' => Storage::where('accounted', 1)->orderBy('sort')->get(),
+            'clients' => Client::all(),
             'closed_order' => Orders::count('reports', "`data` = ? AND `type` = 'order'", [$id])
         ];
 

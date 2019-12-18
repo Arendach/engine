@@ -31,6 +31,7 @@
 
     <form action="<?= uri('orders/update_contacts') ?>" data-type="ajax">
         <?php element('id', $order) ?>
+        <?php element('client_id', $order) ?>
         <?php element('fio', $order) ?>
         <?php element('phone', $order) ?>
         <?php element('email', $order) ?>

@@ -1,76 +1,27 @@
-<?php
+<?php include t_file('buy.create.elements') ?>
 
-use Web\App\Model;
+<?php element('client_id') ?>
+<?php element('fio') ?>
+<?php element('phone') ?>
+<?php element('phone2') ?>
+<?php element('email') ?>
 
-include t_file('buy.create.elements')
+<hr>
 
-?>
+<?php element('hint', ['hints' => $hints]) ?>
+<?php element('date_delivery') ?>
+<?php element('site') ?>
+<?php element('time') ?>
+<?php element('courier', ['users' => $users]) ?>
+<?php element('coupon') ?>
+<?php element('comment') ?>
 
-<div class="row right">
-    <div class="col-md-4">
-        <h4><b>Контактна інформація</b></h4>
-    </div>
-</div>
+<hr>
 
-<div class="type_block">
-    <?php element('fio') ?>
+<?php element('warehouse') ?>
 
-    <?php element('phone') ?>
+<hr>
 
-    <?php element('phone2') ?>
+<?php element('pay_method', ['pays' => $pays]) ?>
+<?php element('prepayment') ?>
 
-    <?php element('email') ?>
-</div>
-
-
-<div class="row right">
-    <div class="col-md-4">
-        <h4><b>Службова інформація</b></h4>
-    </div>
-</div>
-
-<div class="type_block">
-
-    <?php element('hint', ['hints' => $hints]) ?>
-
-    <?php element('date_delivery') ?>
-
-    <?php element('site') ?>
-
-    <?php element('time_with') ?>
-
-    <?php element('time_to') ?>
-
-    <?php element('courier', ['users' => $users]) ?>
-
-    <?php element('coupon') ?>
-
-    <?php element('comment') ?>
-
-</div>
-
-<div class="row right">
-    <div class="col-md-4">
-        <h4><b>Адреса</b></h4>
-    </div>
-</div>
-
-<div class="type_block">
-
-    <?php element('warehouse') ?>
-
-</div>
-
-<div class="row right">
-    <div class="col-md-4">
-        <h4><b>Оплата</b></h4>
-    </div>
-</div>
-
-<div class="type_block">
-
-    <?php element('pay_method', ['pays' => $pays]) ?>
-
-    <?php element('prepayment') ?>
-
-</div>

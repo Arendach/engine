@@ -3,7 +3,6 @@
         <li class="active"><a data-toggle="tab" href="#main">Основне</a></li>
         <li><a data-toggle="tab" href="#products_tab">Товари</a></li>
         <li><a data-toggle="tab" href="#sms">СМС розсилка</a></li>
-        <li><a data-toggle="tab" href="#clients">Постійний клієнт</a></li>
         <?php if (can('bonuses') || $order->liable->id == user()->id) { ?>
             <li><a data-toggle="tab" href="#bonuses">Бонуси</a></li>
         <?php } ?>
@@ -11,7 +10,7 @@
             <li><a data-toggle="tab" href="#prof">Тип замовлення</a></li>
         <?php } ?>
         <li><a data-toggle="tab" href="#transactions">Оплата</a></li>
-        <li><a data-toggle="tab" href="#photo">Файли</a></li>
+        <li><a data-toggle="tab" href="#files">Файли</a></li>
     </ul>
 
     <hr>
@@ -29,12 +28,6 @@
             <?php include t_file('buy.update.parts.sms') ?>
         </div>
 
-        <?php if ($order->type != 'shop') { ?>
-            <div id="clients" class="fade tab-pane">
-                <?php // include t_file('buy.update.parts.clients') ?>
-            </div>
-        <?php } ?>
-
         <?php if (can('bonuses') || $order->liable == user()->id) { ?>
             <div id="bonuses" class="fade tab-pane">
                 <?php // include t_file('buy.update.parts.bonuses'); ?>
@@ -51,8 +44,8 @@
             <?php //include t_file('buy.update.parts.transactions'); ?>
         </div>
 
-        <div id="photo" class="fade tab-pane">
-            <?php //include t_file('buy.update.parts.photo'); ?>
+        <div id="files" class="fade tab-pane">
+            <?php include t_file('buy.update.parts.files'); ?>
         </div>
     </div>
 

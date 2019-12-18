@@ -79,6 +79,11 @@ class Order extends Model
             ->orderByDesc('id');
     }
 
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
     public function getTypeNameAttribute()
     {
         if ($this->type == 'sending') return 'Відправка';

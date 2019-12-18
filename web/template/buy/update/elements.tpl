@@ -370,4 +370,20 @@ function element(string $key, \Web\Eloquent\Order $order, $data = [])
         </div>
     <?php }
 
+    if ($key == 'client_id') { ?>
+        <div class="form-group">
+            <label class="col-md-4 control-label">Клієнт</label>
+            <div class="col-md-5">
+                <select name="site" class="form-control">
+                    <option value="0"></option>
+                    <?php foreach (\Web\Eloquent\Client::all() as $item) { ?>
+                        <option <?= $order->client_id == $item->id ? 'selected' : '' ?> value="<?= $item->id ?>">
+                            <?= $item->name ?>
+                        </option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+    <?php }
+
 }

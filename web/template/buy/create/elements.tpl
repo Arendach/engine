@@ -410,4 +410,20 @@ function element($element, $data = [])
             </div>
         </div>
     <?php }
+
+
+    if ($element == 'client_id') { ?>
+        <div class="form-group">
+            <label class="col-md-4 control-label">Клієнт</label>
+            <div class="col-md-5">
+                <select name="site" class="form-control">
+                    <option value="0"></option>
+                    <?php foreach (\Web\Eloquent\Client::all() as $item) { ?>
+                        <option value="<?= $item->id ?>"><?= $item->name ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+    <?php }
+
 }
