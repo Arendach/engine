@@ -1,10 +1,10 @@
 <div class="row">
     <div class="col-md-3">
-        <form id="load_photo" action="<?= uri('orders') ?>" enctype="multipart/form-data">
+        <form data-type="ajax" action="<?= uri('orders/upload_file') ?>" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?= $order->id ?>">
 
             <div class="form-group">
-                <input type="file" name="file">
+                <?php \Web\Tools\HTML::file('file', true) ?>
             </div>
 
             <div class="form-group">

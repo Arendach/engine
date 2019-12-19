@@ -35,7 +35,8 @@ function element(string $key, \Web\Eloquent\Order $order, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label" for="address">Адреса</label>
             <div class="col-md-5">
-                <input id="address" name="address" class="form-control" value="<?= htmlspecialchars($order->address) ?>">
+                <input id="address" name="address" class="form-control"
+                       value="<?= htmlspecialchars($order->address) ?>">
             </div>
         </div>
     <?php }
@@ -102,7 +103,8 @@ function element(string $key, \Web\Eloquent\Order $order, $data = [])
         <div class="form-group">
             <div class="col-md-4"></div>
             <div class="col-md-5">
-                <button <?= in_array($order->status, [2, 3, 4]) ? 'disabled' : '' ?> class="btn btn-primary">Оновити</button>
+                <button <?= in_array($order->status, [2, 3, 4]) ? 'disabled' : '' ?> class="btn btn-primary">Оновити
+                </button>
             </div>
         </div>
     <?php }
@@ -139,7 +141,8 @@ function element(string $key, \Web\Eloquent\Order $order, $data = [])
                     <div class="col-md-6">
                         <div class="input-group">
                             <span class="input-group-addon">З</span>
-                            <input name="time_with" class="form-control" value="<?= string_to_time($order->time_with) ?>">
+                            <input name="time_with" class="form-control"
+                                   value="<?= string_to_time($order->time_with) ?>">
                         </div>
                     </div>
 
@@ -202,7 +205,8 @@ function element(string $key, \Web\Eloquent\Order $order, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label">Місто <i class="text-danger">*</i></label>
             <div class="col-md-5">
-                <input id="city" required name="city" class="form-control" value="<?= htmlspecialchars($order->city) ?>">
+                <input id="city" required name="city" class="form-control"
+                       value="<?= htmlspecialchars($order->city) ?>">
             </div>
         </div>
     <?php }
@@ -212,7 +216,8 @@ function element(string $key, \Web\Eloquent\Order $order, $data = [])
             <label class="col-md-4 control-label">Вулиця</label>
             <div class="col-md-5">
                 <div class="input-group">
-                    <input id="street" name="street" class="form-control" value="<?= htmlspecialchars($order->street) ?>">
+                    <input id="street" name="street" class="form-control"
+                           value="<?= htmlspecialchars($order->street) ?>">
                     <div class="input-group-btn">
                         <button class="btn btn-md btn-default" type="button" id="street-reset">
                             <i class="fa fa-remove"></i>
@@ -293,7 +298,7 @@ function element(string $key, \Web\Eloquent\Order $order, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label" for="warehouse">Відділення <i class="text-danger">*</i></label>
             <div class="col-md-5">
-                <select <?= $order->warehouses['disabled'] ? 'disabled' : '' ?>  name="warehouse" class="form-control">
+                <select <?= $order->warehouses['disabled'] ? 'disabled' : '' ?> name="warehouse" class="form-control">
                     <?php foreach ($data['warehouses']['data'] as $item) { ?>
                         <option <?= $item['Ref'] == $order->warehouse ? 'selected' : '' ?> value="<?= $item['Ref'] ?>">
                             <?= $item['Description'] ?>
@@ -346,7 +351,8 @@ function element(string $key, \Web\Eloquent\Order $order, $data = [])
             <label class="col-md-4 control-label">Доставку оплачує</label>
             <div class="col-md-5">
                 <select name="pay_delivery" class="form-control">
-                    <option <?= $order->pay_delivery == 'recipient' ? 'selected' : '' ?> value="recipient">Отримувач</option>
+                    <option <?= $order->pay_delivery == 'recipient' ? 'selected' : '' ?> value="recipient">Отримувач
+                    </option>
                     <option <?= $order->pay_delivery == 'sender' ? 'selected' : '' ?> value="sender">Відправник</option>
                 </select>
             </div>
@@ -374,10 +380,13 @@ function element(string $key, \Web\Eloquent\Order $order, $data = [])
         <div class="form-group">
             <label class="col-md-4 control-label">Клієнт</label>
             <div class="col-md-5">
-                <select name="site" class="form-control">
-                    <option value="0"></option>
+                <select name="client_id" id="client_id" class="form-control">
+                    <option value="0">&nbsp;</option>
                     <?php foreach (\Web\Eloquent\Client::all() as $item) { ?>
-                        <option <?= $order->client_id == $item->id ? 'selected' : '' ?> value="<?= $item->id ?>">
+                        <option data-fio="<?= $item->name ?>"
+                                data-phone="<?= $item->phone ?>"
+                                data-email="<?= $item->email ?>"
+                            <?= $order->client_id == $item->id ? 'selected' : '' ?> value="<?= $item->id ?>">
                             <?= $item->name ?>
                         </option>
                     <?php } ?>

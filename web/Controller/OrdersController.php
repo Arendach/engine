@@ -551,8 +551,9 @@ class OrdersController extends Controller
         $this->view->display('orders.new_post_logs', $data);
     }
 
-    public function action_load_photo($post)
+    public function actionUploadFile(Request $request)
     {
+        dd($request->toCollection());
         $file = $_FILES['0'];
 
         create_folder('/server/uploads/orders/');

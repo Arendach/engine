@@ -64,7 +64,19 @@ $(document).on 'keyup', '#city_input', ->
 $(document).on 'click', '#street-reset', -> $('#street').val('')
 
 $(document).ready ->
-    if $('#comment').length then CKEDITOR.replace 'comment'
+    if $('#comment').length
+        CKEDITOR.replace 'comment'
+
+    if $('#client_id').length
+        $('#client_id').select2 {tags: "true", placeholder: "Select an option"}
+
+    $(document).on 'change', '#client_id', (event) ->
+        selected = $(event.currentTarget).find ':selected'
+
+        $('#fio').val selected.data 'fio'
+        $('#phone').val selected.data 'phone'
+        $('#email').val selected.data 'email'
+
 
     $('#street').typeahead
         source: (query, result) ->
@@ -95,29 +107,3 @@ $(document).ready ->
             console.log(p1)
             console.log(p2)
             console.log(p3)
-###
-        $body.on('keyup', '#city', function () {
-            $('#city_select_container').show();
-        var $this = $(this);
-        $.ajax({
-            type: 'post',
-            url: url('/api/search_village'),
-            data: {
-                name: $this.val()
-            },
-            success: function (answer) {
-                $('#city_select').html(answer);
-        },
-        error: function (answer) {
-            errorHandler(answer);
-        }
-        })
-        });
-
-        $body.on('change', '#city_select', function () {
-            $('#city').val($(this).find(':selected').val());
-        $('#city_select_container').hide();
-        });
-        })
-    
-###

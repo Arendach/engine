@@ -32,6 +32,18 @@ $(document).on 'focus', '[data-inspect]', -> document.inputCache = $(@).val()
 
 $(document).on 'focusout', '[data-inspect]', -> document.inputCache = ''
 
+$(document).on 'change', '.input-file-input', (event) ->
+    input_file_input = $ event.currentTarget
+    input_file_container = input_file_input.parents '.input-file-container'
+    input_file_names = input_file_container.find '.input-file-names'
+
+    input_file_names.html ''
+
+    files = input_file_input.prop 'files'
+    for file in files
+        input_file_names.append file.name + '<br>'
+
+
 $(document).on 'keyup', '[data-inspect="decimal"]', ->
     value = $(@).val()
     
@@ -66,13 +78,17 @@ $(document).on 'keyup', '[data-inspect="integer"]', ->
 $(document).on 'submit', '[data-type="ajax"]', (event) ->
     event.preventDefault()
     
-    data = $(event.currentTarget).serializeJSON()
+    #data = $(event.currentTarget).serializeJSON()
     url = $(event.currentTarget).attr 'action'
     type = $(event.currentTarget).attr 'method'
     redirectTo = $(event.currentTarget).data 'redirect-to'
     success = $(event.currentTarget).data 'success'
     error = $(event.currentTarget).data 'error'
     after = $(event.currentTarget).data 'after'
+
+    data = new FormData(this)
+
+    console.log(data)
 
     url ?= window.location
     type ?= 'post'
@@ -97,6 +113,8 @@ $(document).on 'submit', '[data-type="ajax"]', (event) ->
             type: type
             url: url
             data: data
+            processData: off
+            contentType: off
             success: (answer, status, jqXHR) =>
                 new SuccessHandler answer, jqXHR
                     .setDriver success
